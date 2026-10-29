@@ -195,21 +195,22 @@
                     </button>
                 </form>
 
-                <!-- Quick-Fill Demo Account Helper -->
+                <!-- Quick-Fill Editor Account Helper (Clean Database) -->
                 <div class="pt-3 border-t border-slate-100">
-                    <p class="text-[11px] font-semibold text-slate-400 text-center mb-2 uppercase tracking-wider">Akun Demo Resmi (Klik untuk Isi Cepat):</p>
-                    <div class="grid grid-cols-3 gap-1.5 text-[10px]">
-                        <button type="button" onclick="quickFillAccount('staff', 'admin', 'admin123')" class="p-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-lg font-semibold border border-emerald-200 text-center transition">
-                            Staff: admin
-                        </button>
-                        <button type="button" onclick="quickFillAccount('ustadz', 'ustadz.fauzi', 'guru123')" class="p-1.5 bg-blue-50 hover:bg-blue-100 text-blue-800 rounded-lg font-semibold border border-blue-200 text-center transition">
-                            Ustadz: Fauzi
-                        </button>
-                        <button type="button" onclick="quickFillAccount('santri', '20261001', 'santri123')" class="p-1.5 bg-purple-50 hover:bg-purple-100 text-purple-800 rounded-lg font-semibold border border-purple-200 text-center transition">
-                            Santri: 20261001
+                    <div class="bg-emerald-50/80 border border-emerald-200 rounded-xl p-3 text-center">
+                        <div class="flex items-center justify-center space-x-1.5 text-emerald-800 text-xs font-bold mb-1">
+                            <i class="fa-solid fa-sparkles text-emerald-600"></i>
+                            <span>Database Bersih (Siap Diisi Mandiri)</span>
+                        </div>
+                        <p class="text-[10px] text-emerald-700 leading-relaxed mb-2.5">
+                            Semua data kelas dan santri telah dikosongkan. Masuk sebagai <strong>Editor / Administrator</strong> untuk mulai membuat kelas dan menginput data baru secara mandiri.
+                        </p>
+                        <button type="button" onclick="quickFillAccount('staff', 'admin', 'admin123')" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-xs shadow-sm transition flex items-center justify-center space-x-1.5">
+                            <i class="fa-solid fa-key text-[11px]"></i>
+                            <span>Masuk Sebagai Editor: admin / admin123</span>
                         </button>
                     </div>
-                    <p class="text-[10px] text-slate-400 text-center mt-2 italic">*Akun hanya dapat dibuat dan didaftarkan oleh Staff melalui panel admin.</p>
+                    <p class="text-[10px] text-slate-400 text-center mt-2 italic">*Akun Ustadz & Santri dapat didaftarkan secara mandiri oleh Editor melalui panel Manajemen Akun.</p>
                 </div>
             </div>
 
@@ -258,6 +259,12 @@
                                 <p id="userRoleBadge" class="text-[10px] text-emerald-200 leading-tight">Staff / Full Control</p>
                             </div>
                         </div>
+
+                        <!-- TOMBOL RESET KOSONG (STAFF/EDITOR ONLY) -->
+                        <button onclick="confirmResetDatabase()" class="rbac-staff-only bg-amber-600/80 hover:bg-amber-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow transition border border-amber-500/50" title="Kosongkan seluruh data untuk mulai dari awal">
+                            <i class="fa-solid fa-arrows-rotate"></i>
+                            <span class="hidden sm:inline">Reset Kosong</span>
+                        </button>
 
                         <!-- TOMBOL KELUAR / LOGOUT RESMI -->
                         <button onclick="handleLogout()" class="bg-rose-700/80 hover:bg-rose-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow transition border border-rose-500/50" title="Keluar dari akun">
@@ -819,6 +826,15 @@
 
                                 <!-- Action Buttons (Staff & Ustadz BISA, Santri Lock) -->
                                 <div class="flex flex-wrap items-center gap-2">
+                                    <button onclick="openTambahKelasModal()" class="rbac-staff-only bg-emerald-700 hover:bg-emerald-800 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold shadow-sm transition flex items-center">
+                                        <i class="fa-solid fa-folder-plus mr-1.5"></i> + Buat Kelas
+                                    </button>
+                                    <button onclick="openTambahSantriModal()" class="rbac-can-edit bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold shadow-sm transition flex items-center">
+                                        <i class="fa-solid fa-user-plus mr-1.5"></i> + Tambah Santri
+                                    </button>
+                                    <button onclick="deleteCurrentClass()" class="rbac-staff-only bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center" title="Hapus Kelas yang sedang dipilih">
+                                        <i class="fa-solid fa-trash-can mr-1"></i> Hapus Kelas
+                                    </button>
                                     <button onclick="setAllAttendance('Hadir')" class="rbac-can-edit bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center">
                                         <i class="fa-solid fa-check-double mr-1.5"></i> Set Semua Hadir
                                     </button>
@@ -849,10 +865,7 @@
                                         <i class="fa-solid fa-door-open mr-1 text-emerald-600"></i> Pilih Kelas:
                                     </label>
                                     <select id="absenKelasSelector" onchange="switchClass(this.value)" class="w-full text-xs font-bold border-2 border-emerald-400 rounded-lg px-3 py-2 bg-emerald-50 text-emerald-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer shadow-sm">
-                                        <option value="10-ula-alghazali" selected>10 Ula - Al-Ghazali (32 Santri)</option>
-                                        <option value="10-ula-ibnurusyd">10 Ula - Ibnu Rusyd (28 Santri)</option>
-                                        <option value="11-wustho-nawawi">11 Wustho - Imam Nawawi (30 Santri)</option>
-                                        <option value="12-ulya-bukhari">12 Ulya - Al-Bukhari (26 Santri)</option>
+                                        <option value="">-- Memuat Kelas... --</option>
                                     </select>
                                 </div>
 
@@ -953,6 +966,7 @@
                                             <th class="py-3 px-4 min-w-[200px]">Nama Santri</th>
                                             <th class="py-3 px-4 text-center min-w-[280px]">Status Kehadiran</th>
                                             <th class="py-3 px-4 min-w-[180px]">Keterangan / Alasan</th>
+                                            <th class="py-3 px-4 text-center w-20 rbac-staff-only">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody id="santriTableBody" class="divide-y divide-slate-100">
@@ -1321,6 +1335,12 @@
                                 <p class="text-xs text-slate-500 mt-1">Imtihan Syafahi (Lisan) & Tahriri (Tulis) | Standar KKM: <span class="font-bold text-emerald-700">75.0</span></p>
                             </div>
                             <div class="flex flex-wrap items-center gap-2">
+                                <select id="ujianKelasSelector" onchange="switchClass(this.value)" class="text-xs font-bold border-2 border-emerald-400 rounded-lg px-3 py-2 bg-emerald-50 text-emerald-900 focus:bg-white focus:ring-2 focus:ring-emerald-500 shadow-sm">
+                                    <option value="">-- Pilih Kelas --</option>
+                                </select>
+                                <button onclick="openTambahSantriModal()" class="rbac-can-edit bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg text-xs font-bold shadow-sm transition flex items-center">
+                                    <i class="fa-solid fa-user-plus mr-1"></i> + Tambah Santri
+                                </button>
                                 <select id="ujianSemester" class="text-xs border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 font-medium">
                                     <option>Semester Ganjil 2026/2027</option>
                                     <option>Semester Genap 2026/2027</option>
@@ -1546,6 +1566,110 @@
                     <button type="submit" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold shadow-sm">Simpan Akun</button>
                 </div>
             </form>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL: TAMBAH KELAS BARU                       -->
+    <!-- ============================================== -->
+    <div id="kelasModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="text-base font-bold text-slate-800 flex items-center">
+                    <i class="fa-solid fa-door-open text-emerald-600 mr-2"></i> Buat / Tambah Kelas Baru
+                </h3>
+                <button onclick="closeTambahKelasModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="formTambahKelas" onsubmit="handleSaveKelas(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Nama Kelas / Tingkatan:</label>
+                    <input type="text" id="modalKelasNama" required placeholder="Contoh: 10 Ula - Al-Ghazali" class="w-full border border-slate-200 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-emerald-500 font-medium">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Nama Ustadz Wali Kelas:</label>
+                    <input type="text" id="modalKelasWali" required placeholder="Contoh: Ust. M. Ridhwan, Lc" class="w-full border border-slate-200 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-emerald-500 font-medium">
+                </div>
+                <p class="text-[11px] text-slate-400 italic">*Setelah kelas dibuat, Anda dapat langsung menambahkan santri ke kelas ini.</p>
+                <div class="flex justify-end space-x-2 pt-2 border-t border-slate-100">
+                    <button type="button" onclick="closeTambahKelasModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium">Batal</button>
+                    <button type="submit" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold shadow-sm">Simpan Kelas</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL: TAMBAH SANTRI KE KELAS                  -->
+    <!-- ============================================== -->
+    <div id="santriModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="text-base font-bold text-slate-800 flex items-center">
+                    <i class="fa-solid fa-user-plus text-emerald-600 mr-2"></i> Tambah Santri Baru
+                </h3>
+                <button onclick="closeTambahSantriModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="formTambahSantri" onsubmit="handleSaveSantri(event)" class="space-y-3 text-xs">
+                <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-900 text-xs flex items-center justify-between">
+                    <span>Kelas Target:</span>
+                    <span id="modalSantriKelasTarget" class="font-bold text-emerald-800">10 Ula</span>
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Nomor Induk Santri (NIS):</label>
+                    <input type="text" id="modalSantriNIS" required placeholder="Contoh: 20261001" class="w-full border border-slate-200 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-emerald-500 font-mono font-medium">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Nama Lengkap Santri:</label>
+                    <input type="text" id="modalSantriNama" required placeholder="Contoh: Ahmad Fauzan Ramadhan" class="w-full border border-slate-200 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-emerald-500 font-medium">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Kamar / Asrama (Opsional):</label>
+                    <input type="text" id="modalSantriAsrama" placeholder="Contoh: Asrama Al-Farabi Kamar 04" class="w-full border border-slate-200 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-emerald-500 font-medium">
+                </div>
+                <div class="flex justify-end space-x-2 pt-2 border-t border-slate-100">
+                    <button type="button" onclick="closeTambahSantriModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium">Batal</button>
+                    <button type="submit" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold shadow-sm">Simpan Santri</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL: TAMBAH KITAB KAJIAN                     -->
+    <!-- ============================================== -->
+    <div id="kitabModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="text-base font-bold text-slate-800 flex items-center">
+                    <i class="fa-solid fa-book-quran text-emerald-600 mr-2"></i> Tambah Kitab Kajian Baru
+                </h3>
+                <button onclick="closeTambahKitabModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="formTambahKitab" onsubmit="handleSaveKitab(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Nama Kitab / Fan Ilmu:</label>
+                    <input type="text" id="modalKitabNama" required placeholder="Contoh: Fathul Qorib Al-Mujib" class="w-full border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 font-medium">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Bidang / Fan Ilmu:</label>
+                    <input type="text" id="modalKitabFan" required placeholder="Contoh: Fiqih Syafi'i" class="w-full border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 font-medium">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Ustadz Pengampu:</label>
+                    <input type="text" id="modalKitabPengampu" required placeholder="Contoh: Ust. Ahmad Fauzi, S.Pd" class="w-full border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 font-medium">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Target Kurikulum / Halaman:</label>
+                    <input type="text" id="modalKitabTarget" required placeholder="Contoh: Bab Thaharah s/d Bab Shalat (Hal. 1 - 65)" class="w-full border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 font-medium">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Jadwal Kajian:</label>
+                    <input type="text" id="modalKitabJadwal" placeholder="Contoh: Senin & Rabu, Jam 3-4" class="w-full border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 font-medium">
+                </div>
+                <div class="flex justify-end space-x-2 pt-2 border-t border-slate-100">
+                    <button type="button" onclick="closeTambahKitabModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium">Batal</button>
+                    <button type="submit" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold shadow-sm">Simpan Kitab</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -1738,93 +1862,19 @@
     <!-- ========================================================================= -->
     <script>
         // =========================================================================
-        // 1. DATA MASTER AKUN PENGGUNA RESMI (MANAGED BY STAFF)
+        // 1. DATA MASTER AKUN PENGGUNA RESMI (MANAGED BY STAFF / EDITOR)
         // =========================================================================
         const DEFAULT_ACCOUNTS = [
-            // STAFF / ADMIN (FULL CONTROL)
+            // STAFF / ADMIN (EDITOR) - Akun Utama untuk Mengelola Data dari Nol
             {
                 id: "admin",
-                nama: "KH. Abdullah Syakir",
+                nama: "Editor / Administrator",
                 role: "staff",
                 password: "admin123",
-                roleLabel: "Staff Administrasi & IT",
-                nip: "19780512 200312 1 002",
-                mapel: "Manajemen Akademik & Kepesantrenan",
-                avatar: "A"
-            },
-            // USTADZ / GURU
-            {
-                id: "ustadz.fauzi",
-                nama: "Ust. Ahmad Fauzi, S.Pd",
-                role: "ustadz",
-                password: "guru123",
-                roleLabel: "Pengajar Fiqih & Tauhid",
-                nip: "19850101 201101 1 003",
-                mapel: "Fiqih (Fathul Qorib) & Tauhid",
-                jadwal: "Senin & Rabu (07.30 - 10.45)",
-                avatar: "U"
-            },
-            {
-                id: "ustadz.ridhwan",
-                nama: "Ust. M. Ridhwan, Lc",
-                role: "ustadz",
-                password: "guru123",
-                roleLabel: "Wali Kelas 10 Ula & Guru Shorof",
-                nip: "19890418 201403 1 005",
-                mapel: "Shorof (Al-Amtsilah At-Tashrifiyyah)",
-                jadwal: "Sabtu & Ahad (09.15 - 10.45)",
-                avatar: "R"
-            },
-            {
-                id: "ustadz.zulkifli",
-                nama: "Ust. Zulkifli Rahman",
-                role: "ustadz",
-                password: "guru123",
-                roleLabel: "Pengajar Nahwu & Bahasa Arab",
-                nip: "19870315 201302 1 004",
-                mapel: "Nahwu (Matan Al-Jurumiyyah)",
-                jadwal: "Selasa & Kamis (07.30 - 09.00)",
-                avatar: "Z"
-            },
-            // SANTRI / MURID
-            {
-                id: "20261001",
-                nama: "Ahmad Fauzan Ramadhan",
-                role: "santri",
-                password: "santri123",
-                roleLabel: "Santri Madrasah Diniyah",
-                nis: "20261001",
-                kelasId: "10-ula-alghazali",
-                kelasNama: "10 Ula - Al-Ghazali",
-                waliKelas: "Ust. M. Ridhwan, Lc",
-                asrama: "Asrama Al-Farabi Kamar 04",
-                avatar: "A"
-            },
-            {
-                id: "20261002",
-                nama: "Ali Zainal Abidin",
-                role: "santri",
-                password: "santri123",
-                roleLabel: "Santri Madrasah Diniyah",
-                nis: "20261002",
-                kelasId: "10-ula-alghazali",
-                kelasNama: "10 Ula - Al-Ghazali",
-                waliKelas: "Ust. M. Ridhwan, Lc",
-                asrama: "Asrama Al-Farabi Kamar 02",
-                avatar: "A"
-            },
-            {
-                id: "20261003",
-                nama: "Bilal bin Rabah Pratama",
-                role: "santri",
-                password: "santri123",
-                roleLabel: "Santri Madrasah Diniyah",
-                nis: "20261003",
-                kelasId: "10-ula-alghazali",
-                kelasNama: "10 Ula - Al-Ghazali",
-                waliKelas: "Ust. M. Ridhwan, Lc",
-                asrama: "Asrama Ibnu Khaldun Kamar 01",
-                avatar: "B"
+                roleLabel: "Staff Administrasi & IT (Editor)",
+                nip: "19800101 200501 1 001",
+                mapel: "Manajemen Data & Akademik",
+                avatar: "E"
             }
         ];
 
@@ -1832,242 +1882,37 @@
         let currentUser = null;
         let selectedLoginRole = 'staff';
 
-        // Multi-Class Data Store
-        const INITIAL_CLASSES = {
-            "10-ula-alghazali": {
-                name: "10 Ula - Al-Ghazali",
-                wali: "Ust. M. Ridhwan, Lc",
-                santri: [
-                    "Ahmad Fauzan Ramadhan", "Ali Zainal Abidin", "Bilal bin Rabah Pratama", "Dimas Maulana Ishaq",
-                    "Fajar Shodiq Al-Habsyi", "Habibie Rahmatullah", "Hamzah Asadullah", "Hasan Al-Bashri",
-                    "Husain Syihabuddin", "Ibnu Sina Wicaksono", "Ilyas Karim", "Luqman Hakim",
-                    "M. Azka Al-Ghifari", "M. Farhan Hidayat", "M. Fatih Al-Ayyubi", "M. Hanif Abdurrahman",
-                    "M. Ihsan Kamil", "M. Nabil Kurniawan", "M. Rafif Prabowo", "M. Rayhan Al-Farisi",
-                    "M. Rizqi Pratama", "M. Salman Al-Farisi", "M. Yusuf Mansur", "M. Zidan Alfath",
-                    "Malik Ibrahim", "Naufal Azzam", "Raihan Syahputra", "Ridwan Kamiludin",
-                    "Syafiq Riza", "Thoriq Aziz", "Umar Al-Faruq", "Yahya Ayyasy"
-                ]
-            },
-            "10-ula-ibnurusyd": {
-                name: "10 Ula - Ibnu Rusyd",
-                wali: "Ust. Zulkifli Rahman",
-                santri: [
-                    "Abdul Latif", "Aditya Bagus Pratama", "Agus Salim", "Akbar Maulana",
-                    "Arif Budiman", "Arya Sena", "Bagus Pambudi", "Bahrul Ulum",
-                    "Bayu Samudra", "Danang Wicaksono", "Deni Saputra", "Eko Prasetyo",
-                    "Fahri Hamzah", "Faris Naufal", "Galih Pangestu", "Hafidz Zaidan",
-                    "Irham Maulana", "Jefri Nichol", "Kamaluddin", "Kurniawan Dwi",
-                    "Mahmud Barzah", "Muchtar Luthfi", "Najib Ali", "Pramudya Ananta",
-                    "Raditya Dika", "Reza Rahardian", "Saiful Jamil", "Teguh Santoso"
-                ]
-            },
-            "11-wustho-nawawi": {
-                name: "11 Wustho - Imam Nawawi",
-                wali: "Ust. Mansur Hakim, M.Ag",
-                santri: [
-                    "Achmad Dani", "Aldi Taher", "Amir Mahmud", "Bachtiar Nasir",
-                    "Chandra Wijaya", "Dedi Hidayat", "Erwin Gutawa", "Faris Abqari",
-                    "Guruh Soekarno", "Harun Al-Rasyid", "Hilman Syah", "Ihsanuddin",
-                    "Joko Widodo", "Lukmanul Hakim", "Marzuki Alie", "Nashiruddin",
-                    "Oki Setiana", "Pandu Dewanata", "Rahmat Hidayatullah", "Rian D'Masiv",
-                    "Satria Baja", "Soleh Mahmud", "Taufiq Ismail", "Usamah bin Zaid",
-                    "Vicky Prasetyo", "Wahid Hasyim", "Wildan Mauizhah", "Yusuf Qardhawi",
-                    "Zainal Arifin", "Zulfikar Ali"
-                ]
-            },
-            "12-ulya-bukhari": {
-                name: "12 Ulya - Al-Bukhari",
-                wali: "KH. Abdullah Syakir",
-                santri: [
-                    "Abdurrahman Wahid", "Abu Bakar Ba'asyir", "Ali Imron", "Bacharuddin Jusuf",
-                    "Chairul Tanjung", "Dahlan Iskan", "Emha Ainun", "Fadli Zon",
-                    "Gus Bahauddin", "Habiburrahman", "Hamka Abdulmalik", "Imam Bonjol",
-                    "Jenderal Sudirman", "Kalla Jusuf", "Mahfud MD", "Natsir Mohammad",
-                    "Oemar Said", "Pangeran Diponegoro", "Quraish Shihab", "Raden Fatah",
-                    "Sultan Hasanuddin", "Teuku Umar", "Umar bin Khattab", "Wahidin Sudiro",
-                    "Zaenuddin MZ", "Zainul Majdi"
-                ]
-            }
-        };
+        // Multi-Class Data Store (Kosong, siap dibuat mandiri oleh Editor)
+        const INITIAL_CLASSES = {};
 
-        const DEFAULT_JURNAL = [
-            {
-                id: 1,
-                tanggal: "2026-10-29",
-                jam: "Jam 3-4 (09.15 - 10.45)",
-                kitab: "Fathul Qorib",
-                ustadz: "Ust. Ahmad Fauzi, S.Pd",
-                bab: "Bab Thaharah: Fasal Fardhu & Syarat Wudhu",
-                halaman: "Hal. 18 - 22",
-                materi: "Menjelaskan enam fardhu wudhu dari niat hingga tertib, serta syarat-syarat sahnya bersuci dengan air mutlak.",
-                tugas: "Hafalan rukun wudhu beserta dalil ringkas."
-            },
-            {
-                id: 2,
-                tanggal: "2026-10-29",
-                jam: "Jam 1-2 (07.30 - 09.00)",
-                kitab: "Al-Jurumiyyah",
-                ustadz: "Ust. Zulkifli Rahman",
-                bab: "Bab Al-Af'al (Pembagian Fi'il)",
-                halaman: "Hal. 24 - 27",
-                materi: "Pembahasan ciri-ciri Fi'il Madhi, Mudhari', dan Amr beserta contoh tashrif lughawi dalam i'rab.",
-                tugas: "I'rab 5 kalimat santri di buku tulis nahwu."
-            },
-            {
-                id: 3,
-                tanggal: "2026-10-28",
-                jam: "Jam 5-6 (11.00 - 12.30)",
-                kitab: "Arba'in Nawawiyyah",
-                ustadz: "Ust. Mansur Hakim, M.Ag",
-                bab: "Hadits ke-16: Larangan Marah",
-                halaman: "Hadits No. 16",
-                materi: "Wasiat Nabi SAW: La taghdhob wa lakal jannah, kaitan manajemen emosi dalam kehidupan santri di asrama.",
-                tugas: "Setoran hafalan lafadz hadits dan perawi."
-            },
-            {
-                id: 4,
-                tanggal: "2026-10-28",
-                jam: "Jam 3-4 (09.15 - 10.45)",
-                kitab: "Al-Amtsilah At-Tashrifiyyah",
-                ustadz: "Ust. M. Ridhwan, Lc",
-                bab: "Bab Fa'ala - Yaf'ulu (Bab 1)",
-                halaman: "Hal. 32 - 35",
-                materi: "Latihan tashrif istilahi bina shohih wazan Nashara - Yanshuru.",
-                tugas: "Setoran tashrif berantai."
-            },
-            {
-                id: 5,
-                tanggal: "2026-10-27",
-                jam: "Jam 1-2 (07.30 - 09.00)",
-                kitab: "Ta'limul Muta'allim",
-                ustadz: "KH. Abdullah Syakir",
-                bab: "Fasal 5: Bidayatus Sabaq wa Qadruhu",
-                halaman: "Hal. 29 - 33",
-                materi: "Ukuran permulaan belajar dan pemilihan waktu yang berkah (hari Rabu) untuk memulai kitab baru.",
-                tugas: "Muthala'ah mandiri sebelum kajian dimulai."
-            }
-        ];
+        // Batas Pelajaran & Tugas (Kosong)
+        const DEFAULT_JURNAL = [];
 
-        const DEFAULT_KITAB = [
-            {
-                nama: "Fathul Qorib Al-Mujib",
-                fan: "Fiqih Syafi'i",
-                pengampu: "Ust. Ahmad Fauzi, S.Pd",
-                target: "Bab Thaharah s/d Bab Shalat (Hal. 1 - 65)",
-                posisi: "Fasal Syarat Wudhu (Hal. 22)",
-                progres: 34,
-                jadwal: "Senin & Rabu, Jam 3-4",
-                icon: "fa-book-open-reader",
-                color: "emerald"
-            },
-            {
-                nama: "Matan Al-Jurumiyyah",
-                fan: "Kaidah Nahwu",
-                pengampu: "Ust. Zulkifli Rahman",
-                target: "Muqaddimah s/d Nawashib & Jawazim (Hal. 1 - 45)",
-                posisi: "Bab Al-Af'al (Hal. 27)",
-                progres: 60,
-                jadwal: "Selasa & Kamis, Jam 1-2",
-                icon: "fa-language",
-                color: "blue"
-            },
-            {
-                nama: "Al-Amtsilah At-Tashrifiyyah",
-                fan: "Kaidah Shorof",
-                pengampu: "Ust. M. Ridhwan, Lc",
-                target: "Tsulatsi Mujarrad & Mazid (Hal. 1 - 80)",
-                posisi: "Bab Fa'ala - Yaf'ulu (Hal. 35)",
-                progres: 44,
-                jadwal: "Sabtu & Ahad, Jam 2-3",
-                icon: "fa-spell-check",
-                color: "purple"
-            },
-            {
-                nama: "Ta'limul Muta'allim",
-                fan: "Adab Penuntut Ilmu",
-                pengampu: "KH. Abdullah Syakir",
-                target: "13 Fasal Lengkap (Hal. 1 - 70)",
-                posisi: "Fasal 5: Bidayatus Sabaq (Hal. 33)",
-                progres: 47,
-                jadwal: "Jumat Pagi, Jam 1-2",
-                icon: "fa-graduation-cap",
-                color: "amber"
-            },
-            {
-                nama: "Al-Arba'in An-Nawawiyyah",
-                fan: "Hadits Nabawi",
-                pengampu: "Ust. Mansur Hakim, M.Ag",
-                target: "42 Hadits Lengkap",
-                posisi: "Hadits ke-16 (Larangan Marah)",
-                progres: 38,
-                jadwal: "Rabu, Jam 5-6",
-                icon: "fa-hand-holding-heart",
-                color: "teal"
-            },
-            {
-                nama: "Aqidatul Awwam",
-                fan: "Tauhid Ahlussunnah",
-                pengampu: "Ust. Ahmad Fauzi, S.Pd",
-                target: "57 Bait Nadzom Aqidah",
-                posisi: "Bait ke-35 (Sifat Para Rasul)",
-                progres: 61,
-                jadwal: "Senin, Jam 1-2",
-                icon: "fa-star-and-crescent",
-                color: "emerald"
-            }
-        ];
+        // Kitab Kajian (Kosong)
+        const DEFAULT_KITAB = [];
 
-        let selectedClassId = "10-ula-alghazali";
+        let selectedClassId = "";
 
         // =========================================================================
-        // 2. STORAGE MANAGEMENT
+        // 2. STORAGE MANAGEMENT (CLEAN DATABASE)
         // =========================================================================
         function initStorage() {
-            // Inisialisasi Akun jika belum ada
+            // Check version to ensure old mock demo data is purged completely
+            if (localStorage.getItem('siak_db_clean_version') !== 'v4_clean') {
+                localStorage.removeItem('siak_user_accounts');
+                localStorage.removeItem('siak_multi_classes');
+                localStorage.removeItem('siak_jurnal_list');
+                localStorage.removeItem('siak_kitab_list');
+                sessionStorage.removeItem('siak_active_user');
+                localStorage.setItem('siak_db_clean_version', 'v4_clean');
+            }
+
             if (!localStorage.getItem('siak_user_accounts')) {
                 localStorage.setItem('siak_user_accounts', JSON.stringify(DEFAULT_ACCOUNTS));
             }
 
-            // Inisialisasi Kelas jika belum ada
             if (!localStorage.getItem('siak_multi_classes')) {
-                const classesStore = {};
-                for (const [classKey, classObj] of Object.entries(INITIAL_CLASSES)) {
-                    classesStore[classKey] = {
-                        name: classObj.name,
-                        wali: classObj.wali,
-                        santri: classObj.santri.map((nama, idx) => {
-                            const nis = `2026${classKey.startsWith('10') ? '10' : classKey.startsWith('11') ? '11' : '12'}${(idx + 1).toString().padStart(2, '0')}`;
-                            let status = "Hadir";
-                            let keterangan = "";
-                            if (idx === 4) { status = "Sakit"; keterangan = "Demam di Poskestren"; }
-                            else if (idx === 10) { status = "Izin"; keterangan = "Izin pulang acara keluarga"; }
-
-                            const base = 78 + (idx % 18);
-                            let f = Math.min(98, base + (idx % 5));
-                            let n = Math.min(95, base - 2 + (idx % 7));
-                            let s = Math.min(96, base + 1);
-                            let a = Math.min(99, base + 4);
-                            let h = Math.min(95, base + 2);
-                            let t = Math.min(97, base + 3);
-
-                            if (idx === 7) { f = 68; n = 70; s = 65; }
-                            if (idx === 18) { f = 70; n = 68; s = 72; }
-                            if (idx === 28) { f = 65; n = 72; s = 70; }
-
-                            const avg = ((f + n + s + a + h + t) / 6).toFixed(1);
-                            const isLulus = parseFloat(avg) >= 75.0;
-
-                            return {
-                                nis,
-                                nama,
-                                status,
-                                keterangan,
-                                nilai: { fiqih: f, nahwu: n, shorof: s, akhlaq: a, hadits: h, tauhid: t, rata: avg, lulus: isLulus }
-                            };
-                        })
-                    };
-                }
-                localStorage.setItem('siak_multi_classes', JSON.stringify(classesStore));
+                localStorage.setItem('siak_multi_classes', JSON.stringify(INITIAL_CLASSES));
             }
 
             if (!localStorage.getItem('siak_jurnal_list')) {
@@ -2086,6 +1931,7 @@
         function saveAccounts(accounts) {
             localStorage.setItem('siak_user_accounts', JSON.stringify(accounts));
             renderAkunTable();
+            renderGuruTable();
         }
 
         function getAllClassesData() {
@@ -2094,12 +1940,20 @@
 
         function getCurrentClassData() {
             const all = getAllClassesData();
-            return all[selectedClassId] || { name: "10 Ula - Al-Ghazali", wali: "Ust. M. Ridhwan, Lc", santri: [] };
+            const keys = Object.keys(all);
+            if (!selectedClassId || !all[selectedClassId]) {
+                if (keys.length > 0) {
+                    selectedClassId = keys[0];
+                } else {
+                    return { name: "Belum Ada Kelas", wali: "-", santri: [] };
+                }
+            }
+            return all[selectedClassId];
         }
 
         function saveCurrentClassSantri(santriList) {
             const all = getAllClassesData();
-            if (all[selectedClassId]) {
+            if (selectedClassId && all[selectedClassId]) {
                 all[selectedClassId].santri = santriList;
                 localStorage.setItem('siak_multi_classes', JSON.stringify(all));
                 updateAllComponents();
@@ -2118,6 +1972,245 @@
 
         function getKitabData() {
             return JSON.parse(localStorage.getItem('siak_kitab_list') || '[]');
+        }
+
+        function saveKitabData(data) {
+            localStorage.setItem('siak_kitab_list', JSON.stringify(data));
+            renderKitabList();
+        }
+
+        // =========================================================================
+        // 2B. DYNAMIC CLASS & STUDENT MANAGEMENT (EDITOR TOOLS)
+        // =========================================================================
+        function renderAllClassSelectors() {
+            const all = getAllClassesData();
+            const keys = Object.keys(all);
+            const selectorIds = [
+                'absenKelasSelector',
+                'ujianKelasSelector',
+                'rekapMingguanKelasSelect',
+                'rekapBulananKelasSelect',
+                'grafikKelasSelect',
+                'modalAkunKelas'
+            ];
+
+            let optionsHtml = '';
+            if (keys.length === 0) {
+                optionsHtml = '<option value="">-- Belum Ada Kelas (Klik Buat Kelas) --</option>';
+            } else {
+                keys.forEach(k => {
+                    const c = all[k];
+                    const count = c.santri ? c.santri.length : 0;
+                    optionsHtml += `<option value="${k}">${c.name} (${count} Santri)</option>`;
+                });
+            }
+
+            selectorIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.innerHTML = optionsHtml;
+                    if (selectedClassId && all[selectedClassId]) {
+                        el.value = selectedClassId;
+                    }
+                }
+            });
+
+            // Update wali kelas label in attendance view
+            const current = getCurrentClassData();
+            const waliLabel = document.getElementById('currentWaliKelasLabel');
+            if (waliLabel) waliLabel.textContent = current.wali || "-";
+        }
+
+        function openTambahKelasModal() {
+            if (!checkCanEdit('Membuat Kelas Baru')) return;
+            document.getElementById('modalKelasNama').value = '';
+            document.getElementById('modalKelasWali').value = '';
+            document.getElementById('kelasModal').classList.remove('hidden');
+        }
+
+        function closeTambahKelasModal() {
+            document.getElementById('kelasModal').classList.add('hidden');
+        }
+
+        function handleSaveKelas(e) {
+            e.preventDefault();
+            const nama = document.getElementById('modalKelasNama').value.trim();
+            const wali = document.getElementById('modalKelasWali').value.trim();
+            if (!nama) return;
+
+            const all = getAllClassesData();
+            let key = nama.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').trim();
+            if (!key) key = 'kelas-' + Date.now();
+            if (all[key]) {
+                key += '-' + Math.floor(Math.random() * 100);
+            }
+
+            all[key] = {
+                name: nama,
+                wali: wali || "Belum Ditentukan",
+                santri: []
+            };
+
+            localStorage.setItem('siak_multi_classes', JSON.stringify(all));
+            selectedClassId = key;
+            closeTambahKelasModal();
+            renderAllClassSelectors();
+            switchClass(key);
+            showToast(`Kelas "${nama}" berhasil dibuat! Silakan mulai menambahkan santri.`);
+        }
+
+        function deleteCurrentClass() {
+            if (!checkCanEdit('Menghapus Kelas')) return;
+            const all = getAllClassesData();
+            if (!selectedClassId || !all[selectedClassId]) {
+                alert('Belum ada kelas yang dipilih atau kelas masih kosong.');
+                return;
+            }
+            const current = all[selectedClassId];
+            const count = current.santri ? current.santri.length : 0;
+            if (confirm(`PERINGATAN: Apakah Anda yakin ingin menghapus kelas "${current.name}" beserta ${count} data santri di dalamnya?\n\nTindakan ini tidak dapat dibatalkan.`)) {
+                delete all[selectedClassId];
+                localStorage.setItem('siak_multi_classes', JSON.stringify(all));
+                const remaining = Object.keys(all);
+                selectedClassId = remaining.length > 0 ? remaining[0] : "";
+                renderAllClassSelectors();
+                switchClass(selectedClassId);
+                showToast(`Kelas "${current.name}" telah dihapus.`);
+            }
+        }
+
+        function openTambahSantriModal() {
+            if (!checkCanEdit('Menambahkan Santri Baru')) return;
+            const all = getAllClassesData();
+            const keys = Object.keys(all);
+            if (keys.length === 0 || !selectedClassId || !all[selectedClassId]) {
+                alert('Silakan buat kelas terlebih dahulu dengan menekan tombol "+ Buat Kelas" sebelum menambahkan santri.');
+                openTambahKelasModal();
+                return;
+            }
+
+            const current = all[selectedClassId];
+            document.getElementById('modalSantriKelasTarget').textContent = current.name;
+            const allSantri = current.santri || [];
+            const nextNum = (allSantri.length + 1).toString().padStart(2, '0');
+            document.getElementById('modalSantriNIS').value = `2026${nextNum}`;
+            document.getElementById('modalSantriNama').value = '';
+            document.getElementById('modalSantriAsrama').value = '';
+            document.getElementById('santriModal').classList.remove('hidden');
+        }
+
+        function closeTambahSantriModal() {
+            document.getElementById('santriModal').classList.add('hidden');
+        }
+
+        function handleSaveSantri(e) {
+            e.preventDefault();
+            const nis = document.getElementById('modalSantriNIS').value.trim();
+            const nama = document.getElementById('modalSantriNama').value.trim();
+            const asrama = document.getElementById('modalSantriAsrama').value.trim();
+            if (!nis || !nama) return;
+
+            const all = getAllClassesData();
+            if (!selectedClassId || !all[selectedClassId]) {
+                alert('Kelas tidak ditemukan!');
+                return;
+            }
+
+            const current = all[selectedClassId];
+            if (!current.santri) current.santri = [];
+
+            if (current.santri.some(s => s.nis === nis)) {
+                alert(`Santri dengan NIS ${nis} sudah ada di kelas ini!`);
+                return;
+            }
+
+            current.santri.push({
+                nis,
+                nama,
+                asrama: asrama || "-",
+                status: "Hadir",
+                keterangan: "",
+                nilai: { fiqih: 0, nahwu: 0, shorof: 0, akhlaq: 0, hadits: 0, tauhid: 0, rata: "0.0", lulus: false }
+            });
+
+            localStorage.setItem('siak_multi_classes', JSON.stringify(all));
+            closeTambahSantriModal();
+            renderAllClassSelectors();
+            updateAllComponents();
+            showToast(`Santri "${nama}" (NIS: ${nis}) berhasil ditambahkan ke ${current.name}!`);
+        }
+
+        function deleteSantri(idx) {
+            if (!checkCanEdit('Menghapus Data Santri')) return;
+            const all = getAllClassesData();
+            if (!selectedClassId || !all[selectedClassId]) return;
+            const current = all[selectedClassId];
+            const s = current.santri[idx];
+            if (!s) return;
+
+            if (confirm(`Apakah Anda yakin ingin menghapus santri "${s.nama}" (NIS: ${s.nis}) dari kelas ini?`)) {
+                current.santri.splice(idx, 1);
+                localStorage.setItem('siak_multi_classes', JSON.stringify(all));
+                renderAllClassSelectors();
+                updateAllComponents();
+                showToast(`Santri "${s.nama}" berhasil dihapus.`);
+            }
+        }
+
+        function openTambahKitabModal() {
+            if (!checkCanEdit('Menambahkan Kitab Kajian')) return;
+            document.getElementById('modalKitabNama').value = '';
+            document.getElementById('modalKitabFan').value = '';
+            document.getElementById('modalKitabPengampu').value = '';
+            document.getElementById('modalKitabTarget').value = '';
+            document.getElementById('modalKitabJadwal').value = '';
+            document.getElementById('kitabModal').classList.remove('hidden');
+        }
+
+        function closeTambahKitabModal() {
+            document.getElementById('kitabModal').classList.add('hidden');
+        }
+
+        function handleSaveKitab(e) {
+            e.preventDefault();
+            const nama = document.getElementById('modalKitabNama').value.trim();
+            const fan = document.getElementById('modalKitabFan').value.trim();
+            const pengampu = document.getElementById('modalKitabPengampu').value.trim();
+            const target = document.getElementById('modalKitabTarget').value.trim();
+            const jadwal = document.getElementById('modalKitabJadwal').value.trim();
+            if (!nama) return;
+
+            const list = getKitabData();
+            list.push({
+                nama,
+                fan,
+                pengampu: pengampu || "Ustadz Pengampu",
+                target: target || "Khatam Kitab",
+                posisi: "Mukaddimah",
+                progres: 0,
+                jadwal: jadwal || "Sesuai Jadwal",
+                icon: "fa-book-open",
+                color: "emerald"
+            });
+
+            saveKitabData(list);
+            closeTambahKitabModal();
+            showToast(`Kitab "${nama}" berhasil didaftarkan ke kurikulum!`);
+        }
+
+        function confirmResetDatabase() {
+            if (confirm("PERINGATAN: Apakah Anda yakin ingin MENGOSONGKAN seluruh database (semua kelas, santri, jurnal, dan nilai)?\n\nSetelah dikosongkan, Anda dapat mulai menginput data baru secara mandiri dari nol.")) {
+                localStorage.clear();
+                localStorage.setItem('siak_db_clean_version', 'v4_clean');
+                localStorage.setItem('siak_user_accounts', JSON.stringify(DEFAULT_ACCOUNTS));
+                localStorage.setItem('siak_multi_classes', JSON.stringify({}));
+                localStorage.setItem('siak_jurnal_list', JSON.stringify([]));
+                localStorage.setItem('siak_kitab_list', JSON.stringify([]));
+                sessionStorage.removeItem('siak_active_user');
+                selectedClassId = "";
+                alert('Database berhasil dikosongkan. Halaman akan dimuat ulang.');
+                location.reload();
+            }
         }
 
         // =========================================================================
@@ -2577,8 +2670,52 @@
             if (!tbody) return;
             tbody.innerHTML = '';
 
-            let hadir = 0, sakit = 0, izin = 0, alpa = 0;
             const canEdit = currentUser && (currentUser.role === 'staff' || currentUser.role === 'ustadz');
+
+            if (santriList.length === 0) {
+                const isNoClass = !classData || classData.name === "Belum Ada Kelas";
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="py-12 text-center text-slate-400">
+                            <i class="fa-solid fa-users-slash text-4xl mb-3 text-slate-300 block"></i>
+                            <p class="font-bold text-slate-700 text-sm">${isNoClass ? 'Belum Ada Kelas yang Dibuat' : 'Belum Ada Data Santri di ' + classData.name}</p>
+                            <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+                                ${isNoClass ? 'Silakan buat kelas baru terlebih dahulu untuk memulai mengisi data santri.' : 'Mulai daftarkan santri ke kelas ini dengan menekan tombol di bawah.'}
+                            </p>
+                            <div class="mt-4 flex items-center justify-center gap-2">
+                                ${isNoClass ? `
+                                    <button onclick="openTambahKelasModal()" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl shadow transition flex items-center">
+                                        <i class="fa-solid fa-folder-plus mr-1.5"></i> + Buat Kelas Pertama
+                                    </button>
+                                ` : `
+                                    <button onclick="openTambahSantriModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow transition flex items-center">
+                                        <i class="fa-solid fa-user-plus mr-1.5"></i> + Tambah Santri Pertama
+                                    </button>
+                                `}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                document.getElementById('countHadirBadge').textContent = '0';
+                document.getElementById('countSakitBadge').textContent = '0';
+                document.getElementById('countIzinBadge').textContent = '0';
+                document.getElementById('countAlpaBadge').textContent = '0';
+                document.getElementById('statTotalSantri').textContent = '0';
+                document.getElementById('statSantriHadirSub').innerHTML = `<i class="fa-solid fa-check-circle mr-1"></i> 0 Hadir`;
+                document.getElementById('dashHadirCount').textContent = `0 Santri (0%)`;
+                document.getElementById('barHadir').style.width = `0%`;
+                document.getElementById('dashIzinCount').textContent = `0 Santri (0%)`;
+                document.getElementById('barIzin').style.width = `0%`;
+                document.getElementById('dashAlpaCount').textContent = `0 Santri (0%)`;
+                document.getElementById('barAlpa').style.width = `0%`;
+                document.getElementById('lapTotalSantri').textContent = `0 Santri`;
+                document.getElementById('lapPersenKehadiran').textContent = `0%`;
+                const alertsEl = document.getElementById('dashAbsenAlerts');
+                if (alertsEl) alertsEl.innerHTML = `<p class="text-xs text-slate-400 italic">Belum ada santri terdaftar.</p>`;
+                return;
+            }
+
+            let hadir = 0, sakit = 0, izin = 0, alpa = 0;
 
             santriList.forEach((s, idx) => {
                 if (s.status === 'Hadir') hadir++;
@@ -2637,6 +2774,11 @@
                     </td>
                     <td class="py-3 px-4 text-center">${statusCell}</td>
                     <td class="py-3 px-4">${keteranganCell}</td>
+                    <td class="py-3 px-4 text-center rbac-staff-only">
+                        <button onclick="deleteSantri(${idx})" class="p-1.5 text-rose-600 hover:text-rose-800 hover:bg-rose-50 rounded transition" title="Hapus Santri">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -2771,6 +2913,11 @@
             if (!tbody) return;
             tbody.innerHTML = '';
 
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="15" class="text-center py-8 text-slate-400 italic">Belum ada data santri untuk rekap mingguan di kelas ini.</td></tr>`;
+                return;
+            }
+
             const mingguVal = document.getElementById('pilihMingguKe') ? document.getElementById('pilihMingguKe').value : '4';
             const searchVal = document.getElementById('searchSantriMingguan') ? document.getElementById('searchSantriMingguan').value.toLowerCase() : '';
 
@@ -2847,6 +2994,11 @@
             const tbody = document.getElementById('rekapBulananTableBody');
             if (!tbody) return;
             tbody.innerHTML = '';
+
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="13" class="text-center py-8 text-slate-400 italic">Belum ada data santri untuk rekap bulanan di kelas ini.</td></tr>`;
+                return;
+            }
 
             const searchVal = document.getElementById('searchSantriBulanan') ? document.getElementById('searchSantriBulanan').value.toLowerCase() : '';
 
@@ -2966,6 +3118,11 @@
             container.innerHTML = '';
 
             const recents = list.slice(0, 3);
+            if (recents.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 italic py-4 text-center">Belum ada catatan materi pembelajaran terbaru.</p>`;
+                return;
+            }
+
             recents.forEach(j => {
                 const div = document.createElement('div');
                 div.className = "p-3 rounded-lg border border-slate-100 bg-slate-50 hover:bg-slate-100/80 transition flex items-start justify-between gap-3";
@@ -3043,6 +3200,20 @@
 
             document.getElementById('statTotalKitab').textContent = list.length;
             const isStaff = currentUser && currentUser.role === 'staff';
+
+            if (list.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full py-12 text-center bg-white rounded-2xl border-2 border-dashed border-slate-200 p-8">
+                        <i class="fa-solid fa-book-open text-4xl text-slate-300 mb-3 block"></i>
+                        <h4 class="font-bold text-slate-700 text-sm">Belum Ada Kitab / Buku Ajar Terdaftar</h4>
+                        <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">Kurikulum saat ini masih kosong. Daftarkan kitab kajian madrasah untuk memantau capaian materi semester.</p>
+                        <button onclick="openTambahKitabModal()" class="mt-4 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow transition">
+                            <i class="fa-solid fa-plus mr-1"></i> + Tambah Kitab Baru
+                        </button>
+                    </div>
+                `;
+                return;
+            }
 
             list.forEach((k, idx) => {
                 const card = document.createElement('div');
@@ -3154,35 +3325,45 @@
         // 11. KEHADIRAN GURU
         // =========================================================================
         function renderGuruTable() {
-            const teachers = [
-                { nama: "Ust. Ahmad Fauzi, S.Pd", mapel: "Fiqih (Fathul Qorib) & Tauhid", jadwal: "Senin & Rabu (07.30 - 10.45)", jam: "07.15 WIB", status: "Hadir", ket: "Tepat Waktu" },
-                { nama: "Ust. Zulkifli Rahman", mapel: "Nahwu (Matan Al-Jurumiyyah)", jadwal: "Selasa & Kamis (07.30 - 09.00)", jam: "07.20 WIB", status: "Hadir", ket: "Tepat Waktu" },
-                { nama: "Ust. M. Ridhwan, Lc", mapel: "Shorof (Al-Amtsilah At-Tashrifiyyah)", jadwal: "Sabtu & Ahad (09.15 - 10.45)", jam: "07.25 WIB", status: "Hadir", ket: "Wali Kelas 10 Ula" },
-                { nama: "KH. Abdullah Syakir", mapel: "Adab (Ta'limul Muta'allim)", jadwal: "Jumat Pagi (07.30 - 09.00)", jam: "07.05 WIB", status: "Hadir", ket: "Kajian Rutin Masyayikh" },
-                { nama: "Ust. Mansur Hakim, M.Ag", mapel: "Hadits (Arba'in An-Nawawiyyah)", jadwal: "Rabu (11.00 - 12.30)", jam: "-", status: "Izin", ket: "Tugas Luar Pesantren (Inval: Ust. M. Ridhwan)" },
-                { nama: "Ustadzah Nurul Hidayah, S.Pd.I", mapel: "Tajwid & Tahsin Al-Qur'an", jadwal: "Selasa & Kamis (11.00 - 12.30)", jam: "07.20 WIB", status: "Hadir", ket: "Tepat Waktu" }
-            ];
-
+            const accounts = getAccounts();
+            const teachers = accounts.filter(a => a.role === 'ustadz');
             const tbody = document.getElementById('guruTableBody');
             if (!tbody) return;
             tbody.innerHTML = '';
 
+            if (teachers.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="py-10 text-center text-slate-400">
+                            <i class="fa-solid fa-user-tie text-4xl mb-3 text-slate-300 block"></i>
+                            <p class="font-bold text-slate-700 text-sm">Belum Ada Akun Ustadz / Guru Terdaftar</p>
+                            <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+                                Daftarkan akun ustadz pengajar melalui menu <strong>Manajemen Akun</strong> untuk memonitoring presensi guru.
+                            </p>
+                            <button onclick="switchTab('manajemen-akun')" class="mt-4 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow transition">
+                                <i class="fa-solid fa-user-plus mr-1"></i> Buka Manajemen Akun
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
             teachers.forEach(g => {
-                const badge = g.status === 'Hadir' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800';
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition";
                 tr.innerHTML = `
                     <td class="py-3 px-4 font-semibold text-slate-800 flex items-center space-x-2">
-                        <div class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs">${g.nama[5] || 'U'}</div>
+                        <div class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs">${g.avatar || g.nama.charAt(0)}</div>
                         <span>${g.nama}</span>
                     </td>
-                    <td class="py-3 px-4 font-medium text-slate-600">${g.mapel}</td>
-                    <td class="py-3 px-4 text-slate-500">${g.jadwal}</td>
-                    <td class="py-3 px-4 font-mono font-medium text-slate-700">${g.jam}</td>
+                    <td class="py-3 px-4 font-medium text-slate-600">${g.mapel || 'Kitab Turats'}</td>
+                    <td class="py-3 px-4 text-slate-500">${g.jadwal || 'Sesuai Jadwal'}</td>
+                    <td class="py-3 px-4 font-mono font-medium text-emerald-700">07.15 WIB</td>
                     <td class="py-3 px-4 text-center">
-                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${badge}">${g.status}</span>
+                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">Hadir</span>
                     </td>
-                    <td class="py-3 px-4 text-slate-500 italic">${g.ket}</td>
+                    <td class="py-3 px-4 text-slate-500 italic">Tepat Waktu</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -3197,6 +3378,35 @@
             const tbody = document.getElementById('ujianTableBody');
             if (!tbody) return;
             tbody.innerHTML = '';
+
+            if (list.length === 0) {
+                const isNoClass = !classData || classData.name === "Belum Ada Kelas";
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="13" class="py-12 text-center text-slate-400">
+                            <i class="fa-solid fa-graduation-cap text-4xl mb-3 text-slate-300 block"></i>
+                            <p class="font-bold text-slate-700 text-sm">${isNoClass ? 'Belum Ada Kelas' : 'Belum Ada Data Santri di ' + classData.name}</p>
+                            <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+                                ${isNoClass ? 'Buat kelas dan tambahkan santri terlebih dahulu untuk merekap nilai imtihan.' : 'Tambahkan santri ke kelas ini untuk mulai menginput dan merekap nilai imtihan.'}
+                            </p>
+                            <div class="mt-4 flex items-center justify-center gap-2">
+                                <button onclick="openTambahSantriModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow transition flex items-center">
+                                    <i class="fa-solid fa-user-plus mr-1.5"></i> + Tambah Santri
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                document.getElementById('dashLulusCount').textContent = '0';
+                document.getElementById('dashTidakLulusCount').textContent = '0';
+                document.getElementById('dashPersenLulus').textContent = '0%';
+                document.getElementById('ujianLulusCount').textContent = '0';
+                document.getElementById('ujianRemidialCount').textContent = '0';
+                document.getElementById('ujianRataRata').textContent = '0.0';
+                document.getElementById('ujianNilaiTertinggi').textContent = '0.0';
+                document.getElementById('lapSantriLulus').textContent = '0 Santri (0%)';
+                return;
+            }
 
             let lulusCount = 0, remidialCount = 0;
             let totalAvg = 0;
@@ -4016,6 +4226,11 @@
             if (!tbody) return;
             tbody.innerHTML = '';
 
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400 italic">Belum ada data santri untuk dicetak.</td></tr>`;
+                return;
+            }
+
             list.forEach((s, idx) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -4111,7 +4326,31 @@
             document.getElementById('toastNotification').classList.add('hidden');
         }
 
+        function updateUstadzSelector() {
+            const sel = document.getElementById('absenUstadzPengajar');
+            if (!sel) return;
+            const ustadzList = getAccounts().filter(a => a.role === 'ustadz');
+            if (ustadzList.length === 0) {
+                sel.innerHTML = '<option value="">-- Belum Ada Ustadz (Daftarkan di Akun) --</option>';
+            } else {
+                sel.innerHTML = ustadzList.map(u => `<option value="${u.nama}">${u.nama} (${u.mapel || 'Pengajar'})</option>`).join('');
+            }
+        }
+
+        function updateKitabSelector() {
+            const sel = document.getElementById('absenKitab');
+            if (!sel) return;
+            const kitabList = getKitabData();
+            if (kitabList.length === 0) {
+                sel.innerHTML = '<option value="Pelajaran Umum">Pelajaran Umum / Mandiri</option>';
+            } else {
+                sel.innerHTML = kitabList.map(k => `<option value="${k.nama}">${k.nama} (${k.fan})</option>`).join('');
+            }
+        }
+
         function updateAllComponents() {
+            updateUstadzSelector();
+            updateKitabSelector();
             renderSantriTable();
             renderRekapMingguanTable();
             renderRekapBulananTable();
@@ -4137,6 +4376,11 @@
             const today = new Date().toISOString().split('T')[0];
             const dateInput = document.getElementById('absenTanggal');
             if (dateInput) dateInput.value = today;
+
+            // Inisialisasi dropdown kelas dan pengajar secara dinamis
+            renderAllClassSelectors();
+            updateUstadzSelector();
+            updateKitabSelector();
 
             // Check if there is an active session
             const savedSession = sessionStorage.getItem('siak_active_user');
