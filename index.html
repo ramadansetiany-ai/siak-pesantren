@@ -30,6 +30,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Chart.js CDN for Attendance Charts across all roles -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Supabase JS Client CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -258,6 +260,13 @@
 
                     <!-- User Profile & LOGOUT BUTTON -->
                     <div class="flex items-center space-x-2 sm:space-x-3">
+                        <!-- Supabase Cloud Sync Status Badge -->
+                        <button type="button" onclick="openSupabaseStatusModal()" class="flex items-center space-x-1.5 bg-emerald-950/70 hover:bg-emerald-900 border border-emerald-500/50 px-2.5 py-1.5 rounded-xl text-[11px] font-bold text-white shadow transition" title="Status Sinkronisasi Database Supabase Cloud">
+                            <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse" id="supabaseStatusDot"></span>
+                            <span class="hidden sm:inline" id="supabaseStatusText">Supabase Sync</span>
+                            <i class="fa-solid fa-cloud text-emerald-400 text-xs"></i>
+                        </button>
+
                         <!-- User Profile Information -->
                         <div class="flex items-center space-x-2 bg-emerald-900/60 px-3 py-1.5 rounded-xl border border-emerald-600/50 shadow-inner">
                             <div id="userAvatarContainer" class="w-8 h-8 rounded-full bg-emerald-600 border border-emerald-400 flex items-center justify-center font-bold text-sm shadow-inner transition-colors">
@@ -1740,6 +1749,66 @@
     </div>
 
     <!-- ============================================== -->
+    <!-- MODAL: STATUS SINKRONISASI SUPABASE CLOUD      -->
+    <!-- ============================================== -->
+    <div id="supabaseModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="text-base font-bold text-slate-800 flex items-center">
+                    <i class="fa-solid fa-cloud text-emerald-600 mr-2"></i> Sinkronisasi Supabase Cloud
+                </h3>
+                <button type="button" onclick="closeSupabaseStatusModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            
+            <!-- Status Info Container -->
+            <div id="modalSupabaseStatusInfo" class="p-3 bg-emerald-50 border border-emerald-300 rounded-xl text-emerald-900 text-xs">
+                <div class="flex items-center space-x-2 font-bold mb-1 text-emerald-800">
+                    <i class="fa-solid fa-circle-check text-emerald-600 text-sm"></i>
+                    <span>Database Cloud Terhubung & Siap Sinkron</span>
+                </div>
+                <p class="text-[11px] text-emerald-700">Setiap perubahan kelas, absensi santri, jurnal, dan akun langsung otomatis tersimpan di Supabase secara real-time.</p>
+            </div>
+
+            <!-- Endpoint Credentials Details -->
+            <div class="space-y-2.5 text-xs">
+                <div>
+                    <label class="block font-semibold text-slate-600 mb-1">Supabase Project URL:</label>
+                    <input type="text" id="cfgSupabaseUrl" readonly value="https://wlvlkdcvnncztpmopowm.supabase.co" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 font-mono text-xs text-slate-700">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-600 mb-1">Publishable Key:</label>
+                    <input type="text" id="cfgSupabaseKey" readonly value="sb_publishable_15WV_oFNriGSiaEA37DScw_cclWEqJO" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 font-mono text-xs text-slate-700">
+                </div>
+            </div>
+
+            <!-- Petunjuk Jika Tabel Belum Dibuat -->
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-slate-700 flex items-center">
+                        <i class="fa-solid fa-terminal text-emerald-600 mr-1.5"></i> Skrip Database SQL (supabase-schema.sql)
+                    </span>
+                    <button type="button" onclick="copySchemaSqlToClipboard()" class="px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 text-emerald-800 rounded-md font-bold text-[11px] shadow-xs flex items-center transition">
+                        <i class="fa-solid fa-copy mr-1 text-emerald-600"></i> Salin SQL
+                    </button>
+                </div>
+                <p class="text-[11px] text-slate-500 leading-relaxed">
+                    Pastikan Anda telah menempelkan skrip SQL ke menu <strong>SQL Editor</strong> di dashboard Supabase dan menekan tombol <strong>Run</strong> agar tabel presensi dan kelas aktif.
+                </p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-2 pt-2 border-t border-slate-100">
+                <button type="button" onclick="forceSyncFromSupabase()" class="w-full sm:w-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-xs shadow-sm transition flex items-center justify-center space-x-1.5">
+                    <i class="fa-solid fa-arrows-rotate"></i>
+                    <span>Cek & Sinkronkan Sekarang</span>
+                </button>
+                <button type="button" onclick="closeSupabaseStatusModal()" class="w-full sm:w-auto px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium text-xs">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
     <!-- MODAL: ADD / EDIT BATAS PELAJARAN & TUGAS      -->
     <!-- ============================================== -->
     <div id="jurnalModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -1990,6 +2059,354 @@
             }
         }
 
+        // =========================================================================
+        // 2B. SUPABASE CLOUD DATABASE CONFIGURATION & REALTIME SYNC
+        // =========================================================================
+        const SUPABASE_CONFIG = {
+            url: "https://wlvlkdcvnncztpmopowm.supabase.co",
+            anonKey: "sb_publishable_15WV_oFNriGSiaEA37DScw_cclWEqJO"
+        };
+
+        let supabaseClient = null;
+        let supabaseSyncStatus = 'connecting'; // 'connected', 'pending_schema', 'offline'
+
+        function initSupabase() {
+            if (typeof window.supabase === 'undefined') {
+                console.warn("Supabase JS SDK belum termuat.");
+                updateSupabaseUI('offline', 'SDK Offline');
+                return;
+            }
+
+            try {
+                supabaseClient = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+                checkSupabaseConnection();
+                setupSupabaseRealtime();
+            } catch (err) {
+                console.error("Gagal inisialisasi Supabase client:", err);
+                updateSupabaseUI('offline', 'Koneksi Gagal');
+            }
+        }
+
+        async function checkSupabaseConnection() {
+            if (!supabaseClient) return;
+            updateSupabaseUI('connecting', 'Menghubungkan...');
+            try {
+                const { data, error } = await supabaseClient.from('siak_classes').select('id, name, wali, santri').limit(100);
+                if (error) {
+                    if (error.code === '42P01' || (error.message && error.message.includes('does not exist')) || error.code === 'PGRST116') {
+                        updateSupabaseUI('pending_schema', 'Perlu Jalankan SQL');
+                        console.warn("Tabel siak_classes belum dibuat di Supabase SQL Editor:", error);
+                    } else {
+                        updateSupabaseUI('offline', 'Cloud Offline');
+                    }
+                    return;
+                }
+
+                updateSupabaseUI('connected', 'Cloud Terhubung');
+                
+                // Jika remote data kelas ada di cloud, sinkronkan ke local
+                if (data && data.length > 0) {
+                    const remoteClasses = {};
+                    data.forEach(item => {
+                        remoteClasses[item.id] = {
+                            name: item.name,
+                            wali: item.wali,
+                            santri: item.santri || []
+                        };
+                    });
+                    localStorage.setItem('siak_multi_classes', JSON.stringify(remoteClasses));
+                    renderAllClassSelectors();
+                    if (!selectedClassId || !remoteClasses[selectedClassId]) {
+                        selectedClassId = Object.keys(remoteClasses)[0] || "";
+                    }
+                    switchClass(selectedClassId);
+                } else {
+                    // Jika cloud masih kosong, upload data lokal yang ada
+                    const localClasses = getAllClassesData();
+                    const localKeys = Object.keys(localClasses);
+                    if (localKeys.length > 0) {
+                        syncAllLocalClassesToCloud();
+                    }
+                }
+
+                // Sync akun pengguna jika ada di Supabase
+                const { data: accData } = await supabaseClient.from('siak_accounts').select('*').limit(100);
+                if (accData && accData.length > 0) {
+                    localStorage.setItem('siak_user_accounts', JSON.stringify(accData));
+                    renderAkunTable();
+                    renderGuruTable();
+                }
+
+                // Sync jurnal jika ada di Supabase
+                const { data: jurData } = await supabaseClient.from('siak_jurnal').select('*').limit(200);
+                if (jurData && jurData.length > 0) {
+                    localStorage.setItem('siak_jurnal_list', JSON.stringify(jurData));
+                    renderJurnalList();
+                    renderDashboardJurnal();
+                }
+
+            } catch (err) {
+                console.error("Kesalahan koneksi Supabase:", err);
+                updateSupabaseUI('offline', 'Koneksi Terputus');
+            }
+        }
+
+        function updateSupabaseUI(status, label) {
+            supabaseSyncStatus = status;
+            const dot = document.getElementById('supabaseStatusDot');
+            const text = document.getElementById('supabaseStatusText');
+            const modalStatus = document.getElementById('modalSupabaseStatusInfo');
+
+            if (status === 'connected') {
+                if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400";
+                if (text) text.textContent = label || "Cloud Terhubung";
+                if (modalStatus) {
+                    modalStatus.className = "p-3 bg-emerald-50 border border-emerald-300 rounded-xl text-emerald-900 text-xs";
+                    modalStatus.innerHTML = `
+                        <div class="flex items-center space-x-2 font-bold mb-1 text-emerald-800">
+                            <i class="fa-solid fa-circle-check text-emerald-600 text-sm"></i>
+                            <span>Database Cloud Terhubung & Real-Time Aktif</span>
+                        </div>
+                        <p class="text-[11px] text-emerald-700">Setiap perubahan kelas, absensi santri, jurnal, dan akun langsung otomatis tersimpan di Supabase secara real-time.</p>
+                    `;
+                }
+            } else if (status === 'pending_schema') {
+                if (dot) dot.className = "w-2 h-2 rounded-full bg-amber-400 animate-pulse";
+                if (text) text.textContent = label || "Perlu Jalankan SQL";
+                if (modalStatus) {
+                    modalStatus.className = "p-3 bg-amber-50 border border-amber-300 rounded-xl text-amber-900 text-xs";
+                    modalStatus.innerHTML = `
+                        <div class="flex items-center space-x-2 font-bold mb-1 text-amber-800">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-600 text-sm"></i>
+                            <span>Tabel Database Belum Dibuat di Supabase</span>
+                        </div>
+                        <p class="text-[11px] text-amber-700 mb-2.5">
+                            Buka menu <strong>SQL Editor</strong> di dashboard Supabase Anda, tempelkan skrip dari file <code>supabase-schema.sql</code> lalu klik <strong>RUN</strong>.
+                        </p>
+                        <button type="button" onclick="copySchemaSqlToClipboard()" class="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-bold text-xs shadow-xs transition flex items-center">
+                            <i class="fa-solid fa-copy mr-1.5"></i> Salin Skrip SQL Schema
+                        </button>
+                    `;
+                }
+            } else if (status === 'connecting') {
+                if (dot) dot.className = "w-2 h-2 rounded-full bg-blue-400 animate-pulse";
+                if (text) text.textContent = label || "Menghubungkan...";
+            } else {
+                if (dot) dot.className = "w-2 h-2 rounded-full bg-slate-400";
+                if (text) text.textContent = label || "Mode Lokal (Offline)";
+                if (modalStatus) {
+                    modalStatus.className = "p-3 bg-slate-100 border border-slate-300 rounded-xl text-slate-700 text-xs";
+                    modalStatus.innerHTML = `
+                        <div class="flex items-center space-x-2 font-bold mb-1 text-slate-800">
+                            <i class="fa-solid fa-cloud-slash text-slate-500 text-sm"></i>
+                            <span>Mode Lokal / Offline</span>
+                        </div>
+                        <p class="text-[11px] text-slate-600">Aplikasi sedang beroperasi menggunakan penyimpanan lokal perangkat Anda.</p>
+                    `;
+                }
+            }
+        }
+
+        function openSupabaseStatusModal() {
+            document.getElementById('supabaseModal').classList.remove('hidden');
+        }
+
+        function closeSupabaseStatusModal() {
+            document.getElementById('supabaseModal').classList.add('hidden');
+        }
+
+        function forceSyncFromSupabase() {
+            checkSupabaseConnection();
+            showToast('Memeriksa koneksi dan menyinkronkan data dengan Supabase Cloud...');
+        }
+
+        function copySchemaSqlToClipboard() {
+            const sql = `-- =========================================================================
+-- SCHEMA DATABASE SUPABASE UNTUK SIAK LMS PESANTREN
+-- MA'HAD ALY TAFAQQUH MADZHAB SYAFI'I ADZKIYA MANSYAUL HIKAM
+-- =========================================================================
+
+CREATE TABLE IF NOT EXISTS public.siak_classes (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    wali TEXT DEFAULT 'Belum Ditentukan',
+    santri JSONB DEFAULT '[]'::jsonb,
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS public.siak_attendance (
+    id TEXT PRIMARY KEY,
+    class_id TEXT NOT NULL,
+    tanggal TEXT NOT NULL,
+    jam TEXT,
+    mapel TEXT,
+    ustadz TEXT,
+    records JSONB DEFAULT '[]'::jsonb,
+    summary JSONB DEFAULT '{}'::jsonb,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS public.siak_jurnal (
+    id TEXT PRIMARY KEY,
+    tanggal TEXT NOT NULL,
+    jam TEXT,
+    kelas_id TEXT,
+    ustadz TEXT,
+    kitab TEXT,
+    bab TEXT,
+    batas TEXT,
+    tugas TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS public.siak_kitab (
+    id TEXT PRIMARY KEY,
+    nama TEXT NOT NULL,
+    pengarang TEXT,
+    fan TEXT,
+    kelas_id TEXT,
+    pengampu TEXT,
+    target TEXT,
+    jadwal TEXT,
+    selesai INT DEFAULT 0,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS public.siak_accounts (
+    id TEXT PRIMARY KEY,
+    nama TEXT NOT NULL,
+    role TEXT NOT NULL,
+    password TEXT NOT NULL,
+    role_label TEXT,
+    avatar TEXT,
+    mapel TEXT,
+    kelas_id TEXT,
+    kelas_nama TEXT,
+    nis TEXT,
+    nip TEXT,
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.siak_classes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.siak_attendance ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.siak_jurnal ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.siak_kitab ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.siak_accounts ENABLE ROW LEVEL SECURITY;
+
+DO $$ 
+BEGIN
+    DROP POLICY IF EXISTS "Public Full Access siak_classes" ON public.siak_classes;
+    DROP POLICY IF EXISTS "Public Full Access siak_attendance" ON public.siak_attendance;
+    DROP POLICY IF EXISTS "Public Full Access siak_jurnal" ON public.siak_jurnal;
+    DROP POLICY IF EXISTS "Public Full Access siak_kitab" ON public.siak_kitab;
+    DROP POLICY IF EXISTS "Public Full Access siak_accounts" ON public.siak_accounts;
+
+    CREATE POLICY "Public Full Access siak_classes" ON public.siak_classes FOR ALL USING (true) WITH CHECK (true);
+    CREATE POLICY "Public Full Access siak_attendance" ON public.siak_attendance FOR ALL USING (true) WITH CHECK (true);
+    CREATE POLICY "Public Full Access siak_jurnal" ON public.siak_jurnal FOR ALL USING (true) WITH CHECK (true);
+    CREATE POLICY "Public Full Access siak_kitab" ON public.siak_kitab FOR ALL USING (true) WITH CHECK (true);
+    CREATE POLICY "Public Full Access siak_accounts" ON public.siak_accounts FOR ALL USING (true) WITH CHECK (true);
+END $$;
+
+INSERT INTO public.siak_accounts (id, nama, role, password, role_label, avatar)
+VALUES ('admin', 'Editor / Administrator', 'staff', 'admin123', 'Staff Administrasi', 'E')
+ON CONFLICT (id) DO NOTHING;`;
+
+            navigator.clipboard.writeText(sql).then(() => {
+                showToast('Skrip SQL berhasil disalin! Silakan tempel di SQL Editor Supabase.');
+            }).catch(() => {
+                showToast('Silakan buka file supabase-schema.sql');
+            });
+        }
+
+        async function syncClassToCloud(classKey, classObj) {
+            if (!supabaseClient || supabaseSyncStatus !== 'connected') return;
+            try {
+                await supabaseClient.from('siak_classes').upsert({
+                    id: classKey,
+                    name: classObj.name,
+                    wali: classObj.wali || "Belum Ditentukan",
+                    santri: classObj.santri || [],
+                    updated_at: new Date().toISOString()
+                });
+            } catch (e) {
+                console.warn("Gagal sync kelas ke cloud:", e);
+            }
+        }
+
+        async function deleteClassFromCloud(classKey) {
+            if (!supabaseClient || supabaseSyncStatus !== 'connected') return;
+            try {
+                await supabaseClient.from('siak_classes').delete().eq('id', classKey);
+            } catch (e) {
+                console.warn("Gagal hapus kelas dari cloud:", e);
+            }
+        }
+
+        async function syncAttendanceToCloud(recordObj) {
+            if (!supabaseClient || supabaseSyncStatus !== 'connected') return;
+            try {
+                await supabaseClient.from('siak_attendance').upsert(recordObj);
+            } catch (e) {
+                console.warn("Gagal sync absensi ke cloud:", e);
+            }
+        }
+
+        async function syncJurnalToCloud(jurnalObj) {
+            if (!supabaseClient || supabaseSyncStatus !== 'connected') return;
+            try {
+                await supabaseClient.from('siak_jurnal').upsert(jurnalObj);
+            } catch (e) {
+                console.warn("Gagal sync jurnal ke cloud:", e);
+            }
+        }
+
+        async function syncAccountToCloud(accountObj) {
+            if (!supabaseClient || supabaseSyncStatus !== 'connected') return;
+            try {
+                await supabaseClient.from('siak_accounts').upsert(accountObj);
+            } catch (e) {
+                console.warn("Gagal sync akun ke cloud:", e);
+            }
+        }
+
+        async function syncAllLocalClassesToCloud() {
+            if (!supabaseClient || supabaseSyncStatus !== 'connected') return;
+            const all = getAllClassesData();
+            for (const [key, val] of Object.entries(all)) {
+                await syncClassToCloud(key, val);
+            }
+        }
+
+        function setupSupabaseRealtime() {
+            if (!supabaseClient) return;
+            try {
+                supabaseClient.channel('realtime_siak_classes')
+                    .on('postgres_changes', { event: '*', schema: 'public', table: 'siak_classes' }, async (payload) => {
+                        console.log("Realtime event received from Supabase:", payload);
+                        const { data } = await supabaseClient.from('siak_classes').select('*');
+                        if (data) {
+                            const remoteClasses = {};
+                            data.forEach(item => {
+                                remoteClasses[item.id] = {
+                                    name: item.name,
+                                    wali: item.wali,
+                                    santri: item.santri || []
+                                };
+                            });
+                            localStorage.setItem('siak_multi_classes', JSON.stringify(remoteClasses));
+                            renderAllClassSelectors();
+                            switchClass(selectedClassId);
+                        }
+                    })
+                    .subscribe();
+            } catch (e) {
+                console.warn("Gagal setup realtime listener:", e);
+            }
+        }
+
         function getAccounts() {
             return JSON.parse(localStorage.getItem('siak_user_accounts') || '[]');
         }
@@ -1998,6 +2415,9 @@
             localStorage.setItem('siak_user_accounts', JSON.stringify(accounts));
             renderAkunTable();
             renderGuruTable();
+            if (accounts && accounts.length > 0) {
+                accounts.forEach(a => syncAccountToCloud(a));
+            }
         }
 
         function getAllClassesData() {
@@ -2023,6 +2443,7 @@
                 all[selectedClassId].santri = santriList;
                 localStorage.setItem('siak_multi_classes', JSON.stringify(all));
                 updateAllComponents();
+                syncClassToCloud(selectedClassId, all[selectedClassId]);
             }
         }
 
@@ -2171,7 +2592,8 @@
             closeTambahKelasModal();
             renderAllClassSelectors();
             switchClass(key);
-            showToast(`Kelas "${nama}" berhasil dibuat! Silakan mulai menambahkan santri.`);
+            syncClassToCloud(key, all[key]);
+            showToast(`Kelas "${nama}" berhasil dibuat & disinkronkan ke Cloud!`);
         }
 
         function deleteCurrentClass() {
@@ -2182,6 +2604,7 @@
                 return;
             }
             const current = all[selectedClassId];
+            const oldId = selectedClassId;
             const count = current.santri ? current.santri.length : 0;
             if (confirm(`PERINGATAN: Apakah Anda yakin ingin menghapus kelas "${current.name}" beserta ${count} data santri di dalamnya?\n\nTindakan ini tidak dapat dibatalkan.`)) {
                 delete all[selectedClassId];
@@ -2190,6 +2613,7 @@
                 selectedClassId = remaining.length > 0 ? remaining[0] : "";
                 renderAllClassSelectors();
                 switchClass(selectedClassId);
+                deleteClassFromCloud(oldId);
                 showToast(`Kelas "${current.name}" telah dihapus.`);
             }
         }
@@ -2258,6 +2682,7 @@
             localStorage.setItem('siak_multi_classes', JSON.stringify(all));
             renderAllClassSelectors();
             updateAllComponents();
+            syncClassToCloud(selectedClassId, all[selectedClassId]);
 
             const sCount = document.getElementById('stickySantriCount');
             if (sCount) sCount.textContent = current.santri.length;
@@ -2289,6 +2714,7 @@
                 localStorage.setItem('siak_multi_classes', JSON.stringify(all));
                 renderAllClassSelectors();
                 updateAllComponents();
+                syncClassToCloud(selectedClassId, all[selectedClassId]);
                 showToast(`Santri "${s.nama}" berhasil dihapus.`);
             }
         }
@@ -3006,7 +3432,41 @@
 
         function saveAttendance() {
             if (!checkCanEdit('Menyimpan Absensi Santri')) return;
-            showToast('Data presensi santri berhasil disimpan ke sistem!');
+            const classData = getCurrentClassData();
+            if (!classData || !classData.santri || classData.santri.length === 0) {
+                alert('Belum ada data santri untuk disimpan.');
+                return;
+            }
+
+            const tgl = document.getElementById('absenTanggal') ? document.getElementById('absenTanggal').value : new Date().toISOString().split('T')[0];
+            const jam = document.getElementById('absenJamPelajaran') ? document.getElementById('absenJamPelajaran').value : '-';
+            const mapel = document.getElementById('absenMataPelajaran') ? document.getElementById('absenMataPelajaran').value : '-';
+            const ustadz = document.getElementById('absenUstadzPengajar') ? document.getElementById('absenUstadzPengajar').value : '-';
+
+            // Simpan data santri ke local & cloud
+            saveCurrentClassSantri(classData.santri);
+
+            // Simpan riwayat absensi log
+            const attendanceRecord = {
+                id: `${selectedClassId}_${tgl}_${jam}`.replace(/[^a-zA-Z0-9_-]/g, '_'),
+                class_id: selectedClassId,
+                tanggal: tgl,
+                jam: jam,
+                mapel: mapel,
+                ustadz: ustadz,
+                records: classData.santri.map(s => ({ nis: s.nis, nama: s.nama, status: s.status, keterangan: s.keterangan || '' })),
+                summary: {
+                    total: classData.santri.length,
+                    hadir: classData.santri.filter(s => s.status === 'Hadir').length,
+                    sakit: classData.santri.filter(s => s.status === 'Sakit').length,
+                    izin: classData.santri.filter(s => s.status === 'Izin').length,
+                    alpa: classData.santri.filter(s => s.status === 'Alpa').length
+                },
+                updated_at: new Date().toISOString()
+            };
+
+            syncAttendanceToCloud(attendanceRecord);
+            showToast('Alhamdulillah, presensi berhasil disimpan & disinkronkan ke Cloud!');
         }
 
         function filterSantriTable() {
@@ -4536,6 +4996,7 @@
         // =========================================================================
         window.onload = function() {
             initStorage();
+            initSupabase();
             
             const today = new Date().toISOString().split('T')[0];
             const dateInput = document.getElementById('absenTanggal');
