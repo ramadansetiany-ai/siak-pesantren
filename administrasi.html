@@ -440,7 +440,7 @@
                         </div>
                         <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
                             <p class="text-xs font-medium text-slate-500">Jadwal Mengajar</p>
-                            <h3 class="text-sm font-bold text-slate-800 mt-1" id="profilUstadzJadwal">Senin & Rabu (07.30 - 10.45)</h3>
+                            <h3 class="text-sm font-bold text-slate-800 mt-1" id="profilUstadzJadwal">Senin & Rabu (17.00 - 18.30 WIB)</h3>
                             <p class="text-[11px] text-slate-400 mt-0.5">Ruang Kelas 10 Ula - Al-Ghazali</p>
                         </div>
                         <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
@@ -915,10 +915,10 @@
                                         <i class="fa-solid fa-clock mr-1 text-emerald-600"></i> Jam Pelajaran
                                     </label>
                                     <select id="absenJam" class="w-full text-xs border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium">
-                                        <option value="Jam 1-2 (07.30 - 09.00 WIB)">Jam 1-2 (07.30 - 09.00 WIB)</option>
-                                        <option value="Jam 3-4 (09.15 - 10.45 WIB)" selected>Jam 3-4 (09.15 - 10.45 WIB)</option>
-                                        <option value="Jam 5-6 (11.00 - 12.30 WIB)">Jam 5-6 (11.00 - 12.30 WIB)</option>
-                                        <option value="Jam 7-8 (14.00 - 15.30 WIB)">Jam 7-8 (14.00 - 15.30 WIB)</option>
+                                        <option value="17.00 - 18.30 WIB" selected>Jam 1 (17.00 - 18.30 WIB)</option>
+                                        <option value="18.30 - 20.00 WIB">Jam 2 (18.30 - 20.00 WIB)</option>
+                                        <option value="20.00 - 21.30 WIB">Jam 3 (20.00 - 21.30 WIB)</option>
+                                        <option value="05.30 - 06.30 WIB">Jam 4 (05.30 - 06.30 WIB)</option>
                                     </select>
                                 </div>
 
@@ -1829,10 +1829,10 @@
                     <div>
                         <label class="block font-medium text-slate-700 mb-1">Jam Pelajaran</label>
                         <select id="modalJurnalJam" class="w-full border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-                            <option value="Jam 1-2 (07.30 - 09.00)">Jam 1-2 (07.30 - 09.00)</option>
-                            <option value="Jam 3-4 (09.15 - 10.45)" selected>Jam 3-4 (09.15 - 10.45)</option>
-                            <option value="Jam 5-6 (11.00 - 12.30)">Jam 5-6 (11.00 - 12.30)</option>
-                            <option value="Jam 7-8 (14.00 - 15.30)">Jam 7-8 (14.00 - 15.30)</option>
+                            <option value="17.00 - 18.30 WIB" selected>Jam 1 (17.00 - 18.30 WIB)</option>
+                            <option value="18.30 - 20.00 WIB">Jam 2 (18.30 - 20.00 WIB)</option>
+                            <option value="20.00 - 21.30 WIB">Jam 3 (20.00 - 21.30 WIB)</option>
+                            <option value="05.30 - 06.30 WIB">Jam 4 (05.30 - 06.30 WIB)</option>
                         </select>
                     </div>
                 </div>
@@ -4266,7 +4266,7 @@ ON CONFLICT (id) DO NOTHING;`;
             const list = classData.santri || [];
             const tglRaw = document.getElementById('absenTanggal')?.value || new Date().toISOString().split('T')[0];
             const tglFormatted = formatIndoDate(tglRaw);
-            const jam = document.getElementById('absenJam')?.value || 'Jam 3-4 (09.15 - 10.45 WIB)';
+            const jam = document.getElementById('absenJam')?.value || '17.00 - 18.30 WIB';
             const mapel = document.getElementById('absenKitab')?.value || 'Fathul Qorib (Fiqih)';
             const ustadz = document.getElementById('absenUstadzPengajar')?.value || (currentUser && currentUser.role === 'ustadz' ? currentUser.nama : 'Ust. Ahmad Fauzi, S.Pd.I');
             const wali = classData.wali || 'Ust. M. Ridhwan, Lc';
