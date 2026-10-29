@@ -924,16 +924,22 @@
 
                                 <!-- 4. Mata Pelajaran / Kitab -->
                                 <div>
-                                    <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1 flex items-center">
-                                        <i class="fa-solid fa-book-quran mr-1 text-emerald-600"></i> Mata Pelajaran / Kitab
-                                    </label>
-                                    <select id="absenKitab" class="w-full text-xs border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium">
-                                        <option value="Fathul Qorib (Fiqih)" selected>Fathul Qorib (Fiqih)</option>
-                                        <option value="Al-Jurumiyyah (Nahwu)">Al-Jurumiyyah (Nahwu)</option>
-                                        <option value="Al-Amtsilah At-Tashrifiyyah (Shorof)">Al-Amtsilah (Shorof)</option>
-                                        <option value="Ta'limul Muta'allim (Adab/Akhlaq)">Ta'lim Muta'allim (Adab)</option>
-                                        <option value="Arba'in Nawawiyyah (Hadits)">Arba'in (Hadits)</option>
-                                        <option value="Aqidatul Awwam (Tauhid)">Aqidatul Awwam (Tauhid)</option>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <label class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider flex items-center">
+                                            <i class="fa-solid fa-book-quran mr-1 text-emerald-600"></i> Mata Pelajaran
+                                        </label>
+                                        <button type="button" onclick="openTambahMapelModal()" class="rbac-staff-only text-[10px] text-emerald-700 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 px-2 py-0.5 rounded font-bold border border-emerald-300 transition flex items-center gap-1 shadow-xs" title="Tambah Mata Pelajaran Bebas (Khusus Staff)">
+                                            <i class="fa-solid fa-plus-circle text-emerald-600"></i> + Tambah Mapel
+                                        </button>
+                                    </div>
+                                    <select id="absenKitab" onchange="handleAbsenKitabChange(this)" class="w-full text-xs border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium">
+                                        <option value="Fiqih (Fathul Qorib)" selected>Fiqih (Fathul Qorib)</option>
+                                        <option value="Nahwu (Al-Jurumiyyah)">Nahwu (Al-Jurumiyyah)</option>
+                                        <option value="Shorof (Al-Amtsilah At-Tashrifiyyah)">Shorof (Al-Amtsilah)</option>
+                                        <option value="Tahfidz Al-Qur'an">Tahfidz Al-Qur'an</option>
+                                        <option value="Hadits (Arba'in Nawawiyyah)">Hadits (Arba'in)</option>
+                                        <option value="Akhlaq & Adab (Ta'limul Muta'allim)">Akhlaq & Adab</option>
+                                        <option value="Tauhid / Aqidah (Aqidatul Awwam)">Tauhid / Aqidah</option>
                                     </select>
                                 </div>
 
@@ -1302,18 +1308,93 @@
                 <!-- ============================================== -->
                 <!-- SECTION 4: KAJIAN KITAB & KURIKULUM            -->
                 <!-- ============================================== -->
+                <!-- ============================================== -->
+                <!-- SECTION 4: MATA PELAJARAN & KAJIAN KITAB       -->
+                <!-- ============================================== -->
                 <section id="tab-kitab" class="tab-content hidden space-y-6">
+                    <!-- Header Card -->
                     <div class="bg-white rounded-xl shadow-sm border border-slate-200/80 p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div>
                             <h2 class="text-xl font-bold text-slate-800 flex items-center">
-                                <i class="fa-solid fa-book-bookmark text-emerald-600 mr-2"></i> Kajian Kitab & Capaian Kurikulum
+                                <i class="fa-solid fa-book-bookmark text-emerald-600 mr-2"></i> Mata Pelajaran & Kurikulum Pesantren
                             </h2>
-                            <p class="text-xs text-slate-500 mt-1">Daftar kitab turats yang dikaji beserta progres capaian materi semester.</p>
+                            <p class="text-xs text-slate-500 mt-1">Kelola daftar mata pelajaran madrasah & kitab kajian turats. Hanya akun Staff yang berwenang menambah dan mengedit mata pelajaran.</p>
                         </div>
-                        <div>
-                            <button onclick="openAddKitabModal()" class="rbac-staff-only bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-xs font-semibold shadow-sm transition flex items-center">
-                                <i class="fa-solid fa-plus mr-1.5"></i> Tambah Kitab Baru
+                        <div class="flex items-center gap-2">
+                            <button onclick="openTambahMapelModal()" class="rbac-staff-only bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-xs font-bold shadow-sm transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-plus-circle"></i> + Tambah Mapel Bebas
                             </button>
+                            <button onclick="openTambahKitabModal()" class="rbac-staff-only bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2 rounded-lg text-xs font-semibold shadow-xs transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-book-quran text-emerald-600"></i> + Kitab Rujukan
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- PANEL FORM INPUT MATA PELAJARAN KUSTOM (KHUSUS STAFF) -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
+                                    <i class="fa-solid fa-pen-nib"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xs font-bold text-slate-800 flex items-center gap-2">
+                                        <span>Form Input Mata Pelajaran Kustom (Manual / Bebas)</span>
+                                        <span class="rbac-staff-only px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">Staff Control</span>
+                                    </h3>
+                                    <p class="text-[11px] text-slate-500">Tuliskan nama pelajaran apa saja secara bebas. Data akan tersimpan otomatis dan langsung dapat ditarik oleh Ustadz saat absensi, tugas, dan nilai imtihan.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Input Staff -->
+                        <form id="formCepatMapel" onsubmit="handleCepatTambahMapel(event)" class="rbac-staff-only p-4 bg-emerald-50/70 border border-emerald-200 rounded-xl space-y-3">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-slate-700 mb-1">Nama Mata Pelajaran: <span class="text-rose-500">*</span></label>
+                                    <input type="text" id="cepatMapelNama" required placeholder="Contoh: Nahwu, Sharaf, Fiqih, Tahfidz..." class="w-full bg-white text-xs border border-slate-200 rounded-lg px-3 py-2 font-bold text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-slate-700 mb-1">Kategori / Fan Ilmu (Opsional):</label>
+                                    <input type="text" id="cepatMapelKategori" placeholder="Contoh: Fan Alat, Syariah, Al-Qur'an..." class="w-full bg-white text-xs border border-slate-200 rounded-lg px-3 py-2 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-slate-700 mb-1">Kitab Rujukan (Opsional):</label>
+                                    <input type="text" id="cepatMapelKitab" placeholder="Contoh: Al-Jurumiyyah / Fathul Qorib..." class="w-full bg-white text-xs border border-slate-200 rounded-lg px-3 py-2 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-slate-700 mb-1">Ustadz Pengampu Default:</label>
+                                    <select id="cepatMapelPengampu" class="w-full bg-white text-xs border border-slate-200 rounded-lg px-3 py-2 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none text-slate-700">
+                                        <option value="">-- Fleksibel / Sesuai Jadwal --</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between pt-1">
+                                <span class="text-[11px] text-slate-500 italic">*Hanya akun Staff yang dapat mengakses form input ini.</span>
+                                <button type="submit" class="px-5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-lg shadow-sm transition flex items-center gap-1.5">
+                                    <i class="fa-solid fa-floppy-disk"></i> Simpan Mata Pelajaran
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Read-only warning for Ustadz & Santri -->
+                        <div class="rbac-ustadz-action p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-600 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-info text-blue-500"></i>
+                            <span>Akun Ustadz berstatus <strong>Penerima & Pengampu</strong> kurikulum. Daftar mata pelajaran di bawah ini siap Anda pilih saat input presensi, batas materi, dan penilaian nilai ujian santri.</span>
+                        </div>
+
+                        <!-- Daftar Badge Mata Pelajaran Tersimpan -->
+                        <div class="pt-2">
+                            <div class="flex items-center justify-between mb-2.5">
+                                <h4 class="text-xs font-bold text-slate-800 flex items-center gap-2">
+                                    <i class="fa-solid fa-list-check text-emerald-600"></i>
+                                    <span>Daftar Mata Pelajaran Aktif (<span id="totalMapelCount">0</span> Mapel)</span>
+                                </h4>
+                                <span class="text-[11px] text-slate-400">Tersinkronisasi otomatis ke seluruh menu</span>
+                            </div>
+                            <div id="mapelBadgesContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5">
+                                <!-- Populated dynamically -->
+                            </div>
                         </div>
                     </div>
 
@@ -1750,6 +1831,50 @@
     </div>
 
     <!-- ============================================== -->
+    <!-- MODAL: TAMBAH MATA PELAJARAN KUSTOM (STAFF)   -->
+    <!-- ============================================== -->
+    <div id="mapelModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-book-open-reader text-emerald-600"></i>
+                    <span>Tambah Mata Pelajaran Baru</span>
+                </h3>
+                <button type="button" onclick="closeTambahMapelModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="formTambahMapelModal" onsubmit="handleSaveMapelModal(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Nama Mata Pelajaran: <span class="text-rose-500">*</span></label>
+                    <input type="text" id="modalInputMapelNama" required placeholder="Contoh: Nahwu, Sharaf, Fiqih, Tahfidz..." class="w-full border border-slate-200 rounded-lg px-3 py-2.5 font-bold focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    <p class="text-[10px] text-slate-400 mt-0.5">Tulis bebas nama mata pelajaran apa saja sesuai kurikulum pesantren.</p>
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Kategori / Fan Ilmu (Opsional):</label>
+                    <input type="text" id="modalInputMapelKategori" placeholder="Contoh: Fan Alat / Syariah / Al-Qur'an / Adab" class="w-full border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:outline-none font-medium">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Kitab Rujukan / Bahan Kajian (Opsional):</label>
+                    <input type="text" id="modalInputMapelKitab" placeholder="Contoh: Al-Jurumiyyah / Fathul Qorib" class="w-full border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:outline-none font-medium">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Ustadz Pengampu Default (Opsional):</label>
+                    <select id="modalInputMapelPengampu" class="w-full border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:outline-none font-medium text-slate-700">
+                        <option value="">-- Fleksibel / Semua Ustadz --</option>
+                    </select>
+                </div>
+                <div class="p-2.5 bg-amber-50 border border-amber-200 rounded-lg text-[11px] text-amber-900 flex items-start gap-2">
+                    <i class="fa-solid fa-shield-halved text-amber-600 mt-0.5"></i>
+                    <span><strong>Hak Akses Staff:</strong> Mata pelajaran ini otomatis tersimpan ke sistem lokal dan akan langsung bisa dipilih oleh Ustadz saat absensi, tugas, dan nilai ujian.</span>
+                </div>
+                <div class="flex justify-end space-x-2 pt-2 border-t border-slate-100">
+                    <button type="button" onclick="closeTambahMapelModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium">Batal</button>
+                    <button type="submit" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold shadow-sm">Simpan Pelajaran</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
     <!-- MODAL: STATUS SINKRONISASI SUPABASE CLOUD      -->
     <!-- ============================================== -->
     <div id="supabaseModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -1900,30 +2025,14 @@
                 <p class="text-sm font-bold text-slate-800" id="modalNilaiNama">Ahmad Fauzan Ramadhan</p>
                 <input type="hidden" id="modalNilaiIndex">
             </div>
-            <div class="grid grid-cols-2 gap-3 text-xs">
-                <div>
-                    <label class="block font-medium text-slate-700 mb-1">Fiqih (Fathul Qorib)</label>
-                    <input type="number" id="inputFiqih" min="0" max="100" class="w-full border border-slate-200 rounded-lg p-2 focus:ring-2 focus:ring-emerald-500 font-semibold">
-                </div>
-                <div>
-                    <label class="block font-medium text-slate-700 mb-1">Nahwu (Jurumiyyah)</label>
-                    <input type="number" id="inputNahwu" min="0" max="100" class="w-full border border-slate-200 rounded-lg p-2 focus:ring-2 focus:ring-emerald-500 font-semibold">
-                </div>
-                <div>
-                    <label class="block font-medium text-slate-700 mb-1">Shorof (Amtsilah)</label>
-                    <input type="number" id="inputShorof" min="0" max="100" class="w-full border border-slate-200 rounded-lg p-2 focus:ring-2 focus:ring-emerald-500 font-semibold">
-                </div>
-                <div>
-                    <label class="block font-medium text-slate-700 mb-1">Akhlaq (Ta'lim)</label>
-                    <input type="number" id="inputAkhlaq" min="0" max="100" class="w-full border border-slate-200 rounded-lg p-2 focus:ring-2 focus:ring-emerald-500 font-semibold">
-                </div>
-                <div>
-                    <label class="block font-medium text-slate-700 mb-1">Hadits (Arba'in)</label>
-                    <input type="number" id="inputHadits" min="0" max="100" class="w-full border border-slate-200 rounded-lg p-2 focus:ring-2 focus:ring-emerald-500 font-semibold">
-                </div>
-                <div>
-                    <label class="block font-medium text-slate-700 mb-1">Tauhid (Aqidatul Awwam)</label>
-                    <input type="number" id="inputTauhid" min="0" max="100" class="w-full border border-slate-200 rounded-lg p-2 focus:ring-2 focus:ring-emerald-500 font-semibold">
+            <!-- Dynamic Subject Inputs based on registered Custom Mata Pelajaran -->
+            <div>
+                <p class="text-[11px] font-semibold text-slate-500 mb-1.5 flex items-center justify-between">
+                    <span>Nilai Per Mata Pelajaran (0 - 100):</span>
+                    <span class="text-[10px] text-slate-400">Dihitung otomatis</span>
+                </p>
+                <div id="modalNilaiInputsContainer" class="grid grid-cols-2 gap-2.5 text-xs max-h-64 overflow-y-auto custom-scrollbar p-1.5 border border-slate-100 rounded-xl bg-slate-50/60">
+                    <!-- Populated dynamically based on registered custom subjects -->
                 </div>
             </div>
             <div class="flex justify-end space-x-2 pt-2 border-t border-slate-100 text-xs">
@@ -2057,6 +2166,10 @@
 
             if (!localStorage.getItem('siak_kitab_list')) {
                 localStorage.setItem('siak_kitab_list', JSON.stringify(DEFAULT_KITAB));
+            }
+
+            if (!localStorage.getItem('siak_mapel_list')) {
+                getMapelData();
             }
         }
 
@@ -2465,6 +2578,266 @@ ON CONFLICT (id) DO NOTHING;`;
         function saveKitabData(data) {
             localStorage.setItem('siak_kitab_list', JSON.stringify(data));
             renderKitabList();
+        }
+
+        // =========================================================================
+        // 2B. CUSTOM MATA PELAJARAN CONTROLLER (STAFF RESTRICTED & REACTIVE)
+        // =========================================================================
+        function getMapelData() {
+            let list = JSON.parse(localStorage.getItem('siak_mapel_list') || 'null');
+            if (!list || list.length === 0) {
+                list = [
+                    { id: 'mapel-1', nama: 'Fiqih', kategori: 'Syariah', kitab: 'Fathul Qorib', pengampu: 'Ust. Ahmad Fauzi, S.Pd.I' },
+                    { id: 'mapel-2', nama: 'Nahwu', kategori: 'Fan Alat', kitab: 'Al-Jurumiyyah', pengampu: 'Ust. M. Ridhwan, Lc' },
+                    { id: 'mapel-3', nama: 'Shorof', kategori: 'Fan Alat', kitab: 'Al-Amtsilah At-Tashrifiyyah', pengampu: 'Ust. Nurul Huda, M.Ag' },
+                    { id: 'mapel-4', nama: 'Tahfidz Al-Qur\'an', kategori: 'Al-Qur\'an', kitab: 'Mushaf Al-Qur\'an', pengampu: 'Ust. KH. Abdullah Abbas' },
+                    { id: 'mapel-5', nama: 'Hadits', kategori: 'Dirasah Islamiyyah', kitab: 'Arba\'in Nawawiyyah', pengampu: 'Ustadzah Siti Maryam, M.Pd' },
+                    { id: 'mapel-6', nama: 'Akhlaq & Adab', kategori: 'Tazkiyah', kitab: 'Ta\'limul Muta\'allim', pengampu: 'Ust. Ahmad Fauzi, S.Pd.I' },
+                    { id: 'mapel-7', nama: 'Tauhid / Aqidah', kategori: 'Ushuluddin', kitab: 'Aqidatul Awwam', pengampu: 'Ust. M. Ridhwan, Lc' }
+                ];
+                localStorage.setItem('siak_mapel_list', JSON.stringify(list));
+            }
+            return list;
+        }
+
+        function saveMapelData(list) {
+            localStorage.setItem('siak_mapel_list', JSON.stringify(list));
+            updateAllMapelSelectors();
+            renderMapelManager();
+        }
+
+        function updateAllMapelSelectors() {
+            const list = getMapelData();
+            const isStaff = currentUser && currentUser.role === 'staff';
+
+            // 1. Selector Presensi Harian (#absenKitab)
+            const selAbsen = document.getElementById('absenKitab');
+            if (selAbsen) {
+                const currentVal = selAbsen.value;
+                let html = list.map(m => {
+                    const label = m.kitab ? `${m.nama} (${m.kitab})` : m.nama;
+                    return `<option value="${label}">${label}</option>`;
+                }).join('');
+                if (isStaff) {
+                    html += `<option value="__tambah_mapel_baru__" class="font-bold text-emerald-700 bg-emerald-50">+ Tambah Mata Pelajaran Baru...</option>`;
+                }
+                selAbsen.innerHTML = html;
+                if (currentVal && Array.from(selAbsen.options).some(o => o.value === currentVal)) {
+                    selAbsen.value = currentVal;
+                }
+            }
+
+            // 2. Selector Jurnal Modal (#modalJurnalKitab)
+            const selJurnal = document.getElementById('modalJurnalKitab');
+            if (selJurnal) {
+                const currentVal = selJurnal.value;
+                let html = list.map(m => {
+                    const label = m.kitab ? `${m.nama} (${m.kitab})` : m.nama;
+                    return `<option value="${label}">${label}</option>`;
+                }).join('');
+                selJurnal.innerHTML = html;
+                if (currentVal && Array.from(selJurnal.options).some(o => o.value === currentVal)) {
+                    selJurnal.value = currentVal;
+                }
+            }
+
+            // 3. Filter Jurnal Table (#filterJurnalKitab)
+            const selFilter = document.getElementById('filterJurnalKitab');
+            if (selFilter) {
+                const currentVal = selFilter.value;
+                let html = '<option value="all">Semua Mata Pelajaran & Kitab</option>';
+                html += list.map(m => `<option value="${m.nama}">${m.nama}</option>`).join('');
+                selFilter.innerHTML = html;
+                if (currentVal && Array.from(selFilter.options).some(o => o.value === currentVal)) {
+                    selFilter.value = currentVal;
+                }
+            }
+
+            // 4. Dropdown Ustadz Pengampu di Form Mapel
+            const selPengampuCepat = document.getElementById('cepatMapelPengampu');
+            const selPengampuModal = document.getElementById('modalInputMapelPengampu');
+            const ustadzList = getAccounts().filter(a => a.role === 'ustadz');
+            const ustadzOptions = '<option value="">-- Fleksibel / Semua Ustadz --</option>' + 
+                ustadzList.map(u => `<option value="${u.nama}">${u.nama}</option>`).join('');
+            if (selPengampuCepat) selPengampuCepat.innerHTML = ustadzOptions;
+            if (selPengampuModal) selPengampuModal.innerHTML = ustadzOptions;
+        }
+
+        function renderMapelManager() {
+            const list = getMapelData();
+            const countEl = document.getElementById('totalMapelCount');
+            if (countEl) countEl.textContent = list.length;
+
+            const container = document.getElementById('mapelBadgesContainer');
+            if (!container) return;
+
+            const isStaff = currentUser && currentUser.role === 'staff';
+
+            if (list.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full py-6 text-center text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                        <p class="text-xs font-semibold">Belum ada mata pelajaran terdaftar.</p>
+                        ${isStaff ? '<p class="text-[11px] text-slate-400 mt-1">Gunakan formulir di atas untuk mengetik nama mata pelajaran baru.</p>' : ''}
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = list.map(m => `
+                <div class="p-3 bg-slate-50 border border-slate-200/90 rounded-xl flex items-center justify-between hover:bg-emerald-50/60 hover:border-emerald-300 transition shadow-xs">
+                    <div class="min-w-0 pr-2">
+                        <h5 class="font-bold text-xs text-slate-800 truncate">${m.nama}</h5>
+                        <div class="flex items-center gap-1.5 text-[10px] text-slate-500 mt-1">
+                            <span class="px-1.5 py-0.5 bg-emerald-100 text-emerald-800 rounded font-semibold shrink-0">${m.kategori || 'Umum'}</span>
+                            <span class="truncate text-slate-400">${m.kitab || m.pengampu || ''}</span>
+                        </div>
+                    </div>
+                    ${isStaff ? `
+                        <button type="button" onclick="hapusMataPelajaran('${m.id}', '${m.nama}')" class="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 transition shrink-0" title="Hapus Mata Pelajaran">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function handleAbsenKitabChange(selectEl) {
+            if (selectEl.value === '__tambah_mapel_baru__') {
+                selectEl.value = selectEl.options[0] ? selectEl.options[0].value : '';
+                openTambahMapelModal();
+            }
+        }
+
+        function openTambahMapelModal() {
+            if (currentUser && currentUser.role !== 'staff') {
+                showUnauthorizedModal('Akses Ditolak: Hanya Staff Administrasi yang berwenang menambah atau mengedit mata pelajaran.');
+                return;
+            }
+            const inputNama = document.getElementById('modalInputMapelNama');
+            if (inputNama) inputNama.value = '';
+            const inputKat = document.getElementById('modalInputMapelKategori');
+            if (inputKat) inputKat.value = '';
+            const inputKitab = document.getElementById('modalInputMapelKitab');
+            if (inputKitab) inputKitab.value = '';
+            const inputPengampu = document.getElementById('modalInputMapelPengampu');
+            if (inputPengampu) inputPengampu.value = '';
+
+            const mm = document.getElementById('mapelModal');
+            if (mm) {
+                mm.classList.remove('hidden');
+                mm.style.display = 'flex';
+            }
+            setTimeout(() => {
+                if (inputNama) inputNama.focus();
+            }, 60);
+        }
+
+        function closeTambahMapelModal() {
+            const mm = document.getElementById('mapelModal');
+            if (mm) {
+                mm.classList.add('hidden');
+                mm.style.display = 'none';
+            }
+        }
+
+        function handleSaveMapelModal(e) {
+            if (e) e.preventDefault();
+            if (currentUser && currentUser.role !== 'staff') {
+                showUnauthorizedModal('Akses Ditolak: Hanya Staff yang berwenang menambah mata pelajaran.');
+                return;
+            }
+
+            const nama = document.getElementById('modalInputMapelNama').value.trim();
+            const kategori = document.getElementById('modalInputMapelKategori').value.trim();
+            const kitab = document.getElementById('modalInputMapelKitab').value.trim();
+            const pengampu = document.getElementById('modalInputMapelPengampu').value;
+
+            if (!nama) {
+                alert('Silakan masukkan nama mata pelajaran terlebih dahulu!');
+                return;
+            }
+
+            const list = getMapelData();
+            if (list.some(m => m.nama.toLowerCase() === nama.toLowerCase())) {
+                alert(`Mata pelajaran "${nama}" sudah terdaftar.`);
+                return;
+            }
+
+            const newMapel = {
+                id: 'mapel-' + Date.now(),
+                nama: nama,
+                kategori: kategori || 'Mata Pelajaran Pesantren',
+                kitab: kitab || nama,
+                pengampu: pengampu || 'Sesuai Jadwal'
+            };
+
+            list.push(newMapel);
+            saveMapelData(list);
+            closeTambahMapelModal();
+            showToast(`Mata pelajaran "${nama}" berhasil didaftarkan ke sistem!`);
+
+            const selAbsen = document.getElementById('absenKitab');
+            if (selAbsen) {
+                const targetVal = kitab ? `${nama} (${kitab})` : nama;
+                selAbsen.value = targetVal;
+            }
+        }
+
+        function handleCepatTambahMapel(e) {
+            if (e) e.preventDefault();
+            if (currentUser && currentUser.role !== 'staff') {
+                showUnauthorizedModal('Hanya Staff yang berwenang menambah mata pelajaran.');
+                return;
+            }
+
+            const namaInput = document.getElementById('cepatMapelNama');
+            const nama = namaInput.value.trim();
+            const kategori = document.getElementById('cepatMapelKategori').value.trim();
+            const kitab = document.getElementById('cepatMapelKitab').value.trim();
+            const pengampu = document.getElementById('cepatMapelPengampu').value;
+
+            if (!nama) {
+                alert('Silakan ketik nama mata pelajaran terlebih dahulu!');
+                return;
+            }
+
+            const list = getMapelData();
+            if (list.some(m => m.nama.toLowerCase() === nama.toLowerCase())) {
+                alert(`Mata pelajaran "${nama}" sudah terdaftar.`);
+                return;
+            }
+
+            const newMapel = {
+                id: 'mapel-' + Date.now(),
+                nama: nama,
+                kategori: kategori || 'Mata Pelajaran Pesantren',
+                kitab: kitab || nama,
+                pengampu: pengampu || 'Sesuai Jadwal'
+            };
+
+            list.push(newMapel);
+            saveMapelData(list);
+
+            namaInput.value = '';
+            document.getElementById('cepatMapelKategori').value = '';
+            document.getElementById('cepatMapelKitab').value = '';
+            document.getElementById('cepatMapelPengampu').value = '';
+
+            showToast(`Mata pelajaran "${nama}" berhasil disimpan & siap digunakan!`);
+        }
+
+        function hapusMataPelajaran(id, nama) {
+            if (currentUser && currentUser.role !== 'staff') {
+                showUnauthorizedModal('Hanya Staff yang berwenang menghapus mata pelajaran.');
+                return;
+            }
+
+            if (confirm(`Apakah Anda yakin ingin menghapus mata pelajaran "${nama}"?`)) {
+                let list = getMapelData();
+                list = list.filter(m => m.id !== id);
+                saveMapelData(list);
+                showToast(`Mata pelajaran "${nama}" telah dihapus.`);
+            }
         }
 
         // =========================================================================
@@ -3790,6 +4163,7 @@ ON CONFLICT (id) DO NOTHING;`;
 
         function openAddJurnalModal() {
             if (!checkCanEdit('Mencatat Batas Pelajaran & Tugas Baru')) return;
+            updateAllMapelSelectors();
             document.getElementById('modalJurnalTanggal').value = new Date().toISOString().split('T')[0];
             if (currentUser && currentUser.role === 'ustadz') {
                 document.getElementById('modalJurnalUstadz').value = currentUser.nama;
@@ -4136,20 +4510,45 @@ ON CONFLICT (id) DO NOTHING;`;
 
             const classData = getCurrentClassData();
             const s = classData.santri[idx];
-            const n = s.nilai;
+            if (!s) return;
+            const n = s.nilai || {};
             document.getElementById('modalNilaiIndex').value = idx;
             document.getElementById('modalNilaiNama').textContent = `${s.nama} (${s.nis}) - ${classData.name}`;
-            document.getElementById('inputFiqih').value = n.fiqih;
-            document.getElementById('inputNahwu').value = n.nahwu;
-            document.getElementById('inputShorof').value = n.shorof;
-            document.getElementById('inputAkhlaq').value = n.akhlaq;
-            document.getElementById('inputHadits').value = n.hadits;
-            document.getElementById('inputTauhid').value = n.tauhid;
-            document.getElementById('nilaiModal').classList.remove('hidden');
+
+            const container = document.getElementById('modalNilaiInputsContainer');
+            if (container) {
+                container.innerHTML = '';
+                const mapelList = getMapelData();
+                mapelList.forEach(m => {
+                    const key = m.nama.toLowerCase().replace(/[^a-z0-9]/g, '_');
+                    let score = 80;
+                    if (n.mapelScores && n.mapelScores[m.nama] !== undefined) {
+                        score = n.mapelScores[m.nama];
+                    } else if (n[key] !== undefined) {
+                        score = n[key];
+                    }
+                    const div = document.createElement('div');
+                    div.innerHTML = `
+                        <label class="block font-semibold text-slate-700 text-[11px] mb-1 truncate" title="${m.nama}">${m.nama}:</label>
+                        <input type="number" data-mapel="${m.nama}" min="0" max="100" value="${score}" class="input-dynamic-nilai w-full border border-slate-200 rounded-lg p-2 focus:ring-2 focus:ring-emerald-500 font-bold text-xs bg-white">
+                    `;
+                    container.appendChild(div);
+                });
+            }
+
+            const nm = document.getElementById('nilaiModal');
+            if (nm) {
+                nm.classList.remove('hidden');
+                nm.style.display = 'flex';
+            }
         }
 
         function closeNilaiModal() {
-            document.getElementById('nilaiModal').classList.add('hidden');
+            const nm = document.getElementById('nilaiModal');
+            if (nm) {
+                nm.classList.add('hidden');
+                nm.style.display = 'none';
+            }
         }
 
         function saveNilaiModal() {
@@ -4157,20 +4556,50 @@ ON CONFLICT (id) DO NOTHING;`;
 
             const idx = parseInt(document.getElementById('modalNilaiIndex').value);
             const classData = getCurrentClassData();
-            const f = parseFloat(document.getElementById('inputFiqih').value) || 0;
-            const n = parseFloat(document.getElementById('inputNahwu').value) || 0;
-            const s = parseFloat(document.getElementById('inputShorof').value) || 0;
-            const a = parseFloat(document.getElementById('inputAkhlaq').value) || 0;
-            const h = parseFloat(document.getElementById('inputHadits').value) || 0;
-            const t = parseFloat(document.getElementById('inputTauhid').value) || 0;
+            if (!classData || !classData.santri || !classData.santri[idx]) return;
 
-            const avg = ((f + n + s + a + h + t) / 6).toFixed(1);
+            const inputs = document.querySelectorAll('.input-dynamic-nilai');
+            let total = 0;
+            let count = 0;
+            const mapelScores = {};
+            const legacyNilai = {};
+
+            inputs.forEach(inp => {
+                const mapelName = inp.getAttribute('data-mapel');
+                const val = parseFloat(inp.value) || 0;
+                mapelScores[mapelName] = val;
+                const legacyKey = mapelName.toLowerCase().replace(/[^a-z0-9]/g, '_');
+                legacyNilai[legacyKey] = val;
+                total += val;
+                count++;
+            });
+
+            const f = mapelScores['Fiqih'] || legacyNilai['fiqih'] || 80;
+            const n = mapelScores['Nahwu'] || legacyNilai['nahwu'] || 80;
+            const s = mapelScores['Shorof'] || legacyNilai['shorof'] || 80;
+            const a = mapelScores['Akhlaq & Adab'] || legacyNilai['akhlaq'] || 80;
+            const h = mapelScores['Hadits'] || legacyNilai['hadits'] || 80;
+            const t = mapelScores['Tauhid / Aqidah'] || legacyNilai['tauhid'] || 80;
+
+            const avg = count > 0 ? (total / count).toFixed(1) : "80.0";
             const isLulus = parseFloat(avg) >= 75.0;
 
-            classData.santri[idx].nilai = { fiqih: f, nahwu: n, shorof: s, akhlaq: a, hadits: h, tauhid: t, rata: avg, lulus: isLulus };
+            classData.santri[idx].nilai = {
+                ...legacyNilai,
+                fiqih: f,
+                nahwu: n,
+                shorof: s,
+                akhlaq: a,
+                hadits: h,
+                tauhid: t,
+                mapelScores: mapelScores,
+                rata: avg,
+                lulus: isLulus
+            };
+
             saveCurrentClassSantri(classData.santri);
             closeNilaiModal();
-            showToast(`Nilai ujian untuk ${classData.santri[idx].nama} berhasil diperbarui!`);
+            showToast(`Nilai seluruh mata pelajaran untuk ${classData.santri[idx].nama} berhasil diperbarui!`);
         }
 
         // =========================================================================
@@ -5007,6 +5436,8 @@ ON CONFLICT (id) DO NOTHING;`;
         function updateAllComponents() {
             updateUstadzSelector();
             updateKitabSelector();
+            updateAllMapelSelectors();
+            renderMapelManager();
             renderSantriTable();
             renderRekapMingguanTable();
             renderRekapBulananTable();
@@ -5038,6 +5469,8 @@ ON CONFLICT (id) DO NOTHING;`;
             renderAllClassSelectors();
             updateUstadzSelector();
             updateKitabSelector();
+            updateAllMapelSelectors();
+            renderMapelManager();
 
             // Check if there is an active session
             const savedSession = sessionStorage.getItem('siak_active_user');
