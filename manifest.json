@@ -1,0 +1,54 @@
+{
+  "name": "SIAK LMS - Sistem Informasi Administrasi Kelas",
+  "short_name": "SIAK LMS",
+  "description": "Sistem Informasi Administrasi Kelas & LMS Pesantren Salaf Modern",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#064e3b",
+  "theme_color": "#047857",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./app-icon.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Input Absensi",
+      "short_name": "Absensi",
+      "description": "Input presensi santri harian",
+      "url": "./index.html?tab=absensi",
+      "icons": [{ "src": "./icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Batas Pelajaran",
+      "short_name": "Jurnal",
+      "description": "Catat batas pelajaran dan jurnal mengajar",
+      "url": "./index.html?tab=jurnal",
+      "icons": [{ "src": "./icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Status Ujian",
+      "short_name": "Ujian",
+      "description": "Lihat status kelulusan dan nilai santri",
+      "url": "./index.html?tab=ujian",
+      "icons": [{ "src": "./icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

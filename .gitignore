@@ -1,0 +1,8 @@
+# Vercel & IDE
+.vercel
+.gemini
+*.log
+
+# Local Server Scripts
+server.ps1
+start-server.bat
