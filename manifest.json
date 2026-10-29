@@ -1,7 +1,7 @@
 {
-  "name": "SIAK LMS - Sistem Informasi Administrasi Kelas",
-  "short_name": "SIAK LMS",
-  "description": "Sistem Informasi Administrasi Kelas & LMS Pesantren Salaf Modern",
+  "name": "MA'HAD ALY - Sistem Informasi Administrasi Kelas",
+  "short_name": "MA'HAD ALY",
+  "description": "SIAK LMS Ma'had Aly Tafaqquh Madzhab Syafi'i Adzkiya Mansyaul Hikam",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
