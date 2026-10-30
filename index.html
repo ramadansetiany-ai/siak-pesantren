@@ -252,18 +252,18 @@
                         </div>
                     </div>
 
-                    <!-- User Profile & LOGOUT BUTTON -->
-                    <div class="flex items-center space-x-2 sm:space-x-3">
+                    <!-- DESKTOP & TABLET CONTROLS (TETAP SEPERTI AWAL UNTUK PC / LAPTOP) -->
+                    <div class="hidden md:flex items-center space-x-2.5">
                         <!-- Supabase Cloud Sync Status Badge & Force Sync Button -->
                         <div class="flex items-center space-x-1.5">
                             <button type="button" onclick="openSupabaseStatusModal()" class="flex items-center space-x-1.5 bg-emerald-950/70 hover:bg-emerald-900 border border-emerald-500/50 px-2.5 py-1.5 rounded-xl text-[11px] font-bold text-white shadow transition" title="Status Sinkronisasi Database Supabase Cloud">
                                 <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse" id="supabaseStatusDot"></span>
-                                <span class="hidden sm:inline" id="supabaseStatusText">Supabase Sync</span>
+                                <span id="supabaseStatusText">Supabase Sync</span>
                                 <i class="fa-solid fa-cloud text-emerald-400 text-xs"></i>
                             </button>
                             <button type="button" onclick="forceSyncAllData()" class="flex items-center space-x-1.5 bg-emerald-700/80 hover:bg-emerald-600 border border-emerald-400/50 px-2.5 py-1.5 rounded-xl text-[11px] font-bold text-white shadow transition" title="Sinkronkan seluruh data ke Cloud Supabase agar tampil di HP & perangkat lain">
                                 <i class="fa-solid fa-arrows-rotate text-emerald-200"></i>
-                                <span class="hidden md:inline">Sinkronkan Cloud</span>
+                                <span>Sinkronkan Cloud</span>
                             </button>
                         </div>
 
@@ -272,7 +272,7 @@
                             <div id="userAvatarContainer" class="w-8 h-8 rounded-full bg-emerald-600 border border-emerald-400 flex items-center justify-center font-bold text-sm shadow-inner transition-colors group-hover:scale-105">
                                 <span id="userAvatar">A</span>
                             </div>
-                            <div class="hidden sm:block text-left">
+                            <div class="text-left">
                                 <div class="flex items-center gap-1.5">
                                     <p id="userName" class="text-xs font-bold leading-none text-white group-hover:text-emerald-200 transition">Editor / Administrator</p>
                                     <i class="fa-solid fa-pen text-[9px] text-emerald-300 opacity-70 group-hover:opacity-100 rbac-staff-only"></i>
@@ -284,31 +284,67 @@
                         <!-- TOMBOL PENGATURAN AKUN (SETTINGS - KHUSUS STAFF / ADMIN ONLY) -->
                         <button type="button" onclick="openEditProfilSayaModal()" id="btnNavPengaturan" class="rbac-staff-only bg-emerald-900/60 hover:bg-emerald-800 text-white px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center space-x-1.5 shadow transition border border-emerald-600/50 cursor-pointer" title="Pengaturan Akun & Kata Sandi Admin">
                             <i class="fa-solid fa-gear text-emerald-300"></i>
-                            <span class="hidden sm:inline">Pengaturan</span>
+                            <span>Pengaturan</span>
                         </button>
 
                         <!-- TOMBOL RESET KOSONG (STAFF/EDITOR ONLY) -->
                         <button onclick="confirmResetDatabase()" class="rbac-staff-only bg-amber-600/80 hover:bg-amber-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow transition border border-amber-500/50" title="Kosongkan seluruh data untuk mulai dari awal">
                             <i class="fa-solid fa-arrows-rotate"></i>
-                            <span class="hidden sm:inline">Reset Kosong</span>
+                            <span>Reset Kosong</span>
                         </button>
 
                         <!-- TOMBOL KELUAR / LOGOUT RESMI -->
-                        <button onclick="handleLogout()" class="bg-rose-700/80 hover:bg-rose-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow transition border border-rose-500/50" title="Keluar dari akun">
+                        <button onclick="handleLogout()" class="bg-rose-700/80 hover:bg-rose-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow transition border border-rose-500/50 cursor-pointer" title="Keluar dari akun">
                             <i class="fa-solid fa-right-from-bracket"></i>
-                            <span class="hidden sm:inline">Keluar</span>
+                            <span>Keluar</span>
                         </button>
+                    </div>
+
+                    <!-- MOBILE COMPACT HEADER (BERSIH & ESTETIK DI HP) -->
+                    <div class="flex md:hidden items-center space-x-2">
+                        <!-- Cloud Sync Dot & Modal Trigger -->
+                        <button type="button" onclick="openSupabaseStatusModal()" class="w-8 h-8 rounded-xl bg-emerald-950/60 border border-emerald-600/50 flex items-center justify-center text-emerald-300 relative shadow-inner cursor-pointer" title="Status Cloud Supabase">
+                            <i class="fa-solid fa-cloud text-xs"></i>
+                            <span class="w-2 h-2 rounded-full bg-amber-400 absolute top-1 right-1" id="supabaseStatusDotMobile"></span>
+                        </button>
+
+                        <!-- Mobile Avatar & Role Pill -->
+                        <div onclick="if(currentUser && currentUser.role==='staff') openEditProfilSayaModal()" class="flex items-center space-x-1.5 bg-emerald-900/70 border border-emerald-600/50 px-2 py-1 rounded-xl shadow-xs cursor-pointer active:scale-95 transition">
+                            <div class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shadow-inner">
+                                <span id="userAvatarMobile">A</span>
+                            </div>
+                            <span id="userNameMobile" class="text-[11px] font-bold text-white max-w-[85px] truncate">Admin</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </header>
 
         <!-- Main Body Workspace -->
-        <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 flex flex-col md:flex-row gap-6">
+        <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 pb-28 md:pb-16 flex flex-col md:flex-row gap-6">
 
-            <!-- Sidebar Navigation -->
-            <aside id="sidebarNav" class="w-full md:w-64 shrink-0 hidden md:block">
+            <!-- Mobile Sidebar Backdrop Overlay -->
+            <div id="sidebarBackdrop" onclick="toggleMobileSidebar()" class="hidden md:hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-40 transition-opacity"></div>
+
+            <!-- Sidebar Navigation (Desktop: Left Static Sidebar, Mobile: Slide-over Drawer) -->
+            <aside id="sidebarNav" class="w-72 md:w-64 shrink-0 hidden md:block fixed md:static inset-y-0 left-0 z-50 md:z-auto bg-white md:bg-transparent shadow-2xl md:shadow-none overflow-y-auto p-4 md:p-0">
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200/80 p-4 sticky top-22">
+                    <!-- Mobile Drawer Header -->
+                    <div class="md:hidden flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-sm">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-xs">Menu Akademik</h3>
+                                <p class="text-[10px] text-slate-400">Pilih menu navigasi</p>
+                            </div>
+                        </div>
+                        <button type="button" onclick="toggleMobileSidebar()" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 cursor-pointer">
+                            <i class="fa-solid fa-xmark text-lg"></i>
+                        </button>
+                    </div>
+
                     <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-3">
                         Menu Utama
                     </div>
@@ -1771,7 +1807,7 @@
         <!-- ========================================================================= -->
         <!-- FLOATING STICKY ACTION BAR (OPERASIONAL HARIAN CEPAT DI MOBILE & PC)      -->
         <!-- ========================================================================= -->
-        <div id="stickyAttendanceBar" class="hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-2.5 shadow-[0_-4px_25px_rgba(0,0,0,0.08)]">
+        <div id="stickyAttendanceBar" class="hidden fixed bottom-[58px] md:bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-2.5 shadow-[0_-4px_25px_rgba(0,0,0,0.08)]">
             <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
                 <div class="flex items-center space-x-2 text-xs">
                     <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -1791,6 +1827,13 @@
                 </div>
             </div>
         </div>
+
+        <!-- ========================================================================= -->
+        <!-- MOBILE BOTTOM NAVIGATION BAR (Masa Kini / Seperti Aplikasi Pendidikan)      -->
+        <!-- ========================================================================= -->
+        <nav id="mobileBottomNav" class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] px-2 py-1 flex items-center justify-around transition-all select-none">
+            <!-- Diisi secara dinamis oleh JavaScript renderMobileBottomNav(user) -->
+        </nav>
     </div>
 
     <!-- ============================================== -->
@@ -2366,37 +2409,49 @@
         </div>
     </div>
 
-    <!-- =================================================== -->
-    <!-- MODAL PENGATURAN AKUN ADMINISTRATOR (KHUSUS ADMIN)  -->
-    <!-- =================================================== -->
-    <div id="modalEditProfilSaya" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 my-8">
+    <!-- ========================================================================= -->
+    <!-- MODAL PUSAT PENGATURAN SISTEM & ADMINISTRATOR (LENGKAP DI MOBILE & PC)     -->
+    <!-- ========================================================================= -->
+    <div id="modalEditProfilSaya" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl space-y-4 my-6 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <!-- Modal Header -->
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div class="flex items-center space-x-2.5">
-                    <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
-                        <i class="fa-solid fa-user-shield"></i>
+                    <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-base shadow-xs">
+                        <i class="fa-solid fa-sliders"></i>
                     </div>
                     <div>
-                        <h3 class="text-base font-bold text-slate-800">Pengaturan Akun Admin</h3>
-                        <p class="text-[11px] text-slate-400">Khusus Administrator untuk mengelola kata sandi & profil</p>
+                        <h3 class="text-base font-bold text-slate-800">Pusat Pengaturan Sistem</h3>
+                        <p class="text-[11px] text-slate-400">Pengaturan profil admin, cloud database, & pemeliharaan</p>
                     </div>
                 </div>
-                <button type="button" onclick="closeEditProfilSayaModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button type="button" onclick="closeEditProfilSayaModal()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition cursor-pointer">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
             </div>
 
+            <!-- BAGIAN 1: PROFIL & KEAMANAN AKUN ADMIN -->
             <form id="formEditProfilSaya" onsubmit="handleSaveEditProfilSaya(event)" class="space-y-3.5 text-xs">
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-slate-800 flex items-center gap-1.5 text-xs">
+                        <i class="fa-solid fa-user-shield text-emerald-600"></i>
+                        <span>Profil & Keamanan Administrator</span>
+                    </span>
+                    <span class="text-[10px] bg-emerald-50 text-emerald-700 font-semibold px-2 py-0.5 rounded-full border border-emerald-200">Akses Penuh</span>
+                </div>
+
                 <!-- Info ID Akun & Role (Read-only) -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-slate-50 border border-slate-200/80 rounded-xl">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl">
                     <div>
-                        <label class="block font-semibold text-slate-600 mb-1">ID Pengguna (Username):</label>
+                        <label class="block font-semibold text-slate-600 mb-1 text-[11px]">ID Pengguna (Username):</label>
                         <div class="relative">
-                            <input type="text" id="editProfilId" disabled class="w-full bg-slate-100 text-slate-500 font-mono font-bold text-xs border border-slate-200 rounded-lg px-3 py-2 cursor-not-allowed">
-                            <i class="fa-solid fa-lock absolute right-3 top-2.5 text-slate-400 text-xs"></i>
+                            <input type="text" id="editProfilId" disabled class="w-full bg-slate-100 text-slate-500 font-mono font-bold text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 cursor-not-allowed">
+                            <i class="fa-solid fa-lock absolute right-2.5 top-2 text-slate-400 text-xs"></i>
                         </div>
                     </div>
                     <div>
-                        <label class="block font-semibold text-slate-600 mb-1">Status Hak Akses:</label>
-                        <input type="text" id="editProfilRoleLabel" disabled class="w-full bg-slate-100 text-slate-500 font-bold text-xs border border-slate-200 rounded-lg px-3 py-2 cursor-not-allowed">
+                        <label class="block font-semibold text-slate-600 mb-1 text-[11px]">Hak Akses:</label>
+                        <input type="text" id="editProfilRoleLabel" disabled class="w-full bg-slate-100 text-slate-500 font-bold text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 cursor-not-allowed">
                     </div>
                 </div>
 
@@ -2407,46 +2462,115 @@
                 </div>
 
                 <!-- Kontak WhatsApp & Alamat -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Nomor WhatsApp / HP:</label>
                         <div class="relative">
-                            <input type="text" id="editProfilHp" placeholder="Contoh: 08123456789" class="w-full border border-slate-200 rounded-lg pl-8 pr-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 font-mono focus:outline-none">
-                            <i class="fa-brands fa-whatsapp absolute left-2.5 top-2.5 text-emerald-600 text-xs"></i>
+                            <input type="text" id="editProfilHp" placeholder="08123456789" class="w-full border border-slate-200 rounded-lg pl-8 pr-3 py-1.5 text-xs focus:ring-2 focus:ring-emerald-500 font-mono focus:outline-none">
+                            <i class="fa-brands fa-whatsapp absolute left-2.5 top-2 text-emerald-600 text-xs"></i>
                         </div>
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Domisili / Keterangan:</label>
                         <div class="relative">
-                            <input type="text" id="editProfilAlamat" placeholder="Contoh: Kantor Administrasi Pesantren" class="w-full border border-slate-200 rounded-lg pl-8 pr-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-                            <i class="fa-solid fa-location-dot absolute left-2.5 top-2.5 text-slate-400 text-xs"></i>
+                            <input type="text" id="editProfilAlamat" placeholder="Kantor Pondok Pesantren" class="w-full border border-slate-200 rounded-lg pl-8 pr-3 py-1.5 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <i class="fa-solid fa-location-dot absolute left-2.5 top-2 text-slate-400 text-xs"></i>
                         </div>
                     </div>
                 </div>
 
                 <!-- Ganti Password Pribadi Admin -->
-                <div class="p-3 bg-amber-50/70 border border-amber-200/80 rounded-xl space-y-1.5">
+                <div class="p-2.5 bg-amber-50/70 border border-amber-200/80 rounded-xl space-y-1">
                     <div class="flex items-center justify-between">
-                        <label class="block font-semibold text-amber-900"><i class="fa-solid fa-key mr-1 text-amber-600"></i> Ubah Kata Sandi Admin (Opsional):</label>
-                        <span class="text-[10px] text-amber-700">Kosongkan jika tidak diubah</span>
+                        <label class="block font-semibold text-amber-900 text-[11px]"><i class="fa-solid fa-key mr-1 text-amber-600"></i> Ubah Kata Sandi Admin (Opsional):</label>
+                        <span class="text-[10px] text-amber-700">Kosongkan jika tetap</span>
                     </div>
                     <div class="relative">
-                        <input type="password" id="editProfilPassword" placeholder="Tulis kata sandi baru..." class="w-full bg-white border border-slate-200 rounded-lg pl-3 pr-10 py-2 text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none">
-                        <button type="button" onclick="toggleEditProfilPassword()" class="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600 focus:outline-none p-0.5 cursor-pointer" title="Lihat / Sembunyikan Kata Sandi">
+                        <input type="password" id="editProfilPassword" placeholder="Tulis kata sandi baru admin..." class="w-full bg-white border border-slate-200 rounded-lg pl-3 pr-10 py-1.5 text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                        <button type="button" onclick="toggleEditProfilPassword()" class="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600 focus:outline-none p-0.5 cursor-pointer" title="Lihat Sandi">
                             <i id="toggleEditProfilPasswordIcon" class="fa-solid fa-eye text-xs"></i>
                         </button>
                     </div>
-                    <p class="text-[10px] text-amber-700 italic">*Gunakan kata sandi yang aman untuk akun Administrator.</p>
                 </div>
 
-                <div class="flex justify-end items-center space-x-2 pt-3 border-t border-slate-100">
-                    <button type="button" onclick="closeEditProfilSayaModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold text-xs transition cursor-pointer">Batal</button>
-                    <button type="submit" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-md hover:shadow-lg text-xs transition flex items-center gap-1.5 cursor-pointer">
+                <div class="flex justify-end pt-1">
+                    <button type="submit" class="w-full sm:w-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-sm hover:shadow text-xs transition flex items-center justify-center gap-1.5 cursor-pointer">
                         <i class="fa-solid fa-floppy-disk"></i>
-                        <span>Simpan Pengaturan Admin</span>
+                        <span>Simpan Perubahan Admin</span>
                     </button>
                 </div>
             </form>
+
+            <hr class="border-slate-100 my-2">
+
+            <!-- BAGIAN 2: SINKRONISASI CLOUD DATABASE (SUPABASE) -->
+            <div class="space-y-2 text-xs">
+                <span class="font-bold text-slate-800 flex items-center gap-1.5 text-xs">
+                    <i class="fa-solid fa-cloud text-blue-600"></i>
+                    <span>Database & Sinkronisasi Cloud (Supabase)</span>
+                </span>
+                <div class="p-3 bg-slate-50 border border-slate-200/80 rounded-xl space-y-2">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500" id="settingsModalCloudDot"></span>
+                            <span class="font-bold text-slate-700 text-xs" id="settingsModalCloudText">Supabase Cloud Online</span>
+                        </div>
+                        <button type="button" onclick="openSupabaseStatusModal()" class="text-[11px] text-blue-600 hover:text-blue-800 font-semibold underline cursor-pointer">
+                            Lihat Detail Tabel
+                        </button>
+                    </div>
+                    <p class="text-[11px] text-slate-500 leading-relaxed">
+                        Data otomatis tersinkronisasi secara real-time ke cloud sehingga dapat diakses bersamaan melalui PC, Laptop, dan HP.
+                    </p>
+                    <button type="button" onclick="forceSyncAllData()" class="w-full py-2 px-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer text-xs">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                        <span>Sinkronkan Seluruh Data Sekarang</span>
+                    </button>
+                </div>
+            </div>
+
+            <hr class="border-slate-100 my-2">
+
+            <!-- BAGIAN 3: PEMELIHARAAN DATABASE & SESI KELUAR -->
+            <div class="space-y-2 text-xs">
+                <span class="font-bold text-slate-800 flex items-center gap-1.5 text-xs">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-600"></i>
+                    <span>Pemeliharaan Sistem & Tindakan Lanjut</span>
+                </span>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <!-- Reset Kosongkan Database -->
+                    <div class="p-3 bg-amber-50/60 border border-amber-200 rounded-xl flex flex-col justify-between">
+                        <div class="mb-2">
+                            <p class="font-bold text-amber-900 text-xs mb-0.5">Reset Database</p>
+                            <p class="text-[10px] text-amber-700 leading-tight">Kosongkan seluruh data untuk memulai tahun ajaran baru dari nol.</p>
+                        </div>
+                        <button type="button" onclick="confirmResetDatabase()" class="w-full py-1.5 px-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg text-xs transition flex items-center justify-center gap-1 cursor-pointer">
+                            <i class="fa-solid fa-arrows-rotate text-xs"></i>
+                            <span>Reset Kosong</span>
+                        </button>
+                    </div>
+
+                    <!-- Keluar Akun (Logout) -->
+                    <div class="p-3 bg-rose-50/60 border border-rose-200 rounded-xl flex flex-col justify-between">
+                        <div class="mb-2">
+                            <p class="font-bold text-rose-900 text-xs mb-0.5">Keluar Akun</p>
+                            <p class="text-[10px] text-rose-700 leading-tight">Akhiri sesi login ini secara aman dari perangkat ini.</p>
+                        </div>
+                        <button type="button" onclick="handleLogout()" class="w-full py-1.5 px-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg text-xs transition flex items-center justify-center gap-1 cursor-pointer">
+                            <i class="fa-solid fa-right-from-bracket text-xs"></i>
+                            <span>Keluar (Logout)</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="pt-2 border-t border-slate-100 flex justify-end">
+                <button type="button" onclick="closeEditProfilSayaModal()" class="w-full sm:w-auto px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-xs transition cursor-pointer">
+                    Tutup Pengaturan
+                </button>
+            </div>
         </div>
     </div>
 
@@ -2833,12 +2957,18 @@
         function updateSupabaseUI(status, label) {
             supabaseSyncStatus = status;
             const dot = document.getElementById('supabaseStatusDot');
+            const dotMobile = document.getElementById('supabaseStatusDotMobile');
             const text = document.getElementById('supabaseStatusText');
             const modalStatus = document.getElementById('modalSupabaseStatusInfo');
+            const modalCloudDot = document.getElementById('settingsModalCloudDot');
+            const modalCloudText = document.getElementById('settingsModalCloudText');
 
             if (status === 'connected') {
                 if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-400";
+                if (dotMobile) dotMobile.className = "w-2 h-2 rounded-full bg-emerald-400";
                 if (text) text.textContent = label || "Cloud Terhubung";
+                if (modalCloudDot) modalCloudDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500";
+                if (modalCloudText) modalCloudText.textContent = "Supabase Cloud Online & Terhubung";
                 if (modalStatus) {
                     modalStatus.className = "p-3 bg-emerald-50 border border-emerald-300 rounded-xl text-emerald-900 text-xs";
                     modalStatus.innerHTML = `
@@ -2851,7 +2981,10 @@
                 }
             } else if (status === 'pending_schema') {
                 if (dot) dot.className = "w-2 h-2 rounded-full bg-amber-400 animate-pulse";
+                if (dotMobile) dotMobile.className = "w-2 h-2 rounded-full bg-amber-400 animate-pulse";
                 if (text) text.textContent = label || "Perlu Jalankan SQL";
+                if (modalCloudDot) modalCloudDot.className = "w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse";
+                if (modalCloudText) modalCloudText.textContent = "Tabel Database Belum Dibuat";
                 if (modalStatus) {
                     modalStatus.className = "p-3 bg-amber-50 border border-amber-300 rounded-xl text-amber-900 text-xs";
                     modalStatus.innerHTML = `
@@ -2869,10 +3002,16 @@
                 }
             } else if (status === 'connecting') {
                 if (dot) dot.className = "w-2 h-2 rounded-full bg-blue-400 animate-pulse";
+                if (dotMobile) dotMobile.className = "w-2 h-2 rounded-full bg-blue-400 animate-pulse";
                 if (text) text.textContent = label || "Menghubungkan...";
+                if (modalCloudDot) modalCloudDot.className = "w-2.5 h-2.5 rounded-full bg-blue-400 animate-pulse";
+                if (modalCloudText) modalCloudText.textContent = "Menghubungkan ke Cloud...";
             } else {
                 if (dot) dot.className = "w-2 h-2 rounded-full bg-slate-400";
+                if (dotMobile) dotMobile.className = "w-2 h-2 rounded-full bg-slate-400";
                 if (text) text.textContent = label || "Mode Lokal (Offline)";
+                if (modalCloudDot) modalCloudDot.className = "w-2.5 h-2.5 rounded-full bg-slate-400";
+                if (modalCloudText) modalCloudText.textContent = "Supabase Cloud Offline / Mode Lokal";
                 if (modalStatus) {
                     modalStatus.className = "p-3 bg-slate-100 border border-slate-300 rounded-xl text-slate-700 text-xs";
                     modalStatus.innerHTML = `
@@ -4290,6 +4429,15 @@ ON CONFLICT (id) DO NOTHING;`;
                 elBadge.textContent = user.roleLabel || (user.role === 'staff' ? 'Staff / Full Control' : user.role === 'ustadz' ? 'Ustadz / Pengajar' : 'Santri / Read-Only');
             }
 
+            // Mobile Header Avatar & Compact Name
+            const elAvatarMobile = document.getElementById('userAvatarMobile');
+            const elNameMobile = document.getElementById('userNameMobile');
+            if (elAvatarMobile) elAvatarMobile.textContent = user.avatar || (user.nama ? user.nama.charAt(0).toUpperCase() : 'U');
+            if (elNameMobile) {
+                const shortName = user.nama ? user.nama.split(' ')[0] : 'User';
+                elNameMobile.textContent = shortName;
+            }
+
             // 2. Dashboard Utama Banner
             const elDashWelcome = document.getElementById('dashWelcome');
             const elDashRoleBadge = document.getElementById('dashRoleBadge');
@@ -4572,6 +4720,9 @@ ON CONFLICT (id) DO NOTHING;`;
                 switchTab('profil-santri');
                 showToast(`Ahlan wa Sahlan, ${user.nama} (Santri)`);
             }
+
+            // Render Mobile Bottom Navigation Bar khusus peran ini
+            renderMobileBottomNav(user);
 
             // Sync all view tables
             updateAllComponents();
@@ -6887,8 +7038,83 @@ ON CONFLICT (id) DO NOTHING;`;
         }
 
         // =========================================================================
-        // 14. NAVIGATION & TABS
+        // 14. NAVIGATION & TABS & MOBILE BOTTOM NAVIGATION SYSTEM
         // =========================================================================
+        let currentActiveBottomTab = '';
+
+        function renderMobileBottomNav(user) {
+            const nav = document.getElementById('mobileBottomNav');
+            if (!nav) return;
+            if (!user) {
+                nav.innerHTML = '';
+                return;
+            }
+
+            let tabs = [];
+            if (user.role === 'staff') {
+                tabs = [
+                    { id: 'dashboard', label: 'Beranda', icon: 'fa-solid fa-house', action: "switchTab('dashboard')" },
+                    { id: 'absensi', label: 'Absensi', icon: 'fa-solid fa-clipboard-user', action: "switchTab('absensi')" },
+                    { id: 'jurnal', label: 'Jurnal', icon: 'fa-solid fa-book-open-reader', action: "switchTab('jurnal')" },
+                    { id: 'menu-drawer', label: 'Menu Lain', icon: 'fa-solid fa-bars', action: "toggleMobileSidebar()" },
+                    { id: 'pengaturan', label: 'Pengaturan', icon: 'fa-solid fa-gear', action: "openEditProfilSayaModal()" }
+                ];
+            } else if (user.role === 'ustadz') {
+                tabs = [
+                    { id: 'profil-ustadz', label: 'Profil', icon: 'fa-solid fa-id-card', action: "switchTab('profil-ustadz')" },
+                    { id: 'absensi', label: 'Absensi', icon: 'fa-solid fa-clipboard-user', action: "switchTab('absensi')" },
+                    { id: 'jurnal', label: 'Jurnal', icon: 'fa-solid fa-book-open-reader', action: "switchTab('jurnal')" },
+                    { id: 'ujian', label: 'Nilai', icon: 'fa-solid fa-award', action: "switchTab('ujian')" },
+                    { id: 'menu-drawer', label: 'Menu Lain', icon: 'fa-solid fa-bars', action: "toggleMobileSidebar()" }
+                ];
+            } else if (user.role === 'santri') {
+                tabs = [
+                    { id: 'profil-santri', label: 'Biodata', icon: 'fa-solid fa-id-card', action: "switchTab('profil-santri')" },
+                    { id: 'absensi', label: 'Absensi', icon: 'fa-solid fa-clipboard-check', action: "switchTab('absensi')" },
+                    { id: 'jurnal', label: 'Tugas', icon: 'fa-solid fa-book', action: "switchTab('jurnal')" },
+                    { id: 'ujian', label: 'Raport', icon: 'fa-solid fa-file-lines', action: "switchTab('ujian')" },
+                    { id: 'logout', label: 'Keluar', icon: 'fa-solid fa-right-from-bracket', action: "handleLogout()" }
+                ];
+            }
+
+            nav.innerHTML = tabs.map(tab => `
+                <button type="button" 
+                    id="bottomNavBtn_${tab.id}" 
+                    onclick="${tab.action}" 
+                    class="bottom-nav-item flex-1 py-1 px-1 flex flex-col items-center justify-center text-slate-500 hover:text-emerald-700 transition-all cursor-pointer relative group">
+                    <div class="bottom-nav-icon-box w-7 h-7 flex items-center justify-center rounded-xl transition-all mb-0.5">
+                        <i class="${tab.icon} text-sm sm:text-base transition-transform group-active:scale-90"></i>
+                    </div>
+                    <span class="text-[10px] font-semibold leading-none tracking-tight transition-colors bottom-nav-label">${tab.label}</span>
+                </button>
+            `).join('');
+
+            const initialActive = user.role === 'staff' ? 'dashboard' : user.role === 'ustadz' ? 'profil-ustadz' : 'profil-santri';
+            updateBottomNavActive(currentActiveBottomTab || initialActive);
+        }
+
+        function updateBottomNavActive(tabId) {
+            currentActiveBottomTab = tabId;
+            document.querySelectorAll('.bottom-nav-item').forEach(btn => {
+                btn.classList.remove('text-emerald-700', 'font-bold');
+                btn.classList.add('text-slate-500');
+                const iconBox = btn.querySelector('.bottom-nav-icon-box');
+                if (iconBox) {
+                    iconBox.className = "bottom-nav-icon-box w-7 h-7 flex items-center justify-center rounded-xl transition-all mb-0.5 text-slate-500";
+                }
+            });
+
+            const activeBtn = document.getElementById(`bottomNavBtn_${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-500');
+                activeBtn.classList.add('text-emerald-700', 'font-bold');
+                const iconBox = activeBtn.querySelector('.bottom-nav-icon-box');
+                if (iconBox) {
+                    iconBox.className = "bottom-nav-icon-box w-7 h-7 flex items-center justify-center rounded-xl transition-all mb-0.5 bg-emerald-100 text-emerald-700 shadow-xs";
+                }
+            }
+        }
+
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             const target = document.getElementById(`tab-${tabId}`);
@@ -6903,10 +7129,11 @@ ON CONFLICT (id) DO NOTHING;`;
                 activeBtn.className = "nav-btn w-full flex items-center space-x-3 px-3 py-2.5 text-sm font-medium rounded-lg text-emerald-700 bg-emerald-50 transition-colors font-semibold";
             }
 
-            const sidebar = document.getElementById('sidebarNav');
-            if (window.innerWidth < 768 && sidebar && !sidebar.classList.contains('hidden')) {
-                sidebar.classList.add('hidden');
-            }
+            // Tutup drawer sidebar mobile dan backdrop bila terbuka
+            toggleMobileSidebar(false);
+
+            // Perbarui tombol aktif di Bottom Navigation Mobile
+            updateBottomNavActive(tabId);
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -6927,8 +7154,18 @@ ON CONFLICT (id) DO NOTHING;`;
             }, 60);
         }
 
-        function toggleMobileSidebar() {
-            document.getElementById('sidebarNav').classList.toggle('hidden');
+        function toggleMobileSidebar(force) {
+            const sidebar = document.getElementById('sidebarNav');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            if (!sidebar) return;
+            const shouldOpen = (typeof force === 'boolean') ? force : sidebar.classList.contains('hidden');
+            if (shouldOpen) {
+                sidebar.classList.remove('hidden');
+                if (backdrop) backdrop.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('hidden');
+                if (backdrop) backdrop.classList.add('hidden');
+            }
         }
 
         function showToast(msg) {
