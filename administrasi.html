@@ -3166,6 +3166,10 @@
                         renderJurnalList();
                         renderDashboardJurnal();
                     }
+                } catch (jurErr) {
+                    console.warn("Gagal sinkronkan siak_jurnal:", jurErr);
+                }
+
                 // 5. Sinkronisasi Log Presensi / Kehadiran Sesi (siak_attendance)
                 try {
                     const { data: attData, error: attErr } = await supabaseClient.from('siak_attendance').select('*').limit(300);
@@ -4736,9 +4740,10 @@ ON CONFLICT (id) DO NOTHING;`;
             const pwdInput = document.getElementById('loginPassword').value.trim();
             const accounts = getAccounts();
 
-            // Prioritas Akun Sementara Admin: Username adminn (atau admin) dengan Password admin
-            if (selectedLoginRole === 'staff' && (idInput.toLowerCase() === 'adminn' || idInput.toLowerCase() === 'admin') && pwdInput === 'admin') {
-                let staffAcc = accounts.find(a => a.id && a.id.toLowerCase() === idInput.toLowerCase() && a.role === 'staff');
+            // 1. Prioritas Utama: Admin / Staff Login (admin atau adminn dengan password admin atau 123456)
+            // Bisa login langsung tanpa harus memikirkan tab peran yang aktif
+            if ((idInput.toLowerCase() === 'adminn' || idInput.toLowerCase() === 'admin') && (pwdInput === 'admin' || pwdInput === '123456')) {
+                let staffAcc = accounts.find(a => a.id && (a.id.toLowerCase() === 'admin' || a.id.toLowerCase() === 'adminn') && a.role === 'staff');
                 if (!staffAcc) {
                     staffAcc = {
                         id: idInput.toLowerCase(),
@@ -4752,10 +4757,11 @@ ON CONFLICT (id) DO NOTHING;`;
                     };
                     accounts.unshift(staffAcc);
                 } else {
-                    staffAcc.password = 'admin';
+                    staffAcc.password = pwdInput;
                 }
                 saveAccounts(accounts);
                 currentUser = staffAcc;
+                selectedLoginRole = 'staff';
                 sessionStorage.setItem('siak_active_user', JSON.stringify(currentUser));
                 document.getElementById('loginScreen').classList.add('hidden');
                 document.getElementById('appContainer').classList.remove('hidden');
@@ -4763,15 +4769,27 @@ ON CONFLICT (id) DO NOTHING;`;
                 return;
             }
 
-            // Find matching user with same ID, Password, and Role
+            // 2. Cari akun yang cocok berdasarkan ID, Password, dan Peran yang dipilih
             let user = accounts.find(a => 
                 (a.id.toLowerCase() === idInput.toLowerCase() || (a.nis && a.nis === idInput) || (a.nip && a.nip === idInput) || (a.nama && a.nama.toLowerCase() === idInput.toLowerCase())) &&
                 a.password === pwdInput &&
                 a.role === selectedLoginRole
             );
 
-            // Fallback untuk Santri: cari di seluruh data kelas jika akun belum ada di tabel akun
-            if (!user && selectedLoginRole === 'santri') {
+            // 3. Smart Fallback: Jika tab peran belum sesuai, periksa apakah akun cocok di peran lain
+            if (!user) {
+                const altUser = accounts.find(a => 
+                    (a.id.toLowerCase() === idInput.toLowerCase() || (a.nis && a.nis === idInput) || (a.nip && a.nip === idInput) || (a.nama && a.nama.toLowerCase() === idInput.toLowerCase())) &&
+                    a.password === pwdInput
+                );
+                if (altUser) {
+                    user = altUser;
+                    selectedLoginRole = altUser.role;
+                }
+            }
+
+            // 4. Fallback untuk Santri: cari di seluruh data kelas jika akun santri belum terdaftar di tabel akun
+            if (!user) {
                 const allClasses = getAllClassesData();
                 for (const [classKey, classObj] of Object.entries(allClasses)) {
                     const foundSantri = (classObj.santri || []).find(s => 
@@ -4792,6 +4810,7 @@ ON CONFLICT (id) DO NOTHING;`;
                                 avatar: foundSantri.nama ? foundSantri.nama.charAt(0).toUpperCase() : 'S',
                                 password: pwdInput
                             };
+                            selectedLoginRole = 'santri';
                             break;
                         }
                     }
@@ -4801,7 +4820,7 @@ ON CONFLICT (id) DO NOTHING;`;
             if (!user) {
                 const errBox = document.getElementById('loginErrorAlert');
                 const errMsg = document.getElementById('loginErrorMsg');
-                errMsg.textContent = `ID atau kata sandi tidak cocok untuk peran ${selectedLoginRole.toUpperCase()}! Pastikan peran yang dipilih sesuai.`;
+                errMsg.textContent = `ID Pengguna atau Password salah! Pastikan huruf besar/kecil sesuai.`;
                 errBox.classList.remove('hidden');
                 return;
             }
