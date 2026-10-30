@@ -60,7 +60,17 @@ CREATE TABLE IF NOT EXISTS public.siak_kitab (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 5. TABEL PENGGUNA & HAK AKSES (siak_accounts)
+-- 5. TABEL MATA PELAJARAN KUSTOM (siak_mapel)
+CREATE TABLE IF NOT EXISTS public.siak_mapel (
+    id TEXT PRIMARY KEY,
+    nama TEXT NOT NULL,
+    kategori TEXT,
+    kitab TEXT,
+    pengampu TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 6. TABEL PENGGUNA & HAK AKSES (siak_accounts)
 CREATE TABLE IF NOT EXISTS public.siak_accounts (
     id TEXT PRIMARY KEY,
     nama TEXT NOT NULL,
@@ -85,6 +95,7 @@ ALTER TABLE public.siak_classes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.siak_attendance ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.siak_jurnal ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.siak_kitab ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.siak_mapel ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.siak_accounts ENABLE ROW LEVEL SECURITY;
 
 -- Izinkan Read & Write (Select, Insert, Update, Delete) untuk pengguna Anon
@@ -94,12 +105,14 @@ BEGIN
     DROP POLICY IF EXISTS "Public Full Access siak_attendance" ON public.siak_attendance;
     DROP POLICY IF EXISTS "Public Full Access siak_jurnal" ON public.siak_jurnal;
     DROP POLICY IF EXISTS "Public Full Access siak_kitab" ON public.siak_kitab;
+    DROP POLICY IF EXISTS "Public Full Access siak_mapel" ON public.siak_mapel;
     DROP POLICY IF EXISTS "Public Full Access siak_accounts" ON public.siak_accounts;
 
     CREATE POLICY "Public Full Access siak_classes" ON public.siak_classes FOR ALL USING (true) WITH CHECK (true);
     CREATE POLICY "Public Full Access siak_attendance" ON public.siak_attendance FOR ALL USING (true) WITH CHECK (true);
     CREATE POLICY "Public Full Access siak_jurnal" ON public.siak_jurnal FOR ALL USING (true) WITH CHECK (true);
     CREATE POLICY "Public Full Access siak_kitab" ON public.siak_kitab FOR ALL USING (true) WITH CHECK (true);
+    CREATE POLICY "Public Full Access siak_mapel" ON public.siak_mapel FOR ALL USING (true) WITH CHECK (true);
     CREATE POLICY "Public Full Access siak_accounts" ON public.siak_accounts FOR ALL USING (true) WITH CHECK (true);
 END $$;
 

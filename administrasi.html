@@ -261,12 +261,18 @@
 
                     <!-- User Profile & LOGOUT BUTTON -->
                     <div class="flex items-center space-x-2 sm:space-x-3">
-                        <!-- Supabase Cloud Sync Status Badge -->
-                        <button type="button" onclick="openSupabaseStatusModal()" class="flex items-center space-x-1.5 bg-emerald-950/70 hover:bg-emerald-900 border border-emerald-500/50 px-2.5 py-1.5 rounded-xl text-[11px] font-bold text-white shadow transition" title="Status Sinkronisasi Database Supabase Cloud">
-                            <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse" id="supabaseStatusDot"></span>
-                            <span class="hidden sm:inline" id="supabaseStatusText">Supabase Sync</span>
-                            <i class="fa-solid fa-cloud text-emerald-400 text-xs"></i>
-                        </button>
+                        <!-- Supabase Cloud Sync Status Badge & Force Sync Button -->
+                        <div class="flex items-center space-x-1.5">
+                            <button type="button" onclick="openSupabaseStatusModal()" class="flex items-center space-x-1.5 bg-emerald-950/70 hover:bg-emerald-900 border border-emerald-500/50 px-2.5 py-1.5 rounded-xl text-[11px] font-bold text-white shadow transition" title="Status Sinkronisasi Database Supabase Cloud">
+                                <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse" id="supabaseStatusDot"></span>
+                                <span class="hidden sm:inline" id="supabaseStatusText">Supabase Sync</span>
+                                <i class="fa-solid fa-cloud text-emerald-400 text-xs"></i>
+                            </button>
+                            <button type="button" onclick="forceSyncAllData()" class="flex items-center space-x-1.5 bg-emerald-700/80 hover:bg-emerald-600 border border-emerald-400/50 px-2.5 py-1.5 rounded-xl text-[11px] font-bold text-white shadow transition" title="Sinkronkan seluruh data ke Cloud Supabase agar tampil di HP & perangkat lain">
+                                <i class="fa-solid fa-arrows-rotate text-emerald-200"></i>
+                                <span class="hidden md:inline">Sinkronkan Cloud</span>
+                            </button>
+                        </div>
 
                         <!-- User Profile Information -->
                         <div class="flex items-center space-x-2 bg-emerald-900/60 px-3 py-1.5 rounded-xl border border-emerald-600/50 shadow-inner">
@@ -2049,10 +2055,16 @@
             </div>
 
             <div class="flex flex-col sm:flex-row items-center justify-between gap-2 pt-2 border-t border-slate-100">
-                <button type="button" onclick="forceSyncFromSupabase()" class="w-full sm:w-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-xs shadow-sm transition flex items-center justify-center space-x-1.5">
-                    <i class="fa-solid fa-arrows-rotate"></i>
-                    <span>Cek & Sinkronkan Sekarang</span>
-                </button>
+                <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                    <button type="button" onclick="uploadAllLocalToCloud()" class="w-full sm:w-auto px-3.5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg font-bold text-xs shadow-sm transition flex items-center justify-center space-x-1.5" title="Unggah seluruh data lokal saat ini ke Supabase Cloud">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <span>Upload Lokal ke Cloud</span>
+                    </button>
+                    <button type="button" onclick="forceSyncAllData()" class="w-full sm:w-auto px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-xs shadow-sm transition flex items-center justify-center space-x-1.5" title="Tarik dan sinkronkan data terbaru dari Cloud">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                        <span>Sinkronkan Sekarang</span>
+                    </button>
+                </div>
                 <button type="button" onclick="closeSupabaseStatusModal()" class="w-full sm:w-auto px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium text-xs">
                     Tutup
                 </button>
@@ -2327,10 +2339,14 @@
             }
         }
 
-        async function checkSupabaseConnection() {
+        async function checkSupabaseConnection(isManual = false) {
             if (!supabaseClient) return;
+            if (isManual) {
+                showToast('Menghubungkan & menyinkronkan data dengan Supabase Cloud...');
+            }
             updateSupabaseUI('connecting', 'Menghubungkan...');
             try {
+                // 1. Sinkronisasi Tabel Kelas (siak_classes)
                 const { data, error } = await supabaseClient.from('siak_classes').select('id, name, wali, santri').limit(100);
                 if (error) {
                     if (error.code === '42P01' || (error.message && error.message.includes('does not exist')) || error.code === 'PGRST116') {
@@ -2339,55 +2355,158 @@
                     } else {
                         updateSupabaseUI('offline', 'Cloud Offline');
                     }
+                    if (isManual) showToast('Gagal terhubung ke Cloud: ' + (error.message || 'Offline'));
                     return;
                 }
 
                 updateSupabaseUI('connected', 'Cloud Terhubung');
                 
-                // Jika remote data kelas ada di cloud, sinkronkan ke local
+                // Ambil data lokal kelas saat ini
+                const localClasses = getAllClassesData();
+                const mergedClasses = { ...localClasses };
+
                 if (data && data.length > 0) {
-                    const remoteClasses = {};
                     data.forEach(item => {
-                        remoteClasses[item.id] = {
-                            name: item.name,
-                            wali: item.wali,
-                            santri: item.santri || []
-                        };
+                        const localItem = mergedClasses[item.id];
+                        if (!localItem) {
+                            // Kelas ada di cloud tapi belum ada di lokal -> simpan ke lokal
+                            mergedClasses[item.id] = {
+                                name: item.name,
+                                wali: item.wali || 'Belum Ditentukan',
+                                santri: item.santri || []
+                            };
+                        } else {
+                            // Kelas ada di kedua sisi -> gunakan data remote jika santrinya ada/lebih baru
+                            const remoteSantri = item.santri || [];
+                            const localSantri = localItem.santri || [];
+                            if (remoteSantri.length >= localSantri.length) {
+                                mergedClasses[item.id] = {
+                                    name: item.name || localItem.name,
+                                    wali: item.wali || localItem.wali,
+                                    santri: remoteSantri
+                                };
+                            }
+                        }
                     });
-                    localStorage.setItem('siak_multi_classes', JSON.stringify(remoteClasses));
-                    renderAllClassSelectors();
-                    if (!selectedClassId || !remoteClasses[selectedClassId]) {
-                        selectedClassId = Object.keys(remoteClasses)[0] || "";
+                }
+
+                localStorage.setItem('siak_multi_classes', JSON.stringify(mergedClasses));
+                renderAllClassSelectors();
+                if (!selectedClassId || !mergedClasses[selectedClassId]) {
+                    selectedClassId = Object.keys(mergedClasses)[0] || "";
+                }
+                switchClass(selectedClassId);
+
+                // Unggah kelas lokal yang belum ada di cloud Supabase
+                for (const [classKey, classObj] of Object.entries(mergedClasses)) {
+                    const inRemote = data && data.some(d => d.id === classKey);
+                    if (!inRemote) {
+                        await syncClassToCloud(classKey, classObj);
                     }
-                    switchClass(selectedClassId);
-                } else {
-                    // Jika cloud masih kosong, upload data lokal yang ada
-                    const localClasses = getAllClassesData();
-                    const localKeys = Object.keys(localClasses);
-                    if (localKeys.length > 0) {
-                        syncAllLocalClassesToCloud();
+                }
+
+                // 2. Sinkronisasi Akun Pengguna & Ustadz (siak_accounts)
+                try {
+                    const { data: accData, error: accErr } = await supabaseClient.from('siak_accounts').select('*').limit(100);
+                    if (!accErr && accData) {
+                        const localAccounts = getAccounts();
+                        const accMap = new Map();
+                        // Masukkan akun lokal terlebih dahulu
+                        localAccounts.forEach(a => { if (a && a.id) accMap.set(a.id, a); });
+                        // Timpa/tambahkan dengan akun dari remote Supabase
+                        accData.forEach(r => { if (r && r.id) accMap.set(r.id, r); });
+                        
+                        const mergedAccounts = Array.from(accMap.values());
+                        if (mergedAccounts.length > 0) {
+                            localStorage.setItem('siak_user_accounts', JSON.stringify(mergedAccounts));
+                            renderAkunTable();
+                            renderGuruTable();
+                            updateUstadzSelector();
+                            updateAllMapelSelectors();
+                            populateUstadzMapelDropdowns();
+                        }
+
+                        // Unggah akun lokal yang belum ada di cloud
+                        for (const acc of mergedAccounts) {
+                            const existsInCloud = accData.some(r => r.id === acc.id);
+                            if (!existsInCloud) {
+                                await syncAccountToCloud(acc);
+                            }
+                        }
                     }
+                } catch (accErr) {
+                    console.warn("Gagal sinkronkan siak_accounts:", accErr);
                 }
 
-                // Sync akun pengguna jika ada di Supabase
-                const { data: accData } = await supabaseClient.from('siak_accounts').select('*').limit(100);
-                if (accData && accData.length > 0) {
-                    localStorage.setItem('siak_user_accounts', JSON.stringify(accData));
-                    renderAkunTable();
-                    renderGuruTable();
+                // 3. Sinkronisasi Mata Pelajaran (siak_kitab)
+                try {
+                    const { data: mapelData, error: mapelErr } = await supabaseClient.from('siak_kitab').select('*').limit(200);
+                    if (!mapelErr && mapelData) {
+                        const localMapel = getMapelData();
+                        const mapelMap = new Map();
+                        localMapel.forEach(m => {
+                            const k = m.id || m.nama;
+                            mapelMap.set(k, m);
+                        });
+
+                        mapelData.forEach(row => {
+                            const mId = row.id || ('mapel-' + (row.nama || '').toLowerCase().replace(/[^a-z0-9]/g, ''));
+                            mapelMap.set(mId, {
+                                id: mId,
+                                nama: row.nama,
+                                kategori: row.fan || 'Mata Pelajaran Pesantren',
+                                kitab: row.pengarang || row.nama,
+                                pengampu: row.pengampu || 'Sesuai Jadwal'
+                            });
+                        });
+
+                        const mergedMapel = Array.from(mapelMap.values());
+                        localStorage.setItem('siak_mapel_list', JSON.stringify(mergedMapel));
+                        updateAllMapelSelectors();
+                        renderMapelManager();
+                        populateUstadzMapelDropdowns();
+
+                        // Unggah mata pelajaran lokal yang belum ada di cloud
+                        for (const m of mergedMapel) {
+                            const inCloud = mapelData.some(r => r.id === m.id || (r.nama && r.nama.toLowerCase() === m.nama.toLowerCase()));
+                            if (!inCloud) {
+                                await syncMapelToCloud(m);
+                            }
+                        }
+                    }
+                } catch (mapelErr) {
+                    console.warn("Gagal sinkronkan siak_kitab:", mapelErr);
                 }
 
-                // Sync jurnal jika ada di Supabase
-                const { data: jurData } = await supabaseClient.from('siak_jurnal').select('*').limit(200);
-                if (jurData && jurData.length > 0) {
-                    localStorage.setItem('siak_jurnal_list', JSON.stringify(jurData));
-                    renderJurnalList();
-                    renderDashboardJurnal();
+                // 4. Sinkronisasi Jurnal / Batas Pelajaran (siak_jurnal)
+                try {
+                    const { data: jurData, error: jurErr } = await supabaseClient.from('siak_jurnal').select('*').limit(200);
+                    if (!jurErr && jurData && jurData.length > 0) {
+                        const localJurnal = getJurnalData();
+                        const jurMap = new Map();
+                        localJurnal.forEach(j => { if (j && j.id) jurMap.set(j.id, j); });
+                        jurData.forEach(r => { if (r && r.id) jurMap.set(r.id, r); });
+                        const mergedJurnal = Array.from(jurMap.values());
+                        localStorage.setItem('siak_jurnal_list', JSON.stringify(mergedJurnal));
+                        renderJurnalList();
+                        renderDashboardJurnal();
+                    }
+                } catch (jurErr) {
+                    console.warn("Gagal sinkronkan siak_jurnal:", jurErr);
                 }
 
+                // Perbarui seluruh komponen tampilan halaman
+                if (typeof updateAllComponents === 'function') {
+                    updateAllComponents();
+                }
+
+                if (isManual) {
+                    showToast('Alhamdulillah, sinkronisasi Cloud berhasil! Semua data termutakhir.');
+                }
             } catch (err) {
                 console.error("Kesalahan koneksi Supabase:", err);
                 updateSupabaseUI('offline', 'Koneksi Terputus');
+                if (isManual) showToast('Gagal sinkronisasi data: Koneksi terputus.');
             }
         }
 
@@ -2562,7 +2681,7 @@ ON CONFLICT (id) DO NOTHING;`;
         }
 
         async function syncClassToCloud(classKey, classObj) {
-            if (!supabaseClient || supabaseSyncStatus !== 'connected') return;
+            if (!supabaseClient) return;
             try {
                 await supabaseClient.from('siak_classes').upsert({
                     id: classKey,
@@ -2577,7 +2696,7 @@ ON CONFLICT (id) DO NOTHING;`;
         }
 
         async function deleteClassFromCloud(classKey) {
-            if (!supabaseClient || supabaseSyncStatus !== 'connected') return;
+            if (!supabaseClient) return;
             try {
                 await supabaseClient.from('siak_classes').delete().eq('id', classKey);
             } catch (e) {
@@ -2586,7 +2705,7 @@ ON CONFLICT (id) DO NOTHING;`;
         }
 
         async function syncAttendanceToCloud(recordObj) {
-            if (!supabaseClient || supabaseSyncStatus !== 'connected') return;
+            if (!supabaseClient) return;
             try {
                 await supabaseClient.from('siak_attendance').upsert(recordObj);
             } catch (e) {
@@ -2595,7 +2714,7 @@ ON CONFLICT (id) DO NOTHING;`;
         }
 
         async function syncJurnalToCloud(jurnalObj) {
-            if (!supabaseClient || supabaseSyncStatus !== 'connected') return;
+            if (!supabaseClient) return;
             try {
                 await supabaseClient.from('siak_jurnal').upsert(jurnalObj);
             } catch (e) {
@@ -2604,28 +2723,118 @@ ON CONFLICT (id) DO NOTHING;`;
         }
 
         async function syncAccountToCloud(accountObj) {
-            if (!supabaseClient || supabaseSyncStatus !== 'connected') return;
+            if (!supabaseClient) return;
             try {
-                await supabaseClient.from('siak_accounts').upsert(accountObj);
+                await supabaseClient.from('siak_accounts').upsert({
+                    id: accountObj.id,
+                    nama: accountObj.nama,
+                    role: accountObj.role,
+                    role_label: accountObj.role_label || (accountObj.role === 'staff' ? 'Staff Administrasi' : accountObj.role === 'ustadz' ? 'Ustadz / Pengajar' : 'Santri'),
+                    password: accountObj.password || '123456',
+                    avatar: accountObj.avatar || (accountObj.nama ? accountObj.nama.charAt(0).toUpperCase() : 'U'),
+                    mapel: accountObj.mapel || null,
+                    kelas_id: accountObj.kelas_id || null,
+                    kelas_nama: accountObj.kelas_nama || null,
+                    nis: accountObj.nis || null,
+                    nip: accountObj.nip || null,
+                    updated_at: new Date().toISOString()
+                });
             } catch (e) {
                 console.warn("Gagal sync akun ke cloud:", e);
             }
         }
 
+        async function deleteAccountFromCloud(accountId) {
+            if (!supabaseClient) return;
+            try {
+                await supabaseClient.from('siak_accounts').delete().eq('id', accountId);
+            } catch (e) {
+                console.warn("Gagal hapus akun dari cloud:", e);
+            }
+        }
+
+        async function syncMapelToCloud(mapelObj) {
+            if (!supabaseClient) return;
+            try {
+                await supabaseClient.from('siak_kitab').upsert({
+                    id: mapelObj.id,
+                    nama: mapelObj.nama,
+                    fan: mapelObj.kategori || 'Mata Pelajaran Pesantren',
+                    pengarang: mapelObj.kitab || mapelObj.nama,
+                    pengampu: mapelObj.pengampu || 'Sesuai Jadwal'
+                });
+            } catch (e) {
+                console.warn("Gagal sync mapel ke cloud:", e);
+            }
+        }
+
+        async function deleteMapelFromCloud(mapelId) {
+            if (!supabaseClient) return;
+            try {
+                await supabaseClient.from('siak_kitab').delete().eq('id', mapelId);
+            } catch (e) {
+                console.warn("Gagal hapus mapel dari cloud:", e);
+            }
+        }
+
         async function syncAllLocalClassesToCloud() {
-            if (!supabaseClient || supabaseSyncStatus !== 'connected') return;
+            if (!supabaseClient) return;
             const all = getAllClassesData();
             for (const [key, val] of Object.entries(all)) {
                 await syncClassToCloud(key, val);
             }
         }
 
+        async function syncAllLocalAccountsToCloud() {
+            if (!supabaseClient) return;
+            const accounts = getAccounts();
+            for (const a of accounts) {
+                await syncAccountToCloud(a);
+            }
+        }
+
+        async function syncAllLocalMapelToCloud() {
+            if (!supabaseClient) return;
+            const mapel = getMapelData();
+            for (const m of mapel) {
+                await syncMapelToCloud(m);
+            }
+        }
+
+        async function uploadAllLocalToCloud() {
+            if (!supabaseClient) {
+                alert('Koneksi Supabase belum aktif atau masih offline.');
+                return;
+            }
+            showToast('Mengunggah seluruh data lokal ke Supabase Cloud...');
+            try {
+                await syncAllLocalClassesToCloud();
+                await syncAllLocalAccountsToCloud();
+                await syncAllLocalMapelToCloud();
+                
+                const jurnal = getJurnalData();
+                for (const j of jurnal) {
+                    await syncJurnalToCloud(j);
+                }
+                
+                showToast('Alhamdulillah, semua data lokal berhasil diunggah ke Supabase Cloud!');
+            } catch (err) {
+                console.error("Gagal upload semua data ke cloud:", err);
+                showToast('Terjadi kendala saat mengunggah data.');
+            }
+        }
+
+        function forceSyncAllData() {
+            checkSupabaseConnection(true);
+        }
+
         function setupSupabaseRealtime() {
             if (!supabaseClient) return;
             try {
+                // Realtime siak_classes
                 supabaseClient.channel('realtime_siak_classes')
                     .on('postgres_changes', { event: '*', schema: 'public', table: 'siak_classes' }, async (payload) => {
-                        console.log("Realtime event received from Supabase:", payload);
+                        console.log("Realtime event siak_classes:", payload);
                         const { data } = await supabaseClient.from('siak_classes').select('*');
                         if (data) {
                             const remoteClasses = {};
@@ -2638,7 +2847,45 @@ ON CONFLICT (id) DO NOTHING;`;
                             });
                             localStorage.setItem('siak_multi_classes', JSON.stringify(remoteClasses));
                             renderAllClassSelectors();
-                            switchClass(selectedClassId);
+                            if (typeof switchClass === 'function') switchClass(selectedClassId);
+                            if (typeof updateAllComponents === 'function') updateAllComponents();
+                        }
+                    })
+                    .subscribe();
+
+                // Realtime siak_accounts
+                supabaseClient.channel('realtime_siak_accounts')
+                    .on('postgres_changes', { event: '*', schema: 'public', table: 'siak_accounts' }, async (payload) => {
+                        console.log("Realtime event siak_accounts:", payload);
+                        const { data } = await supabaseClient.from('siak_accounts').select('*');
+                        if (data && data.length > 0) {
+                            localStorage.setItem('siak_user_accounts', JSON.stringify(data));
+                            renderAkunTable();
+                            renderGuruTable();
+                            updateUstadzSelector();
+                            updateAllMapelSelectors();
+                            populateUstadzMapelDropdowns();
+                        }
+                    })
+                    .subscribe();
+
+                // Realtime siak_kitab
+                supabaseClient.channel('realtime_siak_kitab')
+                    .on('postgres_changes', { event: '*', schema: 'public', table: 'siak_kitab' }, async (payload) => {
+                        console.log("Realtime event siak_kitab:", payload);
+                        const { data } = await supabaseClient.from('siak_kitab').select('*');
+                        if (data && data.length > 0) {
+                            const mapelList = data.map(row => ({
+                                id: row.id,
+                                nama: row.nama,
+                                kategori: row.fan || 'Mata Pelajaran Pesantren',
+                                kitab: row.pengarang || row.nama,
+                                pengampu: row.pengampu || 'Sesuai Jadwal'
+                            }));
+                            localStorage.setItem('siak_mapel_list', JSON.stringify(mapelList));
+                            updateAllMapelSelectors();
+                            renderMapelManager();
+                            populateUstadzMapelDropdowns();
                         }
                     })
                     .subscribe();
@@ -2733,6 +2980,10 @@ ON CONFLICT (id) DO NOTHING;`;
             localStorage.setItem('siak_mapel_list', JSON.stringify(list));
             updateAllMapelSelectors();
             renderMapelManager();
+            populateUstadzMapelDropdowns();
+            if (list && list.length > 0) {
+                list.forEach(m => syncMapelToCloud(m));
+            }
         }
 
         function updateAllMapelSelectors() {
@@ -2965,6 +3216,7 @@ ON CONFLICT (id) DO NOTHING;`;
                 let list = getMapelData();
                 list = list.filter(m => m.id !== id);
                 saveMapelData(list);
+                deleteMapelFromCloud(id);
                 showToast(`Mata pelajaran "${nama}" telah dihapus.`);
             }
         }
@@ -3116,6 +3368,7 @@ ON CONFLICT (id) DO NOTHING;`;
                 let accounts = getAccounts();
                 accounts = accounts.filter(a => a.id !== id);
                 saveAccounts(accounts);
+                deleteAccountFromCloud(id);
                 showToast(`Data Ustadz "${nama}" telah dihapus.`);
             }
         }
@@ -3515,11 +3768,39 @@ ON CONFLICT (id) DO NOTHING;`;
             const accounts = getAccounts();
 
             // Find matching user with same ID, Password, and Role
-            const user = accounts.find(a => 
+            let user = accounts.find(a => 
                 (a.id.toLowerCase() === idInput.toLowerCase() || (a.nis && a.nis === idInput) || (a.nip && a.nip === idInput) || (a.nama && a.nama.toLowerCase() === idInput.toLowerCase())) &&
                 a.password === pwdInput &&
                 a.role === selectedLoginRole
             );
+
+            // Fallback untuk Santri: cari di seluruh data kelas jika akun belum ada di tabel akun
+            if (!user && selectedLoginRole === 'santri') {
+                const allClasses = getAllClassesData();
+                for (const [classKey, classObj] of Object.entries(allClasses)) {
+                    const foundSantri = (classObj.santri || []).find(s => 
+                        (s.nis && s.nis.toLowerCase() === idInput.toLowerCase()) || 
+                        (s.nama && s.nama.toLowerCase() === idInput.toLowerCase())
+                    );
+                    if (foundSantri) {
+                        // Password default santri: NIS, atau "123456", atau "santri123"
+                        if (pwdInput === foundSantri.nis || pwdInput === '123456' || pwdInput === 'santri123') {
+                            user = {
+                                id: foundSantri.nis,
+                                nama: foundSantri.nama,
+                                role: 'santri',
+                                role_label: 'Santri / Mahasantri',
+                                nis: foundSantri.nis,
+                                kelas_id: classKey,
+                                kelas_nama: classObj.name,
+                                avatar: foundSantri.nama ? foundSantri.nama.charAt(0).toUpperCase() : 'S',
+                                password: pwdInput
+                            };
+                            break;
+                        }
+                    }
+                }
+            }
 
             if (!user) {
                 const errBox = document.getElementById('loginErrorAlert');
