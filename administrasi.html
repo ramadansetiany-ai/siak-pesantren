@@ -274,13 +274,16 @@
                             </button>
                         </div>
 
-                        <!-- User Profile Information -->
-                        <div class="flex items-center space-x-2 bg-emerald-900/60 px-3 py-1.5 rounded-xl border border-emerald-600/50 shadow-inner">
-                            <div id="userAvatarContainer" class="w-8 h-8 rounded-full bg-emerald-600 border border-emerald-400 flex items-center justify-center font-bold text-sm shadow-inner transition-colors">
+                        <!-- User Profile Information (Clickable to Edit) -->
+                        <div onclick="openEditProfilSayaModal()" class="flex items-center space-x-2 bg-emerald-900/60 hover:bg-emerald-800/80 px-3 py-1.5 rounded-xl border border-emerald-600/50 shadow-inner transition cursor-pointer group" title="Klik untuk mengedit biodata & profil akun Anda">
+                            <div id="userAvatarContainer" class="w-8 h-8 rounded-full bg-emerald-600 border border-emerald-400 flex items-center justify-center font-bold text-sm shadow-inner transition-colors group-hover:scale-105">
                                 <span id="userAvatar">A</span>
                             </div>
                             <div class="hidden sm:block text-left">
-                                <p id="userName" class="text-xs font-bold leading-none text-white">KH. Abdullah Syakir</p>
+                                <div class="flex items-center gap-1.5">
+                                    <p id="userName" class="text-xs font-bold leading-none text-white group-hover:text-emerald-200 transition">KH. Abdullah Syakir</p>
+                                    <i class="fa-solid fa-pen text-[9px] text-emerald-300 opacity-70 group-hover:opacity-100"></i>
+                                </div>
                                 <p id="userRoleBadge" class="text-[10px] text-emerald-200 leading-tight">Staff / Full Control</p>
                             </div>
                         </div>
@@ -418,10 +421,18 @@
                             <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-1">
                                 <h2 class="text-2xl font-bold" id="profilUstadzNama">Ust. Ahmad Fauzi, S.Pd</h2>
                                 <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/50 text-white border border-blue-400/50">Ustadz / Pengajar</span>
+                                <button type="button" onclick="openEditProfilSayaModal()" class="ml-auto bg-amber-500 hover:bg-amber-600 text-white text-xs px-3.5 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 shadow-sm">
+                                    <i class="fa-solid fa-user-pen"></i> Edit Biodata Saya
+                                </button>
                             </div>
                             <p class="text-blue-100 text-xs" id="profilUstadzNip">NIP: 19850101 201101 1 003</p>
                             <p class="text-blue-200 text-xs mt-1" id="profilUstadzMapel"><i class="fa-solid fa-book-quran mr-1"></i> Pengampu: Fiqih (Fathul Qorib) & Tauhid</p>
+                            <p class="text-blue-200 text-xs mt-1" id="profilUstadzKontak"><i class="fa-brands fa-whatsapp mr-1 text-emerald-300"></i> WhatsApp: <span id="profilUstadzHp" class="font-medium">-</span> &nbsp;|&nbsp; <i class="fa-solid fa-location-dot mr-1 text-blue-300"></i> Domisili: <span id="profilUstadzAlamat" class="font-medium">-</span></p>
+                            
                             <div class="mt-4 flex flex-wrap gap-2">
+                                <button onclick="openEditProfilSayaModal()" class="bg-amber-500 hover:bg-amber-600 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center shadow-sm">
+                                    <i class="fa-solid fa-user-pen mr-1.5"></i> Edit Profil / Biodata Saya
+                                </button>
                                 <button onclick="switchTab('absensi')" class="bg-white text-blue-900 hover:bg-blue-50 px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center shadow-sm">
                                     <i class="fa-solid fa-user-check mr-1.5"></i> Isi Absensi Santri
                                 </button>
@@ -496,10 +507,18 @@
                             <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-1">
                                 <h2 class="text-2xl font-bold" id="santriProfilNama">Ahmad Fauzan Ramadhan</h2>
                                 <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/50 text-white border border-purple-400/50">Santri Aktif</span>
+                                <button type="button" onclick="openEditProfilSayaModal()" class="ml-auto bg-amber-500 hover:bg-amber-600 text-white text-xs px-3.5 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 shadow-sm">
+                                    <i class="fa-solid fa-user-pen"></i> Edit Biodata Saya
+                                </button>
                             </div>
                             <p class="text-purple-200 text-xs" id="santriProfilNis">NIS: 20261001 | Kelas: 10 Ula - Al-Ghazali</p>
                             <p class="text-purple-200 text-xs mt-1"><i class="fa-solid fa-user-tie mr-1"></i> Wali Kelas: <span id="santriProfilWali" class="font-semibold">Ust. M. Ridhwan, Lc</span></p>
+                            <p class="text-purple-200 text-xs mt-1" id="santriProfilKontak"><i class="fa-brands fa-whatsapp mr-1 text-emerald-300"></i> No. WA/Ortu: <span id="santriProfilHp" class="font-medium">-</span> &nbsp;|&nbsp; <i class="fa-solid fa-house mr-1 text-purple-300"></i> Asrama: <span id="santriProfilAsramaHeader" class="font-medium">-</span></p>
+                            
                             <div class="mt-4 flex flex-wrap gap-2">
+                                <button onclick="openEditProfilSayaModal()" class="bg-amber-500 hover:bg-amber-600 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center shadow-sm">
+                                    <i class="fa-solid fa-user-pen mr-1.5"></i> Edit Biodata & Profil Saya
+                                </button>
                                 <button onclick="switchTab('absensi')" class="bg-white text-purple-900 hover:bg-purple-50 px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center shadow-sm">
                                     <i class="fa-solid fa-calendar-check mr-1.5"></i> Riwayat Absensi Saya
                                 </button>
@@ -622,9 +641,23 @@
                     <!-- Welcome Banner -->
                     <div class="bg-gradient-to-r from-emerald-700 to-teal-800 rounded-2xl p-6 text-white shadow-md relative overflow-hidden">
                         <div class="relative z-10">
-                            <h2 class="text-2xl font-bold mb-1" id="dashWelcome">Ahlan wa Sahlan, KH. Abdullah Syakir!</h2>
-                            <p class="text-emerald-100 text-sm max-w-xl">Sistem Informasi Administrasi Kelas & LMS Pesantren. Pantau progres pembelajaran kurikulum kitab, presensi santri per kelas, dan status kelulusan imtihan.</p>
-                            <div class="mt-4 flex flex-wrap gap-3">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                <div>
+                                    <div class="flex items-center space-x-2 mb-1.5">
+                                        <span id="dashRoleBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/20 text-emerald-100 border border-white/20">Staff Admin</span>
+                                        <span class="text-xs text-emerald-200" id="dashAccountInfo">ID: admin</span>
+                                    </div>
+                                    <h2 class="text-2xl font-bold mb-1" id="dashWelcome">Ahlan wa Sahlan, Administrator!</h2>
+                                    <p class="text-emerald-100 text-xs sm:text-sm max-w-xl" id="dashSubWelcome">Sistem Informasi Administrasi Kelas & LMS Pesantren Terpadu. Pantau progres pembelajaran kurikulum kitab, presensi santri per kelas, dan status kelulusan imtihan.</p>
+                                </div>
+                                <div class="shrink-0">
+                                    <button type="button" onclick="openEditProfilSayaModal()" class="px-4 py-2 bg-white/20 hover:bg-white/30 text-white border border-white/30 font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5 backdrop-blur-xs">
+                                        <i class="fa-solid fa-user-pen"></i>
+                                        <span>Edit Profil & Biodata Saya</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex flex-wrap gap-2.5">
                                 <button onclick="switchTab('absensi')" class="bg-white text-emerald-800 hover:bg-emerald-50 px-4 py-2 rounded-lg text-xs font-semibold shadow-sm transition flex items-center">
                                     <i class="fa-solid fa-user-check mr-1.5"></i> Buka Absensi Santri
                                 </button>
@@ -2335,6 +2368,120 @@
                     <i class="fa-brands fa-whatsapp text-sm mr-1.5"></i> Buka WhatsApp & Kirim
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL EDIT PROFIL & BIODATA SAYA (MANDIRI)     -->
+    <!-- ============================================== -->
+    <div id="modalEditProfilSaya" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 my-8">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center space-x-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-id-card"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-slate-800">Edit Profil & Biodata Saya</h3>
+                        <p class="text-[11px] text-slate-400">Data ini tersinkronkan otomatis ke seluruh sistem & dashboard</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeEditProfilSayaModal()" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <form id="formEditProfilSaya" onsubmit="handleSaveEditProfilSaya(event)" class="space-y-3.5 text-xs">
+                <!-- Info ID Akun & Role (Read-only) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-slate-50 border border-slate-200/80 rounded-xl">
+                    <div>
+                        <label class="block font-semibold text-slate-600 mb-1">ID Pengguna (Username):</label>
+                        <div class="relative">
+                            <input type="text" id="editProfilId" disabled class="w-full bg-slate-100 text-slate-500 font-mono font-bold text-xs border border-slate-200 rounded-lg px-3 py-2 cursor-not-allowed">
+                            <i class="fa-solid fa-lock absolute right-3 top-2.5 text-slate-400 text-xs"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-600 mb-1">Status Hak Akses:</label>
+                        <input type="text" id="editProfilRoleLabel" disabled class="w-full bg-slate-100 text-slate-500 font-bold text-xs border border-slate-200 rounded-lg px-3 py-2 cursor-not-allowed">
+                    </div>
+                </div>
+
+                <!-- Nama Lengkap -->
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Nama Lengkap & Gelar: <span class="text-rose-500">*</span></label>
+                    <input type="text" id="editProfilNama" required placeholder="Contoh: Ust. M. Salman Abi Hasan, S.H." class="w-full font-bold text-slate-800 border border-slate-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                </div>
+
+                <!-- Nomor Identitas (NIP / NIS) -->
+                <div>
+                    <label id="editProfilNomorIdLabel" class="block font-semibold text-slate-700 mb-1">Nomor Induk (NIP / NUPTK / NIS):</label>
+                    <input type="text" id="editProfilNomorId" placeholder="Contoh: 19850101 201101 1 003" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 font-mono focus:outline-none">
+                </div>
+
+                <!-- Role Specific: Ustadz -->
+                <div id="editProfilUstadzFields" class="space-y-3 p-3 bg-blue-50/70 border border-blue-200/80 rounded-xl">
+                    <p class="font-bold text-blue-900 text-[11px] flex items-center">
+                        <i class="fa-solid fa-graduation-cap mr-1 text-blue-600"></i> Informasi Khusus Pengajar / Ustadz:
+                    </p>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Mata Pelajaran yang Diampu:</label>
+                        <input type="text" id="editProfilMapel" placeholder="Contoh: Fiqih (Fathul Qorib) & Tauhid" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Jadwal / Waktu Mengajar:</label>
+                        <input type="text" id="editProfilJadwal" placeholder="Contoh: Senin & Rabu (17.00 - 18.30 WIB)" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <!-- Role Specific: Santri -->
+                <div id="editProfilSantriFields" class="space-y-3 p-3 bg-purple-50/70 border border-purple-200/80 rounded-xl hidden">
+                    <p class="font-bold text-purple-900 text-[11px] flex items-center">
+                        <i class="fa-solid fa-user-graduate mr-1 text-purple-600"></i> Informasi Khusus Santri:
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1">Kelas Aktif:</label>
+                            <input type="text" id="editProfilKelas" disabled class="w-full bg-slate-100 text-slate-500 border border-slate-200 rounded-lg px-3 py-2 text-xs cursor-not-allowed">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1">Asrama / Kamar:</label>
+                            <input type="text" id="editProfilAsrama" placeholder="Contoh: Asrama Al-Farabi Kamar 04" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kontak WhatsApp & Alamat -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Nomor WhatsApp / HP Aktif:</label>
+                        <div class="relative">
+                            <input type="text" id="editProfilHp" placeholder="Contoh: 08123456789" class="w-full border border-slate-200 rounded-lg pl-8 pr-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 font-mono focus:outline-none">
+                            <i class="fa-brands fa-whatsapp absolute left-2.5 top-2.5 text-emerald-600 text-xs"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Alamat Asal / Domisili:</label>
+                        <div class="relative">
+                            <input type="text" id="editProfilAlamat" placeholder="Contoh: Bandung, Jawa Barat" class="w-full border border-slate-200 rounded-lg pl-8 pr-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <i class="fa-solid fa-location-dot absolute left-2.5 top-2.5 text-slate-400 text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ganti Password Pribadi -->
+                <div class="p-3 bg-amber-50/70 border border-amber-200/80 rounded-xl space-y-1">
+                    <label class="block font-semibold text-amber-900">Ubah Kata Sandi Login (Opsional):</label>
+                    <input type="password" id="editProfilPassword" placeholder="Tulis kata sandi baru (kosongkan jika tidak ingin ganti)..." class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    <p class="text-[10px] text-amber-700 italic">*Gunakan minimal 6 karakter demi keamanan akun Anda.</p>
+                </div>
+
+                <div class="flex justify-end items-center space-x-2 pt-3 border-t border-slate-100">
+                    <button type="button" onclick="closeEditProfilSayaModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold text-xs transition">Batal</button>
+                    <button type="submit" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-md hover:shadow-lg text-xs transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>Simpan Perubahan Biodata</span>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -4113,12 +4260,223 @@ ON CONFLICT (id) DO NOTHING;`;
         }
 
         // =========================================================================
-        // 4. ROLE WORKSPACE & PERMISSION CONTROLLER
+        // 4. ROLE WORKSPACE, PROFILE CONTROLLER & EDIT BIODATA MANDIRI
         // =========================================================================
+        function applyUpdatedProfileToUI(user) {
+            if (!user) return;
+
+            // 1. Header Profile Pill
+            const elAvatar = document.getElementById('userAvatar');
+            const elName = document.getElementById('userName');
+            const elBadge = document.getElementById('userRoleBadge');
+            if (elAvatar) elAvatar.textContent = user.avatar || (user.nama ? user.nama.charAt(0).toUpperCase() : 'U');
+            if (elName) elName.textContent = user.nama || 'Pengguna SIAK';
+            if (elBadge) {
+                elBadge.textContent = user.roleLabel || (user.role === 'staff' ? 'Staff / Full Control' : user.role === 'ustadz' ? 'Ustadz / Pengajar' : 'Santri / Read-Only');
+            }
+
+            // 2. Dashboard Utama Banner
+            const elDashWelcome = document.getElementById('dashWelcome');
+            const elDashRoleBadge = document.getElementById('dashRoleBadge');
+            const elDashAccountInfo = document.getElementById('dashAccountInfo');
+            const elDashSubWelcome = document.getElementById('dashSubWelcome');
+            if (elDashWelcome) elDashWelcome.textContent = `Ahlan wa Sahlan, ${user.nama}!`;
+            if (elDashRoleBadge) elDashRoleBadge.textContent = user.role === 'staff' ? 'Staff Admin' : user.role === 'ustadz' ? 'Ustadz Pengajar' : 'Santri';
+            if (elDashAccountInfo) elDashAccountInfo.textContent = `ID: ${user.id || user.nis || '-'}`;
+            if (elDashSubWelcome) elDashSubWelcome.textContent = `Sistem Informasi Administrasi Kelas & LMS Pesantren. Anda login sebagai ${user.role === 'staff' ? 'Staff Administrator' : user.role === 'ustadz' ? 'Ustadz / Pengajar' : 'Santri Pesantren'}.`;
+
+            // 3. Profil Ustadz Tab
+            const uNama = document.getElementById('profilUstadzNama');
+            const uNip = document.getElementById('profilUstadzNip');
+            const uMapel = document.getElementById('profilUstadzMapel');
+            const uJadwal = document.getElementById('profilUstadzJadwal');
+            const uAvatar = document.getElementById('profilUstadzAvatar');
+            const uHp = document.getElementById('profilUstadzHp');
+            const uAlamat = document.getElementById('profilUstadzAlamat');
+            if (uNama) uNama.textContent = user.nama;
+            if (uNip) uNip.textContent = `NIP: ${user.nip || '-'}`;
+            if (uMapel) uMapel.innerHTML = `<i class="fa-solid fa-book-quran mr-1"></i> Pengampu: ${user.mapel || 'Kitab Turats'}`;
+            if (uJadwal) uJadwal.textContent = user.jadwal || 'Sesuai Jadwal Akademik';
+            if (uAvatar) uAvatar.textContent = user.avatar || (user.nama ? user.nama.charAt(0).toUpperCase() : 'U');
+            if (uHp) uHp.textContent = user.hp || '-';
+            if (uAlamat) uAlamat.textContent = user.alamat || '-';
+
+            // 4. Biodata Santri Tab
+            const sNama = document.getElementById('santriProfilNama');
+            const sNis = document.getElementById('santriProfilNis');
+            const sWali = document.getElementById('santriProfilWali');
+            const sAsrama = document.getElementById('santriProfilAsrama');
+            const sAsramaHeader = document.getElementById('santriProfilAsramaHeader');
+            const sAvatar = document.getElementById('santriProfilAvatar');
+            const sHp = document.getElementById('santriProfilHp');
+            if (sNama) sNama.textContent = user.nama;
+            if (sNis) sNis.textContent = `NIS: ${user.nis || user.id} | Kelas: ${user.kelasNama || user.kelas_nama || '10 Ula - Al-Ghazali'}`;
+            if (sWali) sWali.textContent = user.waliKelas || 'Ust. M. Ridhwan, Lc';
+            if (sAsrama) sAsrama.textContent = user.asrama || 'Asrama Pondok Pesantren';
+            if (sAsramaHeader) sAsramaHeader.textContent = user.asrama || '-';
+            if (sAvatar) sAvatar.textContent = user.avatar || (user.nama ? user.nama.charAt(0).toUpperCase() : 'S');
+            if (sHp) sHp.textContent = user.hp || '-';
+
+            // 5. Update selector ustadz di form absensi jika ustadz
+            if (user.role === 'ustadz') {
+                const selUstadz = document.getElementById('absenUstadzPengajar');
+                if (selUstadz) {
+                    let found = false;
+                    for (let opt of selUstadz.options) {
+                        if (opt.value.toLowerCase() === user.nama.toLowerCase()) {
+                            opt.selected = true;
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        const opt = document.createElement('option');
+                        opt.value = user.nama;
+                        opt.textContent = user.nama;
+                        opt.selected = true;
+                        selUstadz.appendChild(opt);
+                    }
+                }
+            }
+        }
+
+        function openEditProfilSayaModal() {
+            if (!currentUser) {
+                showToast('Silakan login terlebih dahulu.');
+                return;
+            }
+            const user = currentUser;
+            document.getElementById('editProfilNama').value = user.nama || '';
+            document.getElementById('editProfilId').value = user.id || '';
+            document.getElementById('editProfilRoleLabel').value = user.role === 'staff' ? 'Staff Administrasi & IT' : user.role === 'ustadz' ? 'Ustadz / Pengajar' : 'Santri Pesantren';
+            
+            const ustadzFields = document.getElementById('editProfilUstadzFields');
+            const santriFields = document.getElementById('editProfilSantriFields');
+            const idLabel = document.getElementById('editProfilNomorIdLabel');
+
+            if (user.role === 'ustadz') {
+                if (ustadzFields) ustadzFields.classList.remove('hidden');
+                if (santriFields) santriFields.classList.add('hidden');
+                if (idLabel) idLabel.textContent = "Nomor Induk Pegawai (NIP / NUPTK):";
+                document.getElementById('editProfilNomorId').value = user.nip || '';
+                document.getElementById('editProfilMapel').value = user.mapel || '';
+                document.getElementById('editProfilJadwal').value = user.jadwal || '';
+            } else if (user.role === 'santri') {
+                if (ustadzFields) ustadzFields.classList.add('hidden');
+                if (santriFields) santriFields.classList.remove('hidden');
+                if (idLabel) idLabel.textContent = "Nomor Induk Santri (NIS):";
+                document.getElementById('editProfilNomorId').value = user.nis || user.id || '';
+                document.getElementById('editProfilAsrama').value = user.asrama || '';
+                document.getElementById('editProfilKelas').value = user.kelasNama || user.kelas_nama || '-';
+            } else {
+                if (ustadzFields) ustadzFields.classList.add('hidden');
+                if (santriFields) santriFields.classList.add('hidden');
+                if (idLabel) idLabel.textContent = "NIP / Nomor Identitas Staff:";
+                document.getElementById('editProfilNomorId').value = user.nip || '';
+            }
+
+            document.getElementById('editProfilHp').value = user.hp || '';
+            document.getElementById('editProfilAlamat').value = user.alamat || '';
+            document.getElementById('editProfilPassword').value = '';
+
+            const modal = document.getElementById('modalEditProfilSaya');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.style.display = 'flex';
+            }
+        }
+
+        function closeEditProfilSayaModal() {
+            const modal = document.getElementById('modalEditProfilSaya');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.style.display = 'none';
+            }
+        }
+
+        function handleSaveEditProfilSaya(e) {
+            e.preventDefault();
+            if (!currentUser) return;
+
+            const nama = document.getElementById('editProfilNama').value.trim();
+            if (!nama) {
+                alert('Nama tidak boleh kosong.');
+                return;
+            }
+
+            const nomorId = document.getElementById('editProfilNomorId')?.value.trim() || '';
+            const mapel = document.getElementById('editProfilMapel')?.value.trim() || '';
+            const jadwal = document.getElementById('editProfilJadwal')?.value.trim() || '';
+            const asrama = document.getElementById('editProfilAsrama')?.value.trim() || '';
+            const hp = document.getElementById('editProfilHp')?.value.trim() || '';
+            const alamat = document.getElementById('editProfilAlamat')?.value.trim() || '';
+            const newPwd = document.getElementById('editProfilPassword')?.value.trim();
+
+            const oldNama = currentUser.nama;
+
+            // Update currentUser object
+            currentUser.nama = nama;
+            currentUser.avatar = nama.charAt(0).toUpperCase();
+            currentUser.hp = hp;
+            currentUser.alamat = alamat;
+
+            if (currentUser.role === 'ustadz' || currentUser.role === 'staff') {
+                currentUser.nip = nomorId;
+                currentUser.mapel = mapel;
+                currentUser.jadwal = jadwal;
+            } else if (currentUser.role === 'santri') {
+                currentUser.nis = nomorId || currentUser.nis;
+                currentUser.asrama = asrama;
+            }
+
+            if (newPwd) {
+                currentUser.password = newPwd;
+            }
+
+            // 1. Simpan ke sessionStorage
+            sessionStorage.setItem('siak_active_user', JSON.stringify(currentUser));
+
+            // 2. Simpan ke list accounts lokal
+            const accounts = getAccounts();
+            const accIdx = accounts.findIndex(a => a.id.toLowerCase() === currentUser.id.toLowerCase());
+            if (accIdx !== -1) {
+                accounts[accIdx] = { ...accounts[accIdx], ...currentUser };
+            } else {
+                accounts.push({ ...currentUser });
+            }
+            saveAccounts(accounts);
+
+            // 3. Sinkronkan ke Supabase Cloud
+            syncAccountToCloud(currentUser);
+
+            // 4. Jika role santri, update nama dan asrama di database kelas siak_multi_classes
+            if (currentUser.role === 'santri') {
+                const allClasses = getAllClassesData();
+                let classUpdated = false;
+                for (const [cKey, cObj] of Object.entries(allClasses)) {
+                    (cObj.santri || []).forEach(s => {
+                        if (s.nis === currentUser.nis || (s.nama && s.nama.toLowerCase() === oldNama.toLowerCase())) {
+                            s.nama = nama;
+                            if (asrama) s.asrama = asrama;
+                            classUpdated = true;
+                        }
+                    });
+                    if (classUpdated) {
+                        saveClassData(cKey, cObj);
+                    }
+                }
+            }
+
+            // 5. Update seluruh tampilan profil yang aktif
+            applyUpdatedProfileToUI(currentUser);
+
+            closeEditProfilSayaModal();
+            showToast(`Alhamdulillah, profil & biodata ${nama} berhasil disimpan!`);
+        }
+
         function setupRoleWorkspace(user) {
-            // Update Header Profile Info
-            document.getElementById('userAvatar').textContent = user.avatar || user.nama.charAt(0);
-            document.getElementById('userName').textContent = user.nama;
+            // Terapkan seluruh data profil ke UI (Navbar, Dashboard, Profil Ustadz, Biodata Santri)
+            applyUpdatedProfileToUI(user);
             
             const roleBadge = document.getElementById('userRoleBadge');
             const headerBadge = document.getElementById('headerRoleBadge');
@@ -4165,7 +4523,7 @@ ON CONFLICT (id) DO NOTHING;`;
 
                 // Tampilkan menu ustadz
                 document.getElementById('nav-dashboard').classList.remove('hidden');
-                document.getElementById('nav-manajemen-akun').classList.add('hidden'); // Ustadz tidak bisa kelola akun
+                document.getElementById('nav-manajemen-akun').classList.add('hidden');
                 document.getElementById('nav-profil-ustadz').classList.remove('hidden');
                 document.getElementById('nav-profil-santri').classList.add('hidden');
 
@@ -4176,16 +4534,7 @@ ON CONFLICT (id) DO NOTHING;`;
                 document.querySelectorAll('.rbac-santri-readonly').forEach(el => el.classList.add('hidden'));
                 document.querySelectorAll('.rbac-col-action').forEach(el => el.classList.remove('hidden'));
 
-                // Isi data profil ustadz
-                document.getElementById('profilUstadzNama').textContent = user.nama;
-                document.getElementById('profilUstadzNip').textContent = `NIP: ${user.nip || '-'}`;
-                document.getElementById('profilUstadzMapel').innerHTML = `<i class="fa-solid fa-book-quran mr-1"></i> Pengampu: ${user.mapel || 'Kitab Turats'}`;
-                document.getElementById('profilUstadzJadwal').textContent = user.jadwal || 'Sesuai Jadwal Akademik';
-                document.getElementById('profilUstadzAvatar').textContent = user.avatar || user.nama.charAt(0);
-
-                // Auto-map Ustadz ke selector presensi & jurnal
-                const selUstadz = document.getElementById('absenUstadzPengajar');
-                if (selUstadz) selUstadz.value = user.nama;
+                // Auto-map Ustadz ke selector jurnal
                 const inputJurnalUstadz = document.getElementById('modalJurnalUstadz');
                 if (inputJurnalUstadz) inputJurnalUstadz.value = user.nama;
 
@@ -4227,16 +4576,9 @@ ON CONFLICT (id) DO NOTHING;`;
 
                 document.getElementById('descAbsensiSection').textContent = "Lihat catatan kehadiran Anda secara transparan.";
 
-                // Isi data profil santri
-                document.getElementById('santriProfilNama').textContent = user.nama;
-                document.getElementById('santriProfilNis').textContent = `NIS: ${user.nis || user.id} | Kelas: ${user.kelasNama || '10 Ula - Al-Ghazali'}`;
-                document.getElementById('santriProfilWali').textContent = user.waliKelas || 'Ust. M. Ridhwan, Lc';
-                document.getElementById('santriProfilAsrama').textContent = user.asrama || 'Asrama Pondok Pesantren';
-                document.getElementById('santriProfilAvatar').textContent = user.avatar || user.nama.charAt(0);
-
                 // Set active class to student's class
-                if (user.kelasId) {
-                    switchClass(user.kelasId);
+                if (user.kelasId || user.kelas_id) {
+                    switchClass(user.kelasId || user.kelas_id);
                 }
 
                 // Tampilan Pertama Santri: HALAMAN BIODATA PRIBADI SANTRI
