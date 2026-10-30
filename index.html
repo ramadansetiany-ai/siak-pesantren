@@ -124,7 +124,7 @@
     <!-- ========================================================================= -->
     <!-- 1. HALAMAN LOGIN & AUTENTIKASI BERBASIS ID                               -->
     <!-- ========================================================================= -->
-    <div id="loginScreen" class="fixed inset-0 z-50 bg-gradient-to-br from-emerald-950 via-emerald-900 to-teal-950 flex flex-col items-center justify-center p-4 sm:p-6 overflow-y-auto">
+    <div id="loginScreen" class="fixed inset-0 z-[100] bg-gradient-to-br from-emerald-950 via-emerald-900 to-teal-950 flex flex-col items-center justify-center p-4 sm:p-6 overflow-y-auto">
         <!-- Background Decorative Elements -->
         <div class="absolute inset-0 opacity-10 pointer-events-none overflow-hidden">
             <i class="fa-solid fa-mosque absolute -top-12 -left-12 text-[260px] text-white"></i>
@@ -698,38 +698,25 @@
                 <!-- SECTION 1: DASHBOARD UTAMA                     -->
                 <!-- ============================================== -->
                 <section id="tab-dashboard" class="tab-content block space-y-6">
-                    <!-- Welcome Banner -->
-                    <div class="bg-gradient-to-r from-emerald-700 to-teal-800 rounded-2xl p-6 text-white shadow-md relative overflow-hidden">
-                        <div class="relative z-10">
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                <div>
-                                    <div class="flex items-center space-x-2 mb-1.5">
-                                        <span id="dashRoleBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/20 text-emerald-100 border border-white/20">Staff Admin</span>
-                                        <span class="text-xs text-emerald-200" id="dashAccountInfo">ID: admin</span>
-                                    </div>
-                                    <h2 class="text-2xl font-bold mb-1" id="dashWelcome">Ahlan wa Sahlan, Administrator!</h2>
-                                    <p class="text-emerald-100 text-xs sm:text-sm max-w-xl" id="dashSubWelcome">Sistem Informasi Administrasi Kelas & LMS Pesantren Terpadu. Pantau progres pembelajaran kurikulum kitab, presensi santri per kelas, dan status kelulusan imtihan.</p>
+                    <!-- Welcome Banner (Clean, Minimalist & Modern) -->
+                    <div class="bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-800 rounded-2xl p-4 sm:p-5 text-white shadow-sm relative overflow-hidden">
+                        <div class="relative z-10 flex items-center justify-between gap-4">
+                            <div>
+                                <div class="flex items-center space-x-2 mb-1">
+                                    <span id="dashRoleBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/20 text-emerald-100 border border-white/20 backdrop-blur-xs">Staff Admin</span>
+                                    <span class="text-xs text-emerald-200 font-mono" id="dashAccountInfo">ID: admin</span>
                                 </div>
-                                <div class="shrink-0 rbac-staff-only">
-                                    <button type="button" onclick="openEditProfilSayaModal()" class="px-4 py-2 bg-white/20 hover:bg-white/30 text-white border border-white/30 font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5 backdrop-blur-xs cursor-pointer">
-                                        <i class="fa-solid fa-gear"></i>
-                                        <span>Pengaturan Akun Admin</span>
-                                    </button>
-                                </div>
+                                <h2 class="text-lg sm:text-2xl font-bold tracking-tight" id="dashWelcome">Ahlan wa Sahlan, Administrator!</h2>
+                                <p class="text-emerald-100/90 text-xs sm:text-xs max-w-xl mt-0.5 leading-relaxed" id="dashSubWelcome">Sistem Informasi Administrasi Kelas & LMS Pesantren Terpadu.</p>
                             </div>
-                            <div class="mt-4 flex flex-wrap gap-2.5">
-                                <button onclick="switchTab('absensi')" class="bg-white text-emerald-800 hover:bg-emerald-50 px-4 py-2 rounded-lg text-xs font-semibold shadow-sm transition flex items-center">
-                                    <i class="fa-solid fa-user-check mr-1.5"></i> Buka Absensi Santri
-                                </button>
-                                <button onclick="switchTab('jurnal')" class="bg-emerald-600/80 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-xs font-semibold transition border border-emerald-500/50 flex items-center">
-                                    <i class="fa-solid fa-book-open mr-1.5"></i> Batas Pelajaran & Tugas
-                                </button>
-                                <button onclick="switchTab('laporan')" class="bg-emerald-900/60 hover:bg-emerald-900 text-emerald-100 px-4 py-2 rounded-lg text-xs font-semibold transition border border-emerald-700 flex items-center">
-                                    <i class="fa-solid fa-print mr-1.5"></i> Cetak Laporan
+                            <div class="hidden sm:block shrink-0 rbac-staff-only">
+                                <button type="button" onclick="openEditProfilSayaModal()" class="px-3.5 py-2 bg-white/15 hover:bg-white/25 text-white border border-white/25 font-semibold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5 backdrop-blur-xs cursor-pointer">
+                                    <i class="fa-solid fa-gear"></i>
+                                    <span>Pengaturan</span>
                                 </button>
                             </div>
                         </div>
-                        <i class="fa-solid fa-mosque absolute -right-4 -bottom-6 text-8xl text-white/10 pointer-events-none"></i>
+                        <i class="fa-solid fa-mosque absolute -right-3 -bottom-5 text-7xl sm:text-8xl text-white/10 pointer-events-none"></i>
                     </div>
 
                     <!-- Stats Cards -->
@@ -2627,162 +2614,160 @@
     <!-- ========================================================================= -->
     <!-- MODAL PUSAT PENGATURAN SISTEM & ADMINISTRATOR (LENGKAP DI MOBILE & PC)     -->
     <!-- ========================================================================= -->
-    <div id="modalEditProfilSaya" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl space-y-4 my-6 max-h-[90vh] overflow-y-auto custom-scrollbar">
+    <div id="modalEditProfilSaya" onclick="if(event.target === this) closeEditProfilSayaModal()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-t-3xl sm:rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl space-y-4 my-0 sm:my-6 max-h-[92vh] sm:max-h-[88vh] overflow-y-auto custom-scrollbar border border-slate-100">
             <!-- Modal Header -->
-            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                <div class="flex items-center space-x-2.5">
-                    <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-base shadow-xs">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-lg border border-emerald-100 shadow-2xs">
                         <i class="fa-solid fa-sliders"></i>
                     </div>
                     <div>
-                        <h3 class="text-base font-bold text-slate-800">Pusat Pengaturan Sistem</h3>
-                        <p class="text-[11px] text-slate-400">Pengaturan profil admin, cloud database, & pemeliharaan</p>
+                        <h3 class="text-base font-bold text-slate-800 tracking-tight">Pengaturan Sistem</h3>
+                        <p class="text-[11px] text-slate-400">Profil akun, sinkronisasi cloud & pemeliharaan</p>
                     </div>
                 </div>
-                <button type="button" onclick="closeEditProfilSayaModal()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition cursor-pointer">
-                    <i class="fa-solid fa-xmark text-lg"></i>
+                <button type="button" onclick="closeEditProfilSayaModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition cursor-pointer" title="Tutup">
+                    <i class="fa-solid fa-xmark text-sm"></i>
                 </button>
             </div>
 
             <!-- BAGIAN 1: PROFIL & KEAMANAN AKUN ADMIN -->
             <form id="formEditProfilSaya" onsubmit="handleSaveEditProfilSaya(event)" class="space-y-3.5 text-xs">
-                <div class="flex items-center justify-between">
-                    <span class="font-bold text-slate-800 flex items-center gap-1.5 text-xs">
-                        <i class="fa-solid fa-user-shield text-emerald-600"></i>
-                        <span>Profil & Keamanan Administrator</span>
-                    </span>
-                    <span class="text-[10px] bg-emerald-50 text-emerald-700 font-semibold px-2 py-0.5 rounded-full border border-emerald-200">Akses Penuh</span>
-                </div>
-
-                <!-- Info ID Akun & Role (Read-only) -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl">
-                    <div>
-                        <label class="block font-semibold text-slate-600 mb-1 text-[11px]">ID Pengguna (Username):</label>
-                        <div class="relative">
-                            <input type="text" id="editProfilId" disabled class="w-full bg-slate-100 text-slate-500 font-mono font-bold text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 cursor-not-allowed">
-                            <i class="fa-solid fa-lock absolute right-2.5 top-2 text-slate-400 text-xs"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block font-semibold text-slate-600 mb-1 text-[11px]">Hak Akses:</label>
-                        <input type="text" id="editProfilRoleLabel" disabled class="w-full bg-slate-100 text-slate-500 font-bold text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 cursor-not-allowed">
-                    </div>
-                </div>
-
-                <!-- Nama Lengkap Admin -->
-                <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Nama Lengkap Administrator: <span class="text-rose-500">*</span></label>
-                    <input type="text" id="editProfilNama" required placeholder="Contoh: Editor / Administrator" class="w-full font-bold text-slate-800 border border-slate-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-                </div>
-
-                <!-- Kontak WhatsApp & Alamat -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Nomor WhatsApp / HP:</label>
-                        <div class="relative">
-                            <input type="text" id="editProfilHp" placeholder="08123456789" class="w-full border border-slate-200 rounded-lg pl-8 pr-3 py-1.5 text-xs focus:ring-2 focus:ring-emerald-500 font-mono focus:outline-none">
-                            <i class="fa-brands fa-whatsapp absolute left-2.5 top-2 text-emerald-600 text-xs"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Domisili / Keterangan:</label>
-                        <div class="relative">
-                            <input type="text" id="editProfilAlamat" placeholder="Kantor Pondok Pesantren" class="w-full border border-slate-200 rounded-lg pl-8 pr-3 py-1.5 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-                            <i class="fa-solid fa-location-dot absolute left-2.5 top-2 text-slate-400 text-xs"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Ganti Password Pribadi Admin -->
-                <div class="p-2.5 bg-amber-50/70 border border-amber-200/80 rounded-xl space-y-1">
+                <div class="bg-slate-50/80 rounded-2xl p-4 border border-slate-200/70 space-y-3">
                     <div class="flex items-center justify-between">
-                        <label class="block font-semibold text-amber-900 text-[11px]"><i class="fa-solid fa-key mr-1 text-amber-600"></i> Ubah Kata Sandi Admin (Opsional):</label>
-                        <span class="text-[10px] text-amber-700">Kosongkan jika tetap</span>
+                        <span class="font-bold text-slate-700 flex items-center gap-2 text-xs">
+                            <i class="fa-solid fa-id-badge text-emerald-600"></i>
+                            <span>Identitas Administrator</span>
+                        </span>
+                        <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded-full border border-emerald-200/50">Staff Admin</span>
                     </div>
-                    <div class="relative">
-                        <input type="password" id="editProfilPassword" placeholder="Tulis kata sandi baru admin..." class="w-full bg-white border border-slate-200 rounded-lg pl-3 pr-10 py-1.5 text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none">
-                        <button type="button" onclick="toggleEditProfilPassword()" class="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600 focus:outline-none p-0.5 cursor-pointer" title="Lihat Sandi">
-                            <i id="toggleEditProfilPasswordIcon" class="fa-solid fa-eye text-xs"></i>
+
+                    <!-- Readonly Username & Role -->
+                    <div class="grid grid-cols-2 gap-2 text-[11px]">
+                        <div class="bg-white rounded-xl p-2.5 border border-slate-200/80">
+                            <span class="text-[10px] text-slate-400 block font-medium">ID Pengguna</span>
+                            <div class="flex items-center justify-between mt-0.5">
+                                <input type="text" id="editProfilId" disabled class="bg-transparent font-mono font-bold text-slate-700 text-xs w-full cursor-not-allowed">
+                                <i class="fa-solid fa-lock text-slate-300 text-[10px]"></i>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl p-2.5 border border-slate-200/80">
+                            <span class="text-[10px] text-slate-400 block font-medium">Hak Akses</span>
+                            <input type="text" id="editProfilRoleLabel" disabled class="bg-transparent font-semibold text-slate-700 text-xs w-full cursor-not-allowed mt-0.5">
+                        </div>
+                    </div>
+
+                    <!-- Nama Lengkap Admin -->
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1 text-[11px]">Nama Lengkap Administrator: <span class="text-rose-500">*</span></label>
+                        <input type="text" id="editProfilNama" required placeholder="Contoh: Editor / Administrator" class="w-full bg-white font-semibold text-slate-800 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">
+                    </div>
+
+                    <!-- Kontak WhatsApp & Alamat -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1 text-[11px]">Nomor WhatsApp / HP:</label>
+                            <div class="relative">
+                                <input type="text" id="editProfilHp" placeholder="08123456789" class="w-full bg-white border border-slate-200 rounded-xl pl-8 pr-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 font-mono focus:outline-none transition">
+                                <i class="fa-brands fa-whatsapp absolute left-2.5 top-2.5 text-emerald-600 text-xs"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1 text-[11px]">Domisili / Keterangan:</label>
+                            <div class="relative">
+                                <input type="text" id="editProfilAlamat" placeholder="Kantor Pondok Pesantren" class="w-full bg-white border border-slate-200 rounded-xl pl-8 pr-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">
+                                <i class="fa-solid fa-location-dot absolute left-2.5 top-2.5 text-slate-400 text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Keamanan Kata Sandi -->
+                <div class="bg-slate-50/80 rounded-2xl p-4 border border-slate-200/70 space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-slate-700 flex items-center gap-2 text-xs">
+                            <i class="fa-solid fa-shield-halved text-emerald-600"></i>
+                            <span>Keamanan Kata Sandi</span>
+                        </span>
+                        <span class="text-[10px] text-slate-400">Opsional</span>
+                    </div>
+                    <div>
+                        <div class="relative">
+                            <input type="password" id="editProfilPassword" placeholder="Masukkan kata sandi baru admin..." class="w-full bg-white border border-slate-200 rounded-xl pl-3 pr-10 py-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">
+                            <button type="button" onclick="toggleEditProfilPassword()" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer" title="Lihat Sandi">
+                                <i id="toggleEditProfilPasswordIcon" class="fa-solid fa-eye text-xs"></i>
+                            </button>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-1">Kosongkan bila tidak ingin mengubah kata sandi masuk admin.</p>
+                    </div>
+
+                    <div class="pt-1">
+                        <button type="submit" class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-xs hover:shadow-sm text-xs transition flex items-center justify-center gap-2 cursor-pointer">
+                            <i class="fa-solid fa-check"></i>
+                            <span>Simpan Perubahan Akun</span>
                         </button>
                     </div>
-                </div>
-
-                <div class="flex justify-end pt-1">
-                    <button type="submit" class="w-full sm:w-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-sm hover:shadow text-xs transition flex items-center justify-center gap-1.5 cursor-pointer">
-                        <i class="fa-solid fa-floppy-disk"></i>
-                        <span>Simpan Perubahan Admin</span>
-                    </button>
                 </div>
             </form>
 
-            <hr class="border-slate-100 my-2">
-
             <!-- BAGIAN 2: SINKRONISASI CLOUD DATABASE (SUPABASE) -->
-            <div class="space-y-2 text-xs">
-                <span class="font-bold text-slate-800 flex items-center gap-1.5 text-xs">
-                    <i class="fa-solid fa-cloud text-blue-600"></i>
-                    <span>Database & Sinkronisasi Cloud (Supabase)</span>
-                </span>
-                <div class="p-3 bg-slate-50 border border-slate-200/80 rounded-xl space-y-2">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-2">
-                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500" id="settingsModalCloudDot"></span>
-                            <span class="font-bold text-slate-700 text-xs" id="settingsModalCloudText">Supabase Cloud Online</span>
+            <div class="bg-slate-50/80 rounded-2xl p-4 border border-slate-200/70 space-y-2.5">
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-slate-700 flex items-center gap-2 text-xs">
+                        <i class="fa-solid fa-cloud text-blue-600"></i>
+                        <span>Database Cloud (Supabase)</span>
+                    </span>
+                    <button type="button" onclick="openSupabaseStatusModal()" class="text-[11px] text-blue-600 hover:text-blue-800 font-semibold cursor-pointer">
+                        Detail Tabel <i class="fa-solid fa-chevron-right text-[9px] ml-0.5"></i>
+                    </button>
+                </div>
+                
+                <div class="flex items-center justify-between bg-white rounded-xl p-3 border border-slate-200/80">
+                    <div class="flex items-center space-x-2.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500" id="settingsModalCloudDot"></span>
+                        <div>
+                            <span class="font-bold text-slate-700 text-xs block" id="settingsModalCloudText">Supabase Cloud Online</span>
+                            <span class="text-[10px] text-slate-400">Sinkronisasi otomatis aktif</span>
                         </div>
-                        <button type="button" onclick="openSupabaseStatusModal()" class="text-[11px] text-blue-600 hover:text-blue-800 font-semibold underline cursor-pointer">
-                            Lihat Detail Tabel
-                        </button>
                     </div>
-                    <p class="text-[11px] text-slate-500 leading-relaxed">
-                        Data otomatis tersinkronisasi secara real-time ke cloud sehingga dapat diakses bersamaan melalui PC, Laptop, dan HP.
-                    </p>
-                    <button type="button" onclick="forceSyncAllData()" class="w-full py-2 px-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer text-xs">
-                        <i class="fa-solid fa-arrows-rotate"></i>
-                        <span>Sinkronkan Seluruh Data Sekarang</span>
+                    <button type="button" onclick="forceSyncAllData()" class="py-1.5 px-3 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-semibold rounded-lg transition flex items-center gap-1.5 cursor-pointer text-xs">
+                        <i class="fa-solid fa-arrows-rotate text-xs"></i>
+                        <span>Sinkronkan</span>
                     </button>
                 </div>
             </div>
 
-            <hr class="border-slate-100 my-2">
-
-            <!-- BAGIAN 3: PEMELIHARAAN DATABASE & SESI KELUAR -->
-            <div class="space-y-2 text-xs">
-                <span class="font-bold text-slate-800 flex items-center gap-1.5 text-xs">
-                    <i class="fa-solid fa-triangle-exclamation text-amber-600"></i>
-                    <span>Pemeliharaan Sistem & Tindakan Lanjut</span>
-                </span>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    <!-- Reset Kosongkan Database -->
-                    <div class="p-3 bg-amber-50/60 border border-amber-200 rounded-xl flex flex-col justify-between">
-                        <div class="mb-2">
-                            <p class="font-bold text-amber-900 text-xs mb-0.5">Reset Database</p>
-                            <p class="text-[10px] text-amber-700 leading-tight">Kosongkan seluruh data untuk memulai tahun ajaran baru dari nol.</p>
-                        </div>
-                        <button type="button" onclick="confirmResetDatabase()" class="w-full py-1.5 px-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg text-xs transition flex items-center justify-center gap-1 cursor-pointer">
-                            <i class="fa-solid fa-arrows-rotate text-xs"></i>
-                            <span>Reset Kosong</span>
-                        </button>
+            <!-- BAGIAN 3: PEMELIHARAAN SISTEM & KELUAR AKUN -->
+            <div class="bg-slate-50/80 rounded-2xl p-3 border border-slate-200/70 divide-y divide-slate-200/70">
+                <!-- Reset Data Pesantren -->
+                <div class="flex items-center justify-between py-2 px-1">
+                    <div>
+                        <span class="font-semibold text-slate-800 text-xs block">Reset Data Sistem</span>
+                        <span class="text-[10px] text-slate-400">Kosongkan seluruh data untuk tahun ajaran baru</span>
                     </div>
+                    <button type="button" onclick="confirmResetDatabase()" class="py-1.5 px-3 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 font-semibold rounded-lg text-xs transition cursor-pointer flex items-center gap-1.5">
+                        <i class="fa-solid fa-trash-can text-[11px]"></i>
+                        <span>Reset Kosong</span>
+                    </button>
+                </div>
 
-                    <!-- Keluar Akun (Logout) -->
-                    <div class="p-3 bg-rose-50/60 border border-rose-200 rounded-xl flex flex-col justify-between">
-                        <div class="mb-2">
-                            <p class="font-bold text-rose-900 text-xs mb-0.5">Keluar Akun</p>
-                            <p class="text-[10px] text-rose-700 leading-tight">Akhiri sesi login ini secara aman dari perangkat ini.</p>
-                        </div>
-                        <button type="button" onclick="handleLogout()" class="w-full py-1.5 px-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg text-xs transition flex items-center justify-center gap-1 cursor-pointer">
-                            <i class="fa-solid fa-right-from-bracket text-xs"></i>
-                            <span>Keluar (Logout)</span>
-                        </button>
+                <!-- Keluar Sesi Akun -->
+                <div class="flex items-center justify-between pt-2 pb-1 px-1">
+                    <div>
+                        <span class="font-semibold text-slate-800 text-xs block">Keluar dari Akun</span>
+                        <span class="text-[10px] text-slate-400">Akhiri sesi login aktif di perangkat ini</span>
                     </div>
+                    <button type="button" onclick="handleLogout()" class="py-1.5 px-3 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-semibold rounded-lg text-xs transition cursor-pointer flex items-center gap-1.5">
+                        <i class="fa-solid fa-arrow-right-from-bracket text-[11px]"></i>
+                        <span>Keluar Akun</span>
+                    </button>
                 </div>
             </div>
 
             <!-- Modal Footer -->
-            <div class="pt-2 border-t border-slate-100 flex justify-end">
-                <button type="button" onclick="closeEditProfilSayaModal()" class="w-full sm:w-auto px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-xs transition cursor-pointer">
+            <div class="pt-1">
+                <button type="button" onclick="closeEditProfilSayaModal()" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold rounded-xl text-xs transition cursor-pointer text-center">
                     Tutup Pengaturan
                 </button>
             </div>
@@ -4837,12 +4822,26 @@ ON CONFLICT (id) DO NOTHING;`;
             setupRoleWorkspace(user);
         }
 
+        function closeAllModals() {
+            // Tutup seluruh modal aktif di DOM
+            const modals = document.querySelectorAll('[id^="modal"], #unauthorizedModal');
+            modals.forEach(m => {
+                m.classList.add('hidden');
+                m.style.display = 'none';
+            });
+            const sidebar = document.getElementById('sidebarNav');
+            if (sidebar) sidebar.classList.add('hidden');
+        }
+
         function handleLogout() {
             if (confirm('Apakah Anda ingin keluar dari akun Anda?')) {
+                // 1. Tutup seluruh modal dan backdrop terlebih dahulu
+                closeAllModals();
+
                 currentUser = null;
                 sessionStorage.removeItem('siak_active_user');
 
-                // Return to login screen
+                // 2. Tampilkan kembali loginScreen dan sembunyikan app
                 document.getElementById('appContainer').classList.add('hidden');
                 document.getElementById('loginScreen').classList.remove('hidden');
                 document.getElementById('loginPassword').value = '';
@@ -8153,11 +8152,13 @@ ON CONFLICT (id) DO NOTHING;`;
                     sessionStorage.removeItem('siak_active_user');
                     document.getElementById('loginScreen').classList.remove('hidden');
                     document.getElementById('appContainer').classList.add('hidden');
+                    closeAllModals();
                 }
             } else {
                 // Selalu tampilkan Halaman Login jika belum login
                 document.getElementById('loginScreen').classList.remove('hidden');
                 document.getElementById('appContainer').classList.add('hidden');
+                closeAllModals();
                 selectLoginRole('staff');
             }
 
