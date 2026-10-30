@@ -207,22 +207,15 @@
                     </button>
                 </form>
 
-                <!-- Quick-Fill Editor Account Helper (Clean Database) -->
-                <div class="pt-3 border-t border-slate-100">
-                    <div class="bg-emerald-50/80 border border-emerald-200 rounded-xl p-3 text-center">
-                        <div class="flex items-center justify-center space-x-1.5 text-emerald-800 text-xs font-bold mb-1">
-                            <i class="fa-solid fa-sparkles text-emerald-600"></i>
-                            <span>Database Bersih (Siap Diisi Mandiri)</span>
-                        </div>
-                        <p class="text-[10px] text-emerald-700 leading-relaxed mb-2.5">
-                            Semua data kelas dan santri telah dikosongkan. Masuk sebagai <strong>Editor / Administrator</strong> untuk mulai membuat kelas dan menginput data baru secara mandiri.
-                        </p>
-                        <button type="button" onclick="quickFillAccount('staff', 'admin', 'admin123')" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-xs shadow-sm transition flex items-center justify-center space-x-1.5">
-                            <i class="fa-solid fa-key text-[11px]"></i>
-                            <span>Masuk Sebagai Editor: admin / admin123</span>
-                        </button>
+                <!-- Info Keamanan & Bantuan Resmi Akademik -->
+                <div class="pt-4 border-t border-slate-100 text-center space-y-1.5">
+                    <div class="flex items-center justify-center space-x-1.5 text-slate-500 text-xs">
+                        <i class="fa-solid fa-shield-halved text-emerald-600"></i>
+                        <span class="font-semibold text-slate-600">Sistem Akademik Terenkripsi</span>
                     </div>
-                    <p class="text-[10px] text-slate-400 text-center mt-2 italic">*Akun Ustadz & Santri dapat didaftarkan secara mandiri oleh Editor melalui panel Manajemen Akun.</p>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">
+                        Lupa kata sandi atau butuh akses akun baru? Silakan hubungi bagian <strong class="text-slate-600 font-semibold">Tata Usaha / Pengelola IT Pesantren</strong>.
+                    </p>
                 </div>
             </div>
 
@@ -287,6 +280,12 @@
                                 <p id="userRoleBadge" class="text-[10px] text-emerald-200 leading-tight">Staff / Full Control</p>
                             </div>
                         </div>
+
+                        <!-- TOMBOL PENGATURAN AKUN (SETTINGS) -->
+                        <button type="button" onclick="openEditProfilSayaModal()" class="bg-emerald-900/60 hover:bg-emerald-800 text-white px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center space-x-1.5 shadow transition border border-emerald-600/50 cursor-pointer" title="Pengaturan Akun & Kata Sandi">
+                            <i class="fa-solid fa-gear text-emerald-300"></i>
+                            <span class="hidden sm:inline">Pengaturan</span>
+                        </button>
 
                         <!-- TOMBOL RESET KOSONG (STAFF/EDITOR ONLY) -->
                         <button onclick="confirmResetDatabase()" class="rbac-staff-only bg-amber-600/80 hover:bg-amber-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow transition border border-amber-500/50" title="Kosongkan seluruh data untuk mulai dari awal">
@@ -374,6 +373,14 @@
                             <i class="fa-solid fa-file-invoice w-5 text-center"></i>
                             <span>Laporan Kelas</span>
                         </button>
+
+                        <!-- 11. Pengaturan Akun & Keamanan (Untuk Semua Role) -->
+                        <div class="pt-2 mt-2 border-t border-slate-100">
+                            <button type="button" onclick="openEditProfilSayaModal()" id="nav-pengaturan" class="w-full flex items-center space-x-3 px-3 py-2.5 text-sm font-medium rounded-lg text-slate-600 hover:bg-emerald-50 hover:text-emerald-800 transition-colors cursor-pointer group">
+                                <i class="fa-solid fa-gear w-5 text-center text-slate-400 group-hover:text-emerald-600 transition-colors"></i>
+                                <span>Pengaturan Akun</span>
+                            </button>
+                        </div>
                     </nav>
 
                     <!-- Info Box (Active Class) -->
@@ -2372,21 +2379,21 @@
     </div>
 
     <!-- ============================================== -->
-    <!-- MODAL EDIT PROFIL & BIODATA SAYA (MANDIRI)     -->
+    <!-- MODAL PENGATURAN AKUN & BIODATA (MANDIRI)      -->
     <!-- ============================================== -->
     <div id="modalEditProfilSaya" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 my-8">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div class="flex items-center space-x-2.5">
                     <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
-                        <i class="fa-solid fa-id-card"></i>
+                        <i class="fa-solid fa-gear"></i>
                     </div>
                     <div>
-                        <h3 class="text-base font-bold text-slate-800">Edit Profil & Biodata Saya</h3>
-                        <p class="text-[11px] text-slate-400">Data ini tersinkronkan otomatis ke seluruh sistem & dashboard</p>
+                        <h3 class="text-base font-bold text-slate-800">Pengaturan Akun & Biodata</h3>
+                        <p class="text-[11px] text-slate-400">Kelola profil, biodata diri, dan kata sandi login akun Anda</p>
                     </div>
                 </div>
-                <button type="button" onclick="closeEditProfilSayaModal()" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button type="button" onclick="closeEditProfilSayaModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
             <form id="formEditProfilSaya" onsubmit="handleSaveEditProfilSaya(event)" class="space-y-3.5 text-xs">
@@ -2468,17 +2475,25 @@
                 </div>
 
                 <!-- Ganti Password Pribadi -->
-                <div class="p-3 bg-amber-50/70 border border-amber-200/80 rounded-xl space-y-1">
-                    <label class="block font-semibold text-amber-900">Ubah Kata Sandi Login (Opsional):</label>
-                    <input type="password" id="editProfilPassword" placeholder="Tulis kata sandi baru (kosongkan jika tidak ingin ganti)..." class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                <div class="p-3 bg-amber-50/70 border border-amber-200/80 rounded-xl space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <label class="block font-semibold text-amber-900"><i class="fa-solid fa-key mr-1 text-amber-600"></i> Ubah Kata Sandi Login (Opsional):</label>
+                        <span class="text-[10px] text-amber-700">Kosongkan jika tidak diubah</span>
+                    </div>
+                    <div class="relative">
+                        <input type="password" id="editProfilPassword" placeholder="Tulis kata sandi baru..." class="w-full bg-white border border-slate-200 rounded-lg pl-3 pr-10 py-2 text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                        <button type="button" onclick="toggleEditProfilPassword()" class="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600 focus:outline-none p-0.5 cursor-pointer" title="Lihat / Sembunyikan Kata Sandi">
+                            <i id="toggleEditProfilPasswordIcon" class="fa-solid fa-eye text-xs"></i>
+                        </button>
+                    </div>
                     <p class="text-[10px] text-amber-700 italic">*Gunakan minimal 6 karakter demi keamanan akun Anda.</p>
                 </div>
 
                 <div class="flex justify-end items-center space-x-2 pt-3 border-t border-slate-100">
-                    <button type="button" onclick="closeEditProfilSayaModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold text-xs transition">Batal</button>
-                    <button type="submit" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-md hover:shadow-lg text-xs transition flex items-center gap-1.5">
+                    <button type="button" onclick="closeEditProfilSayaModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold text-xs transition cursor-pointer">Batal</button>
+                    <button type="submit" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-md hover:shadow-lg text-xs transition flex items-center gap-1.5 cursor-pointer">
                         <i class="fa-solid fa-floppy-disk"></i>
-                        <span>Simpan Perubahan Biodata</span>
+                        <span>Simpan Pengaturan Akun</span>
                     </button>
                 </div>
             </form>
@@ -4345,6 +4360,10 @@ ON CONFLICT (id) DO NOTHING;`;
                 showToast('Silakan login terlebih dahulu.');
                 return;
             }
+            const sidebar = document.getElementById('sidebarNav');
+            if (window.innerWidth < 768 && sidebar && !sidebar.classList.contains('hidden')) {
+                sidebar.classList.add('hidden');
+            }
             const user = currentUser;
             document.getElementById('editProfilNama').value = user.nama || '';
             document.getElementById('editProfilId').value = user.id || '';
@@ -4377,7 +4396,14 @@ ON CONFLICT (id) DO NOTHING;`;
 
             document.getElementById('editProfilHp').value = user.hp || '';
             document.getElementById('editProfilAlamat').value = user.alamat || '';
-            document.getElementById('editProfilPassword').value = '';
+            
+            const pwdInput = document.getElementById('editProfilPassword');
+            const icon = document.getElementById('toggleEditProfilPasswordIcon');
+            if (pwdInput) {
+                pwdInput.value = '';
+                pwdInput.type = 'password';
+            }
+            if (icon) icon.className = 'fa-solid fa-eye text-xs';
 
             const modal = document.getElementById('modalEditProfilSaya');
             if (modal) {
@@ -4391,6 +4417,19 @@ ON CONFLICT (id) DO NOTHING;`;
             if (modal) {
                 modal.classList.add('hidden');
                 modal.style.display = 'none';
+            }
+        }
+
+        function toggleEditProfilPassword() {
+            const pwdInput = document.getElementById('editProfilPassword');
+            const icon = document.getElementById('toggleEditProfilPasswordIcon');
+            if (!pwdInput || !icon) return;
+            if (pwdInput.type === 'password') {
+                pwdInput.type = 'text';
+                icon.className = 'fa-solid fa-eye-slash text-xs';
+            } else {
+                pwdInput.type = 'password';
+                icon.className = 'fa-solid fa-eye text-xs';
             }
         }
 
@@ -4471,7 +4510,7 @@ ON CONFLICT (id) DO NOTHING;`;
             applyUpdatedProfileToUI(currentUser);
 
             closeEditProfilSayaModal();
-            showToast(`Alhamdulillah, profil & biodata ${nama} berhasil disimpan!`);
+            showToast(`Alhamdulillah, pengaturan akun ${nama} berhasil disimpan!`);
         }
 
         function setupRoleWorkspace(user) {
