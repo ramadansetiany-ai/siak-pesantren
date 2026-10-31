@@ -1103,7 +1103,10 @@
                                     Hanya Staff yang berhak membuat, mengubah, atau menghapus ID akun Ustadz dan Santri.
                                 </p>
                             </div>
-                            <div>
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="const res = seedSantriDatabase(true); showToast(Alhamdulillah,  Akun Santri Berhasil Disinkronkan!);" class="bg-teal-600 hover:bg-teal-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold shadow-xs transition flex items-center gap-1.5 cursor-pointer" title="Seeder otomatis untuk 76 akun santri lengkap dengan biodata, absensi, & nilai">
+                                    <i class="fa-solid fa-database"></i> <span>Sinkron 76 Santri</span>
+                                </button>
                                 <button onclick="openTambahAkunModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold shadow transition flex items-center">
                                     <i class="fa-solid fa-user-plus mr-1.5"></i> + Tambah Akun Baru
                                 </button>
@@ -4427,6 +4430,1342 @@
         // Multi-Class Data Store (Kosong, siap dibuat mandiri oleh Editor)
         const INITIAL_CLASSES = {};
 
+        // =========================================================================
+        // SEEDER RESMI: 76 AKUN & BIODATA SANTRI LENGKAP DENGAN ABSENSI & NILAI
+        // =========================================================================
+        const SEED_SANTRI_LIST = [
+            {
+                id: "1aly.ajiws",
+                nama: "Aji WS",
+                password: "1aly001",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "1aly.ajiws",
+                kelas_id: "1-aly",
+                kelas_nama: "1 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 1 Banin, Asrama Al-Ghazali",
+                avatar: "A",
+                rekap: { hadir: 24, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 83, nahwu: 85, shorof: 87, akhlaq: 87, hadits: 86, tauhid: 90, rata: "86.3", lulus: true }
+            },
+            {
+                id: "1aly.adityar",
+                nama: "Aditya R.",
+                password: "1aly002",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "1aly.adityar",
+                kelas_id: "1-aly",
+                kelas_nama: "1 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 1 Banin, Asrama Al-Ghazali",
+                avatar: "A",
+                rekap: { hadir: 25, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 86, nahwu: 92, shorof: 92, akhlaq: 89, hadits: 90, tauhid: 96, rata: "90.8", lulus: true }
+            },
+            {
+                id: "1aly.evan",
+                nama: "Evan",
+                password: "1aly003",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "1aly.evan",
+                kelas_id: "1-aly",
+                kelas_nama: "1 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 1 Banin, Asrama Al-Ghazali",
+                avatar: "E",
+                rekap: { hadir: 26, alpa: 0, izin: 1, sakit: 0 },
+                nilai: { fiqih: 89, nahwu: 80, shorof: 82, akhlaq: 91, hadits: 94, tauhid: 87, rata: "87.2", lulus: true }
+            },
+            {
+                id: "1aly.fajrim",
+                nama: "Fajri M",
+                password: "1aly004",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "1aly.fajrim",
+                kelas_id: "1-aly",
+                kelas_nama: "1 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 1 Banin, Asrama Al-Ghazali",
+                avatar: "F",
+                rekap: { hadir: 23, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 92, nahwu: 87, shorof: 87, akhlaq: 93, hadits: 82, tauhid: 93, rata: "89", lulus: true }
+            },
+            {
+                id: "1aly.farisi",
+                nama: "Faris I",
+                password: "1aly005",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "1aly.farisi",
+                kelas_id: "1-aly",
+                kelas_nama: "1 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 1 Banin, Asrama Al-Ghazali",
+                avatar: "F",
+                rekap: { hadir: 24, alpa: 0, izin: 0, sakit: 1 },
+                nilai: { fiqih: 95, nahwu: 94, shorof: 92, akhlaq: 95, hadits: 86, tauhid: 84, rata: "91", lulus: true }
+            },
+            {
+                id: "1aly.hidayat",
+                nama: "Hidayat",
+                password: "1aly006",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "1aly.hidayat",
+                kelas_id: "1-aly",
+                kelas_nama: "1 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 1 Banin, Asrama Al-Ghazali",
+                avatar: "H",
+                rekap: { hadir: 25, alpa: 0, izin: 1, sakit: 0 },
+                nilai: { fiqih: 81, nahwu: 82, shorof: 82, akhlaq: 97, hadits: 90, tauhid: 90, rata: "87", lulus: true }
+            },
+            {
+                id: "1aly.hilalabd",
+                nama: "Hilal Abd",
+                password: "1aly007",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "1aly.hilalabd",
+                kelas_id: "1-aly",
+                kelas_nama: "1 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 1 Banin, Asrama Al-Ghazali",
+                avatar: "H",
+                rekap: { hadir: 26, alpa: 0, izin: 2, sakit: 0 },
+                nilai: { fiqih: 84, nahwu: 89, shorof: 87, akhlaq: 85, hadits: 94, tauhid: 96, rata: "89.2", lulus: true }
+            },
+            {
+                id: "1aly.luthfia",
+                nama: "Luthfi A",
+                password: "1aly008",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "1aly.luthfia",
+                kelas_id: "1-aly",
+                kelas_nama: "1 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 1 Banin, Asrama Al-Ghazali",
+                avatar: "L",
+                rekap: { hadir: 23, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 87, nahwu: 96, shorof: 92, akhlaq: 87, hadits: 82, tauhid: 87, rata: "88.5", lulus: true }
+            },
+            {
+                id: "1aly.nazril",
+                nama: "M. Nazril",
+                password: "1aly009",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "1aly.nazril",
+                kelas_id: "1-aly",
+                kelas_nama: "1 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 1 Banin, Asrama Al-Ghazali",
+                avatar: "M",
+                rekap: { hadir: 24, alpa: 0, izin: 1, sakit: 0 },
+                nilai: { fiqih: 90, nahwu: 84, shorof: 82, akhlaq: 89, hadits: 86, tauhid: 93, rata: "87.3", lulus: true }
+            },
+            {
+                id: "1aly.fakhri",
+                nama: "M. Fakhri",
+                password: "1aly010",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "1aly.fakhri",
+                kelas_id: "1-aly",
+                kelas_nama: "1 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 1 Banin, Asrama Al-Ghazali",
+                avatar: "M",
+                rekap: { hadir: 25, alpa: 0, izin: 0, sakit: 1 },
+                nilai: { fiqih: 93, nahwu: 91, shorof: 87, akhlaq: 91, hadits: 90, tauhid: 84, rata: "89.3", lulus: true }
+            },
+            {
+                id: "1aly.ramdan",
+                nama: "M. Ramdan",
+                password: "1aly011",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "1aly.ramdan",
+                kelas_id: "1-aly",
+                kelas_nama: "1 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 1 Banin, Asrama Al-Ghazali",
+                avatar: "M",
+                rekap: { hadir: 26, alpa: 1, izin: 0, sakit: 0 },
+                nilai: { fiqih: 96, nahwu: 79, shorof: 92, akhlaq: 93, hadits: 94, tauhid: 90, rata: "90.7", lulus: true }
+            },
+            {
+                id: "1aly.burhan",
+                nama: "M. Burhan",
+                password: "1aly012",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "1aly.burhan",
+                kelas_id: "1-aly",
+                kelas_nama: "1 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 1 Banin, Asrama Al-Ghazali",
+                avatar: "M",
+                rekap: { hadir: 23, alpa: 0, izin: 1, sakit: 0 },
+                nilai: { fiqih: 82, nahwu: 86, shorof: 82, akhlaq: 95, hadits: 82, tauhid: 96, rata: "87.2", lulus: true }
+            },
+            {
+                id: "1aly.taufik",
+                nama: "M. Taufik",
+                password: "1aly013",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "1aly.taufik",
+                kelas_id: "1-aly",
+                kelas_nama: "1 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 1 Banin, Asrama Al-Ghazali",
+                avatar: "M",
+                rekap: { hadir: 24, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 85, nahwu: 93, shorof: 87, akhlaq: 97, hadits: 86, tauhid: 87, rata: "89.2", lulus: true }
+            },
+            {
+                id: "1aly.syahrul",
+                nama: "M. Syahrul",
+                password: "1aly014",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "1aly.syahrul",
+                kelas_id: "1-aly",
+                kelas_nama: "1 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 1 Banin, Asrama Al-Ghazali",
+                avatar: "M",
+                rekap: { hadir: 25, alpa: 0, izin: 2, sakit: 0 },
+                nilai: { fiqih: 88, nahwu: 81, shorof: 92, akhlaq: 85, hadits: 90, tauhid: 93, rata: "88.2", lulus: true }
+            },
+            {
+                id: "1aly.riskir",
+                nama: "Riski R",
+                password: "1aly015",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "1aly.riskir",
+                kelas_id: "1-aly",
+                kelas_nama: "1 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 1 Banin, Asrama Al-Ghazali",
+                avatar: "R",
+                rekap: { hadir: 26, alpa: 0, izin: 1, sakit: 1 },
+                nilai: { fiqih: 91, nahwu: 88, shorof: 82, akhlaq: 87, hadits: 94, tauhid: 84, rata: "87.7", lulus: true }
+            },
+            {
+                id: "1aly.radeas",
+                nama: "Radea S",
+                password: "1aly016",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "1aly.radeas",
+                kelas_id: "1-aly",
+                kelas_nama: "1 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 1 Banin, Asrama Al-Ghazali",
+                avatar: "R",
+                rekap: { hadir: 23, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 94, nahwu: 95, shorof: 87, akhlaq: 89, hadits: 82, tauhid: 90, rata: "89.5", lulus: true }
+            },
+            {
+                id: "1aly.satriaam",
+                nama: "Satria AM",
+                password: "1aly017",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "1aly.satriaam",
+                kelas_id: "1-aly",
+                kelas_nama: "1 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 1 Banin, Asrama Al-Ghazali",
+                avatar: "S",
+                rekap: { hadir: 24, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 80, nahwu: 83, shorof: 92, akhlaq: 91, hadits: 86, tauhid: 96, rata: "88", lulus: true }
+            },
+            {
+                id: "2aly.ahmadramdani",
+                nama: "Ahmad Ramdani",
+                password: "2aly001",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "2aly.ahmadramdani",
+                kelas_id: "2-aly",
+                kelas_nama: "2 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 2 Banin, Asrama Al-Farabi",
+                avatar: "A",
+                rekap: { hadir: 25, alpa: 0, izin: 1, sakit: 0 },
+                nilai: { fiqih: 83, nahwu: 90, shorof: 82, akhlaq: 93, hadits: 90, tauhid: 87, rata: "87.5", lulus: true }
+            },
+            {
+                id: "2aly.ahmadrifai",
+                nama: "Ahmad Rifai",
+                password: "2aly002",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "2aly.ahmadrifai",
+                kelas_id: "2-aly",
+                kelas_nama: "2 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 2 Banin, Asrama Al-Farabi",
+                avatar: "A",
+                rekap: { hadir: 26, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 86, nahwu: 78, shorof: 87, akhlaq: 95, hadits: 94, tauhid: 93, rata: "88.8", lulus: true }
+            },
+            {
+                id: "2aly.faisal",
+                nama: "Faisal",
+                password: "2aly003",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "2aly.faisal",
+                kelas_id: "2-aly",
+                kelas_nama: "2 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 2 Banin, Asrama Al-Farabi",
+                avatar: "F",
+                rekap: { hadir: 23, alpa: 0, izin: 0, sakit: 1 },
+                nilai: { fiqih: 89, nahwu: 85, shorof: 92, akhlaq: 97, hadits: 82, tauhid: 84, rata: "88.2", lulus: true }
+            },
+            {
+                id: "2aly.fathan",
+                nama: "Fathan",
+                password: "2aly004",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "2aly.fathan",
+                kelas_id: "2-aly",
+                kelas_nama: "2 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 2 Banin, Asrama Al-Farabi",
+                avatar: "F",
+                rekap: { hadir: 24, alpa: 0, izin: 1, sakit: 0 },
+                nilai: { fiqih: 92, nahwu: 92, shorof: 82, akhlaq: 85, hadits: 86, tauhid: 90, rata: "87.8", lulus: true }
+            },
+            {
+                id: "2aly.indra",
+                nama: "Indra",
+                password: "2aly005",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "2aly.indra",
+                kelas_id: "2-aly",
+                kelas_nama: "2 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 2 Banin, Asrama Al-Farabi",
+                avatar: "I",
+                rekap: { hadir: 25, alpa: 1, izin: 0, sakit: 0 },
+                nilai: { fiqih: 95, nahwu: 80, shorof: 87, akhlaq: 87, hadits: 90, tauhid: 96, rata: "89.2", lulus: true }
+            },
+            {
+                id: "2aly.jalila",
+                nama: "Jalil A",
+                password: "2aly006",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "2aly.jalila",
+                kelas_id: "2-aly",
+                kelas_nama: "2 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 2 Banin, Asrama Al-Farabi",
+                avatar: "J",
+                rekap: { hadir: 26, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 81, nahwu: 87, shorof: 92, akhlaq: 89, hadits: 94, tauhid: 87, rata: "88.3", lulus: true }
+            },
+            {
+                id: "2aly.maulanas",
+                nama: "Maulana S",
+                password: "2aly007",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "2aly.maulanas",
+                kelas_id: "2-aly",
+                kelas_nama: "2 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 2 Banin, Asrama Al-Farabi",
+                avatar: "M",
+                rekap: { hadir: 23, alpa: 0, izin: 1, sakit: 0 },
+                nilai: { fiqih: 84, nahwu: 94, shorof: 82, akhlaq: 91, hadits: 82, tauhid: 93, rata: "87.7", lulus: true }
+            },
+            {
+                id: "2aly.aidil",
+                nama: "M. Aidil",
+                password: "2aly008",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "2aly.aidil",
+                kelas_id: "2-aly",
+                kelas_nama: "2 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 2 Banin, Asrama Al-Farabi",
+                avatar: "M",
+                rekap: { hadir: 24, alpa: 0, izin: 0, sakit: 1 },
+                nilai: { fiqih: 87, nahwu: 82, shorof: 87, akhlaq: 93, hadits: 86, tauhid: 84, rata: "86.5", lulus: true }
+            },
+            {
+                id: "2aly.irvanr",
+                nama: "Irvan R",
+                password: "2aly009",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "2aly.irvanr",
+                kelas_id: "2-aly",
+                kelas_nama: "2 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 2 Banin, Asrama Al-Farabi",
+                avatar: "I",
+                rekap: { hadir: 25, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 90, nahwu: 89, shorof: 92, akhlaq: 95, hadits: 90, tauhid: 90, rata: "91", lulus: true }
+            },
+            {
+                id: "2aly.fadhil",
+                nama: "M. Fadhil",
+                password: "2aly010",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "2aly.fadhil",
+                kelas_id: "2-aly",
+                kelas_nama: "2 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 2 Banin, Asrama Al-Farabi",
+                avatar: "M",
+                rekap: { hadir: 26, alpa: 0, izin: 1, sakit: 0 },
+                nilai: { fiqih: 93, nahwu: 96, shorof: 82, akhlaq: 97, hadits: 94, tauhid: 96, rata: "93", lulus: true }
+            },
+            {
+                id: "2aly.fatirul",
+                nama: "M. Fatirul",
+                password: "2aly011",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "2aly.fatirul",
+                kelas_id: "2-aly",
+                kelas_nama: "2 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 2 Banin, Asrama Al-Farabi",
+                avatar: "M",
+                rekap: { hadir: 23, alpa: 0, izin: 2, sakit: 0 },
+                nilai: { fiqih: 96, nahwu: 84, shorof: 87, akhlaq: 85, hadits: 82, tauhid: 87, rata: "86.8", lulus: true }
+            },
+            {
+                id: "2aly.rizqim",
+                nama: "M. Rizqi M",
+                password: "2aly012",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "2aly.rizqim",
+                kelas_id: "2-aly",
+                kelas_nama: "2 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 2 Banin, Asrama Al-Farabi",
+                avatar: "M",
+                rekap: { hadir: 24, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 82, nahwu: 91, shorof: 92, akhlaq: 87, hadits: 86, tauhid: 93, rata: "88.5", lulus: true }
+            },
+            {
+                id: "2aly.abdulwahid",
+                nama: "M. Abdul Wahid",
+                password: "2aly013",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "2aly.abdulwahid",
+                kelas_id: "2-aly",
+                kelas_nama: "2 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 2 Banin, Asrama Al-Farabi",
+                avatar: "M",
+                rekap: { hadir: 25, alpa: 0, izin: 1, sakit: 1 },
+                nilai: { fiqih: 85, nahwu: 79, shorof: 82, akhlaq: 89, hadits: 90, tauhid: 84, rata: "84.8", lulus: true }
+            },
+            {
+                id: "2aly.rofik",
+                nama: "M. Rofik",
+                password: "2aly014",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "2aly.rofik",
+                kelas_id: "2-aly",
+                kelas_nama: "2 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 2 Banin, Asrama Al-Farabi",
+                avatar: "M",
+                rekap: { hadir: 26, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 88, nahwu: 86, shorof: 87, akhlaq: 91, hadits: 94, tauhid: 90, rata: "89.3", lulus: true }
+            },
+            {
+                id: "2aly.nabilr",
+                nama: "M. Nabil R",
+                password: "2aly015",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "2aly.nabilr",
+                kelas_id: "2-aly",
+                kelas_nama: "2 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 2 Banin, Asrama Al-Farabi",
+                avatar: "M",
+                rekap: { hadir: 23, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 91, nahwu: 93, shorof: 92, akhlaq: 93, hadits: 82, tauhid: 96, rata: "91.2", lulus: true }
+            },
+            {
+                id: "2aly.syahdan",
+                nama: "Syahdan",
+                password: "2aly016",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "2aly.syahdan",
+                kelas_id: "2-aly",
+                kelas_nama: "2 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 2 Banin, Asrama Al-Farabi",
+                avatar: "S",
+                rekap: { hadir: 24, alpa: 1, izin: 1, sakit: 0 },
+                nilai: { fiqih: 94, nahwu: 81, shorof: 82, akhlaq: 95, hadits: 86, tauhid: 87, rata: "87.5", lulus: true }
+            },
+            {
+                id: "2aly.yaisyn",
+                nama: "Yaisy N",
+                password: "2aly017",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "2aly.yaisyn",
+                kelas_id: "2-aly",
+                kelas_nama: "2 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 2 Banin, Asrama Al-Farabi",
+                avatar: "Y",
+                rekap: { hadir: 25, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 80, nahwu: 88, shorof: 87, akhlaq: 97, hadits: 90, tauhid: 93, rata: "89.2", lulus: true }
+            },
+            {
+                id: "3aly.fahrihusain",
+                nama: "M. Fahri Husain",
+                password: "3aly001",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "3aly.fahrihusain",
+                kelas_id: "3-aly",
+                kelas_nama: "3 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 3 Banin, Asrama Ibnu Rusyd",
+                avatar: "M",
+                rekap: { hadir: 26, alpa: 0, izin: 2, sakit: 1 },
+                nilai: { fiqih: 83, nahwu: 95, shorof: 92, akhlaq: 85, hadits: 94, tauhid: 84, rata: "88.8", lulus: true }
+            },
+            {
+                id: "3aly.fadhil",
+                nama: "M. Fadhil",
+                password: "3aly002",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "3aly.fadhil",
+                kelas_id: "3-aly",
+                kelas_nama: "3 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 3 Banin, Asrama Ibnu Rusyd",
+                avatar: "M",
+                rekap: { hadir: 23, alpa: 0, izin: 1, sakit: 0 },
+                nilai: { fiqih: 86, nahwu: 83, shorof: 82, akhlaq: 87, hadits: 82, tauhid: 90, rata: "85", lulus: true }
+            },
+            {
+                id: "3aly.fais",
+                nama: "M. Fais",
+                password: "3aly003",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "3aly.fais",
+                kelas_id: "3-aly",
+                kelas_nama: "3 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 3 Banin, Asrama Ibnu Rusyd",
+                avatar: "M",
+                rekap: { hadir: 24, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 89, nahwu: 90, shorof: 87, akhlaq: 89, hadits: 86, tauhid: 96, rata: "89.5", lulus: true }
+            },
+            {
+                id: "3aly.dava",
+                nama: "Dava",
+                password: "3aly004",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "3aly.dava",
+                kelas_id: "3-aly",
+                kelas_nama: "3 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 3 Banin, Asrama Ibnu Rusyd",
+                avatar: "D",
+                rekap: { hadir: 25, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 92, nahwu: 78, shorof: 92, akhlaq: 91, hadits: 90, tauhid: 87, rata: "88.3", lulus: true }
+            },
+            {
+                id: "3aly.nanda",
+                nama: "Nanda",
+                password: "3aly005",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "3aly.nanda",
+                kelas_id: "3-aly",
+                kelas_nama: "3 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 3 Banin, Asrama Ibnu Rusyd",
+                avatar: "N",
+                rekap: { hadir: 26, alpa: 0, izin: 1, sakit: 0 },
+                nilai: { fiqih: 95, nahwu: 85, shorof: 82, akhlaq: 93, hadits: 94, tauhid: 93, rata: "90.3", lulus: true }
+            },
+            {
+                id: "3aly.afif",
+                nama: "M. Afif",
+                password: "3aly006",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "3aly.afif",
+                kelas_id: "3-aly",
+                kelas_nama: "3 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 3 Banin, Asrama Ibnu Rusyd",
+                avatar: "M",
+                rekap: { hadir: 23, alpa: 0, izin: 0, sakit: 1 },
+                nilai: { fiqih: 81, nahwu: 92, shorof: 87, akhlaq: 95, hadits: 82, tauhid: 84, rata: "86.8", lulus: true }
+            },
+            {
+                id: "3aly.egafaran",
+                nama: "Ega Faran",
+                password: "3aly007",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "3aly.egafaran",
+                kelas_id: "3-aly",
+                kelas_nama: "3 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 3 Banin, Asrama Ibnu Rusyd",
+                avatar: "E",
+                rekap: { hadir: 24, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 84, nahwu: 80, shorof: 92, akhlaq: 97, hadits: 86, tauhid: 90, rata: "88.2", lulus: true }
+            },
+            {
+                id: "3aly.ferdi",
+                nama: "Ferdi",
+                password: "3aly008",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "3aly.ferdi",
+                kelas_id: "3-aly",
+                kelas_nama: "3 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 3 Banin, Asrama Ibnu Rusyd",
+                avatar: "F",
+                rekap: { hadir: 25, alpa: 0, izin: 1, sakit: 0 },
+                nilai: { fiqih: 87, nahwu: 87, shorof: 82, akhlaq: 85, hadits: 90, tauhid: 96, rata: "87.8", lulus: true }
+            },
+            {
+                id: "3aly.fulki",
+                nama: "Fulki",
+                password: "3aly009",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "3aly.fulki",
+                kelas_id: "3-aly",
+                kelas_nama: "3 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 3 Banin, Asrama Ibnu Rusyd",
+                avatar: "F",
+                rekap: { hadir: 26, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 90, nahwu: 94, shorof: 87, akhlaq: 87, hadits: 94, tauhid: 87, rata: "89.8", lulus: true }
+            },
+            {
+                id: "3aly.reki",
+                nama: "Reki",
+                password: "3aly010",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "3aly.reki",
+                kelas_id: "3-aly",
+                kelas_nama: "3 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 3 Banin, Asrama Ibnu Rusyd",
+                avatar: "R",
+                rekap: { hadir: 23, alpa: 1, izin: 0, sakit: 0 },
+                nilai: { fiqih: 93, nahwu: 82, shorof: 92, akhlaq: 89, hadits: 82, tauhid: 93, rata: "88.5", lulus: true }
+            },
+            {
+                id: "3aly.royhan",
+                nama: "Royhan",
+                password: "3aly011",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "3aly.royhan",
+                kelas_id: "3-aly",
+                kelas_nama: "3 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 3 Banin, Asrama Ibnu Rusyd",
+                avatar: "R",
+                rekap: { hadir: 24, alpa: 0, izin: 1, sakit: 1 },
+                nilai: { fiqih: 96, nahwu: 89, shorof: 82, akhlaq: 91, hadits: 86, tauhid: 84, rata: "88", lulus: true }
+            },
+            {
+                id: "3aly.alis",
+                nama: "Ali Sirojudin",
+                password: "3aly012",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "3aly.alis",
+                kelas_id: "3-aly",
+                kelas_nama: "3 Aly Banin",
+                kategori: "banin",
+                waliKelas: "Ust. M. Salman Abi Hasan M. S.H.",
+                asrama: "Kobong 3 Banin, Asrama Ibnu Rusyd",
+                avatar: "A",
+                rekap: { hadir: 25, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 82, nahwu: 96, shorof: 87, akhlaq: 93, hadits: 90, tauhid: 90, rata: "89.7", lulus: true }
+            },
+            {
+                id: "b1aly.nova",
+                nama: "Nova Rizky Fadhilah",
+                password: "b1aly001",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b1aly.nova",
+                kelas_id: "1-aly-banat",
+                kelas_nama: "1 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 1 Banat, Asrama Sayyidah Khadijah",
+                avatar: "N",
+                rekap: { hadir: 26, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 85, nahwu: 84, shorof: 92, akhlaq: 95, hadits: 94, tauhid: 96, rata: "91", lulus: true }
+            },
+            {
+                id: "b1aly.nita",
+                nama: "Nita Rosita",
+                password: "b1aly002",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b1aly.nita",
+                kelas_id: "1-aly-banat",
+                kelas_nama: "1 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 1 Banat, Asrama Sayyidah Khadijah",
+                avatar: "N",
+                rekap: { hadir: 23, alpa: 0, izin: 1, sakit: 0 },
+                nilai: { fiqih: 88, nahwu: 91, shorof: 82, akhlaq: 97, hadits: 82, tauhid: 87, rata: "87.8", lulus: true }
+            },
+            {
+                id: "b1aly.thalitha",
+                nama: "Thalitha Fakhira Sayyidah",
+                password: "b1aly003",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b1aly.thalitha",
+                kelas_id: "1-aly-banat",
+                kelas_nama: "1 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 1 Banat, Asrama Sayyidah Khadijah",
+                avatar: "T",
+                rekap: { hadir: 24, alpa: 0, izin: 2, sakit: 0 },
+                nilai: { fiqih: 91, nahwu: 79, shorof: 87, akhlaq: 85, hadits: 86, tauhid: 93, rata: "86.8", lulus: true }
+            },
+            {
+                id: "b1aly.cicin",
+                nama: "Cicin Anggraeni",
+                password: "b1aly004",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b1aly.cicin",
+                kelas_id: "1-aly-banat",
+                kelas_nama: "1 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 1 Banat, Asrama Sayyidah Khadijah",
+                avatar: "C",
+                rekap: { hadir: 25, alpa: 0, izin: 0, sakit: 1 },
+                nilai: { fiqih: 94, nahwu: 86, shorof: 92, akhlaq: 87, hadits: 90, tauhid: 84, rata: "88.8", lulus: true }
+            },
+            {
+                id: "b1aly.dara",
+                nama: "Dara Aulia Zahra",
+                password: "b1aly005",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b1aly.dara",
+                kelas_id: "1-aly-banat",
+                kelas_nama: "1 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 1 Banat, Asrama Sayyidah Khadijah",
+                avatar: "D",
+                rekap: { hadir: 26, alpa: 0, izin: 1, sakit: 0 },
+                nilai: { fiqih: 80, nahwu: 93, shorof: 82, akhlaq: 89, hadits: 94, tauhid: 90, rata: "88", lulus: true }
+            },
+            {
+                id: "b1aly.naisywa",
+                nama: "Naisywa Khairunnisa",
+                password: "b1aly006",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b1aly.naisywa",
+                kelas_id: "1-aly-banat",
+                kelas_nama: "1 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 1 Banat, Asrama Sayyidah Khadijah",
+                avatar: "N",
+                rekap: { hadir: 23, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 83, nahwu: 81, shorof: 87, akhlaq: 91, hadits: 82, tauhid: 96, rata: "86.7", lulus: true }
+            },
+            {
+                id: "b1aly.dini",
+                nama: "Dini Aulia",
+                password: "b1aly007",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b1aly.dini",
+                kelas_id: "1-aly-banat",
+                kelas_nama: "1 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 1 Banat, Asrama Sayyidah Khadijah",
+                avatar: "D",
+                rekap: { hadir: 24, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 86, nahwu: 88, shorof: 92, akhlaq: 93, hadits: 86, tauhid: 87, rata: "88.7", lulus: true }
+            },
+            {
+                id: "b2aly.suci",
+                nama: "Suci Ramadani Sujana",
+                password: "b2aly001",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b2aly.suci",
+                kelas_id: "2-aly-banat",
+                kelas_nama: "2 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 2 Banat, Asrama Sayyidah Aisyah",
+                avatar: "S",
+                rekap: { hadir: 25, alpa: 0, izin: 1, sakit: 0 },
+                nilai: { fiqih: 89, nahwu: 95, shorof: 82, akhlaq: 95, hadits: 90, tauhid: 93, rata: "90.7", lulus: true }
+            },
+            {
+                id: "b2aly.hanum",
+                nama: "Hanum Tirani",
+                password: "b2aly002",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b2aly.hanum",
+                kelas_id: "2-aly-banat",
+                kelas_nama: "2 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 2 Banat, Asrama Sayyidah Aisyah",
+                avatar: "H",
+                rekap: { hadir: 26, alpa: 1, izin: 0, sakit: 1 },
+                nilai: { fiqih: 92, nahwu: 83, shorof: 87, akhlaq: 97, hadits: 94, tauhid: 84, rata: "89.5", lulus: true }
+            },
+            {
+                id: "b2aly.naila",
+                nama: "Naila Amalia Habibah",
+                password: "b2aly003",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b2aly.naila",
+                kelas_id: "2-aly-banat",
+                kelas_nama: "2 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 2 Banat, Asrama Sayyidah Aisyah",
+                avatar: "N",
+                rekap: { hadir: 23, alpa: 0, izin: 2, sakit: 0 },
+                nilai: { fiqih: 95, nahwu: 90, shorof: 92, akhlaq: 85, hadits: 82, tauhid: 90, rata: "89", lulus: true }
+            },
+            {
+                id: "b2aly.atun",
+                nama: "Atun Darozatun Aliyah",
+                password: "b2aly004",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b2aly.atun",
+                kelas_id: "2-aly-banat",
+                kelas_nama: "2 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 2 Banat, Asrama Sayyidah Aisyah",
+                avatar: "A",
+                rekap: { hadir: 24, alpa: 0, izin: 1, sakit: 0 },
+                nilai: { fiqih: 81, nahwu: 78, shorof: 82, akhlaq: 87, hadits: 86, tauhid: 96, rata: "85", lulus: true }
+            },
+            {
+                id: "b2aly.intan",
+                nama: "Intan RahmaYulia",
+                password: "b2aly005",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b2aly.intan",
+                kelas_id: "2-aly-banat",
+                kelas_nama: "2 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 2 Banat, Asrama Sayyidah Aisyah",
+                avatar: "I",
+                rekap: { hadir: 25, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 84, nahwu: 85, shorof: 87, akhlaq: 89, hadits: 90, tauhid: 87, rata: "87", lulus: true }
+            },
+            {
+                id: "b2aly.herlina",
+                nama: "Herlina Meiliawati",
+                password: "b2aly006",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b2aly.herlina",
+                kelas_id: "2-aly-banat",
+                kelas_nama: "2 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 2 Banat, Asrama Sayyidah Aisyah",
+                avatar: "H",
+                rekap: { hadir: 26, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 87, nahwu: 92, shorof: 92, akhlaq: 91, hadits: 94, tauhid: 93, rata: "91.5", lulus: true }
+            },
+            {
+                id: "b2aly.saskia",
+                nama: "Saskia Sri Rizkiyah",
+                password: "b2aly007",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b2aly.saskia",
+                kelas_id: "2-aly-banat",
+                kelas_nama: "2 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 2 Banat, Asrama Sayyidah Aisyah",
+                avatar: "S",
+                rekap: { hadir: 23, alpa: 0, izin: 1, sakit: 1 },
+                nilai: { fiqih: 90, nahwu: 80, shorof: 82, akhlaq: 93, hadits: 82, tauhid: 84, rata: "85.2", lulus: true }
+            },
+            {
+                id: "b2aly.delina",
+                nama: "Delina Ananda",
+                password: "b2aly008",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b2aly.delina",
+                kelas_id: "2-aly-banat",
+                kelas_nama: "2 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 2 Banat, Asrama Sayyidah Aisyah",
+                avatar: "D",
+                rekap: { hadir: 24, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 93, nahwu: 87, shorof: 87, akhlaq: 95, hadits: 86, tauhid: 90, rata: "89.7", lulus: true }
+            },
+            {
+                id: "b2aly.silfira",
+                nama: "Silfira Agustin",
+                password: "b2aly009",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b2aly.silfira",
+                kelas_id: "2-aly-banat",
+                kelas_nama: "2 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 2 Banat, Asrama Sayyidah Aisyah",
+                avatar: "S",
+                rekap: { hadir: 25, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 96, nahwu: 94, shorof: 92, akhlaq: 97, hadits: 90, tauhid: 96, rata: "94.2", lulus: true }
+            },
+            {
+                id: "b3aly.eni",
+                nama: "Eni Kartini",
+                password: "b3aly001",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b3aly.eni",
+                kelas_id: "3-aly-banat",
+                kelas_nama: "3 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 3 Banat, Asrama Sayyidah Fatimah",
+                avatar: "E",
+                rekap: { hadir: 26, alpa: 0, izin: 1, sakit: 0 },
+                nilai: { fiqih: 82, nahwu: 82, shorof: 82, akhlaq: 85, hadits: 94, tauhid: 87, rata: "85.3", lulus: true }
+            },
+            {
+                id: "b3aly.risna",
+                nama: "Risna Dewi",
+                password: "b3aly002",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b3aly.risna",
+                kelas_id: "3-aly-banat",
+                kelas_nama: "3 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 3 Banat, Asrama Sayyidah Fatimah",
+                avatar: "R",
+                rekap: { hadir: 23, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 85, nahwu: 89, shorof: 87, akhlaq: 87, hadits: 82, tauhid: 93, rata: "87.2", lulus: true }
+            },
+            {
+                id: "b3aly.khodijah",
+                nama: "Siti Khodijah",
+                password: "b3aly003",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b3aly.khodijah",
+                kelas_id: "3-aly-banat",
+                kelas_nama: "3 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 3 Banat, Asrama Sayyidah Fatimah",
+                avatar: "S",
+                rekap: { hadir: 24, alpa: 0, izin: 0, sakit: 1 },
+                nilai: { fiqih: 88, nahwu: 96, shorof: 92, akhlaq: 89, hadits: 86, tauhid: 84, rata: "89.2", lulus: true }
+            },
+            {
+                id: "b3aly.desinta",
+                nama: "Desinta Putri",
+                password: "b3aly004",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b3aly.desinta",
+                kelas_id: "3-aly-banat",
+                kelas_nama: "3 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 3 Banat, Asrama Sayyidah Fatimah",
+                avatar: "D",
+                rekap: { hadir: 25, alpa: 1, izin: 1, sakit: 0 },
+                nilai: { fiqih: 91, nahwu: 84, shorof: 82, akhlaq: 91, hadits: 90, tauhid: 90, rata: "88", lulus: true }
+            },
+            {
+                id: "b3aly.iin",
+                nama: "Iin Intania",
+                password: "b3aly005",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b3aly.iin",
+                kelas_id: "3-aly-banat",
+                kelas_nama: "3 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 3 Banat, Asrama Sayyidah Fatimah",
+                avatar: "I",
+                rekap: { hadir: 26, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 94, nahwu: 91, shorof: 87, akhlaq: 93, hadits: 94, tauhid: 96, rata: "92.5", lulus: true }
+            },
+            {
+                id: "b3aly.linda",
+                nama: "Linda Damayanti",
+                password: "b3aly006",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b3aly.linda",
+                kelas_id: "3-aly-banat",
+                kelas_nama: "3 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 3 Banat, Asrama Sayyidah Fatimah",
+                avatar: "L",
+                rekap: { hadir: 23, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 80, nahwu: 79, shorof: 92, akhlaq: 95, hadits: 82, tauhid: 87, rata: "85.8", lulus: true }
+            },
+            {
+                id: "b3aly.annisa",
+                nama: "Annisa Nailal",
+                password: "b3aly007",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b3aly.annisa",
+                kelas_id: "3-aly-banat",
+                kelas_nama: "3 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 3 Banat, Asrama Sayyidah Fatimah",
+                avatar: "A",
+                rekap: { hadir: 24, alpa: 0, izin: 1, sakit: 0 },
+                nilai: { fiqih: 83, nahwu: 86, shorof: 82, akhlaq: 97, hadits: 86, tauhid: 93, rata: "87.8", lulus: true }
+            },
+            {
+                id: "b3aly.dian",
+                nama: "Dian Nur Aeni",
+                password: "b3aly008",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b3aly.dian",
+                kelas_id: "3-aly-banat",
+                kelas_nama: "3 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 3 Banat, Asrama Sayyidah Fatimah",
+                avatar: "D",
+                rekap: { hadir: 25, alpa: 0, izin: 2, sakit: 1 },
+                nilai: { fiqih: 86, nahwu: 93, shorof: 87, akhlaq: 85, hadits: 90, tauhid: 84, rata: "87.5", lulus: true }
+            },
+            {
+                id: "b3aly.fitri",
+                nama: "Fitri Adisti",
+                password: "b3aly009",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b3aly.fitri",
+                kelas_id: "3-aly-banat",
+                kelas_nama: "3 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 3 Banat, Asrama Sayyidah Fatimah",
+                avatar: "F",
+                rekap: { hadir: 26, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 89, nahwu: 81, shorof: 92, akhlaq: 87, hadits: 94, tauhid: 90, rata: "88.8", lulus: true }
+            },
+            {
+                id: "b3aly.inayatul",
+                nama: "Inayatul Hikmah",
+                password: "b3aly010",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b3aly.inayatul",
+                kelas_id: "3-aly-banat",
+                kelas_nama: "3 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 3 Banat, Asrama Sayyidah Fatimah",
+                avatar: "I",
+                rekap: { hadir: 23, alpa: 0, izin: 1, sakit: 0 },
+                nilai: { fiqih: 92, nahwu: 88, shorof: 82, akhlaq: 89, hadits: 82, tauhid: 96, rata: "88.2", lulus: true }
+            },
+            {
+                id: "b3aly.riva",
+                nama: "Riva Najwa Mubarokah",
+                password: "b3aly011",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b3aly.riva",
+                kelas_id: "3-aly-banat",
+                kelas_nama: "3 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 3 Banat, Asrama Sayyidah Fatimah",
+                avatar: "R",
+                rekap: { hadir: 24, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 95, nahwu: 95, shorof: 87, akhlaq: 91, hadits: 86, tauhid: 87, rata: "90.2", lulus: true }
+            },
+            {
+                id: "b3aly.selfi",
+                nama: "Selfi Ameliani",
+                password: "b3aly012",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b3aly.selfi",
+                kelas_id: "3-aly-banat",
+                kelas_nama: "3 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 3 Banat, Asrama Sayyidah Fatimah",
+                avatar: "S",
+                rekap: { hadir: 25, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 81, nahwu: 83, shorof: 92, akhlaq: 93, hadits: 90, tauhid: 93, rata: "88.7", lulus: true }
+            },
+            {
+                id: "b3aly.julaeha",
+                nama: "Siti Julaeha",
+                password: "b3aly013",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b3aly.julaeha",
+                kelas_id: "3-aly-banat",
+                kelas_nama: "3 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 3 Banat, Asrama Sayyidah Fatimah",
+                avatar: "S",
+                rekap: { hadir: 26, alpa: 0, izin: 1, sakit: 1 },
+                nilai: { fiqih: 84, nahwu: 90, shorof: 82, akhlaq: 95, hadits: 94, tauhid: 84, rata: "88.2", lulus: true }
+            },
+            {
+                id: "b3aly.zakia",
+                nama: "Zakia Fauzah",
+                password: "b3aly014",
+                role: "santri",
+                roleLabel: "Santri / Mahasantri",
+                nis: "b3aly.zakia",
+                kelas_id: "3-aly-banat",
+                kelas_nama: "3 Aly Banat",
+                kategori: "banat",
+                waliKelas: "Ustadzah Siti Maryam, M.Pd",
+                asrama: "Kobong 3 Banat, Asrama Sayyidah Fatimah",
+                avatar: "Z",
+                rekap: { hadir: 23, alpa: 0, izin: 0, sakit: 0 },
+                nilai: { fiqih: 87, nahwu: 78, shorof: 87, akhlaq: 97, hadits: 82, tauhid: 90, rata: "86.8", lulus: true }
+            },
+        ];
+
+
+        function seedSantriDatabase(force = false) {
+            let accounts = getAccounts();
+            let classes = getAllClassesData();
+
+            // 1. Pastikan struktur 6 kelas utama tersedia
+            const classMeta = {
+                '1-aly': { name: '1 Aly Banin', wali: 'Ust. M. Salman Abi Hasan M. S.H.', kategori: 'banin' },
+                '2-aly': { name: '2 Aly Banin', wali: 'Ust. M. Salman Abi Hasan M. S.H.', kategori: 'banin' },
+                '3-aly': { name: '3 Aly Banin', wali: 'Ust. M. Salman Abi Hasan M. S.H.', kategori: 'banin' },
+                '1-aly-banat': { name: '1 Aly Banat', wali: 'Ustadzah Siti Maryam, M.Pd', kategori: 'banat' },
+                '2-aly-banat': { name: '2 Aly Banat', wali: 'Ustadzah Siti Maryam, M.Pd', kategori: 'banat' },
+                '3-aly-banat': { name: '3 Aly Banat', wali: 'Ustadzah Siti Maryam, M.Pd', kategori: 'banat' }
+            };
+
+            for (const [k, meta] of Object.entries(classMeta)) {
+                if (!classes[k]) {
+                    classes[k] = {
+                        name: meta.name,
+                        wali: meta.wali,
+                        kategori: meta.kategori,
+                        santri: []
+                    };
+                } else {
+                    classes[k].name = meta.name;
+                    classes[k].wali = meta.wali;
+                    classes[k].kategori = meta.kategori;
+                    if (!classes[k].santri) classes[k].santri = [];
+                }
+            }
+
+            let seededAccCount = 0;
+            let seededSantriCount = 0;
+
+            // 2. Seeding setiap santri ke accounts & classes
+            SEED_SANTRI_LIST.forEach(s => {
+                // A. Ke tabel Akun Autentikasi (siak_user_accounts)
+                const existingAccIdx = accounts.findIndex(a => a && a.id && a.id.toLowerCase() === s.id.toLowerCase());
+                const accObj = {
+                    id: s.id,
+                    nama: s.nama,
+                    role: "santri",
+                    password: s.password,
+                    roleLabel: "Santri / Mahasantri",
+                    nis: s.nis,
+                    kelas_id: s.kelas_id,
+                    kelas_nama: s.kelas_nama,
+                    kategori: s.kategori,
+                    waliKelas: s.waliKelas,
+                    asrama: s.asrama,
+                    avatar: s.avatar
+                };
+
+                if (existingAccIdx === -1) {
+                    accounts.push(accObj);
+                    seededAccCount++;
+                } else if (force) {
+                    accounts[existingAccIdx] = { ...accounts[existingAccIdx], ...accObj };
+                    seededAccCount++;
+                }
+
+                // B. Ke tabel Kelas & Santri (siak_multi_classes)
+                const targetClass = classes[s.kelas_id];
+                if (targetClass) {
+                    if (!targetClass.santri) targetClass.santri = [];
+                    const existingSantriIdx = targetClass.santri.findIndex(st => st && (
+                        (st.nis && String(st.nis).toLowerCase() === s.id.toLowerCase()) || 
+                        (st.nama && st.nama.toLowerCase() === s.nama.toLowerCase())
+                    ));
+
+                    const santriData = {
+                        nis: s.id,
+                        nama: s.nama,
+                        asrama: s.asrama,
+                        kategori: s.kategori,
+                        status: "Hadir",
+                        keterangan: "",
+                        rekap: {
+                            hadir: s.rekap.hadir,
+                            alpa: s.rekap.alpa,
+                            izin: s.rekap.izin,
+                            sakit: s.rekap.sakit
+                        },
+                        nilai: s.nilai
+                    };
+
+                    if (existingSantriIdx === -1) {
+                        targetClass.santri.push(santriData);
+                        seededSantriCount++;
+                    } else if (force) {
+                        targetClass.santri[existingSantriIdx] = {
+                            ...targetClass.santri[existingSantriIdx],
+                            ...santriData
+                        };
+                        seededSantriCount++;
+                    }
+                }
+            });
+
+            // 3. Simpan pembaruan ke storage
+            saveAccounts(accounts);
+            localStorage.setItem('siak_multi_classes', JSON.stringify(classes));
+            localStorage.setItem('siak_santri_seeder_version', 'v1_76_santri');
+
+            try {
+                renderAkunTable();
+                updateAllComponents();
+                renderDailyAttendanceStatusPanel();
+                renderAllClassSelectors();
+            } catch (e) {}
+
+            return { seededAccCount, seededSantriCount, total: SEED_SANTRI_LIST.length };
+        }
+
         // Batas Pelajaran & Tugas (Kosong)
         const DEFAULT_JURNAL = [];
 
@@ -4570,6 +5909,17 @@
 
             if (!localStorage.getItem('siak_mapel_list')) {
                 getMapelData();
+            }
+
+            // Seeder otomatis 76 akun santri lengkap dengan biodata, absensi, & nilai
+            try {
+                if (localStorage.getItem('siak_santri_seeder_version') !== 'v1_76_santri') {
+                    seedSantriDatabase(true);
+                } else {
+                    seedSantriDatabase(false);
+                }
+            } catch (errSeeder) {
+                console.warn("Gagal eksekusi seeder santri:", errSeeder);
             }
         }
 
@@ -10658,11 +12008,11 @@ ON CONFLICT (id) DO NOTHING;`;
 
         function updateSantriDashboardUI(user) {
             const extra = getSantriExtraProfile();
-            const nama = extra.nama || (user && user.nama) || DEFAULT_SANTRI_EXTRA.nama;
-            const nis = extra.nis || (user && (user.nis || user.id)) || DEFAULT_SANTRI_EXTRA.nis;
-            const kelas = extra.kelas || (user && (user.kelasId || user.kelas_id)) || DEFAULT_SANTRI_EXTRA.kelas;
-            const alamat = extra.alamat || DEFAULT_SANTRI_EXTRA.alamat;
-            const avatar = extra.avatar || DEFAULT_SANTRI_EXTRA.avatar;
+            const nama = (user && user.nama) || extra.nama || DEFAULT_SANTRI_EXTRA.nama;
+            const nis = (user && (user.nis || user.id)) || extra.nis || DEFAULT_SANTRI_EXTRA.nis;
+            const kelas = (user && (user.kelas_nama || user.kelasId || user.kelas_id)) || extra.kelas || DEFAULT_SANTRI_EXTRA.kelas;
+            const alamat = (user && user.asrama) || (user && user.alamat) || extra.alamat || DEFAULT_SANTRI_EXTRA.alamat;
+            const avatar = (user && user.avatarUrl) || extra.avatar || DEFAULT_SANTRI_EXTRA.avatar;
 
             const elNama = document.getElementById('santriProfilNama');
             if (elNama) elNama.textContent = nama;
@@ -10694,10 +12044,13 @@ ON CONFLICT (id) DO NOTHING;`;
             try {
                 const classData = getCurrentClassData();
                 const santriList = (classData && classData.santri) ? classData.santri : [];
-                const sData = santriList.find(s => s && (s.nis === nis || s.nama === nama));
+                const sData = santriList.find(s => s && (
+                    (s.nis && String(s.nis).toLowerCase() === String(nis).toLowerCase()) || 
+                    (s.nama && s.nama.toLowerCase() === String(nama).toLowerCase())
+                ));
                 
-                // Nilai default spesifik sesuai ketentuan (Hadir: 12, Alfa: 4, Izin: 4, Sakit: 2)
-                let hadir = 12, alpa = 4, izin = 4, sakit = 2;
+                // Nilai presensi mahasiswa
+                let hadir = 24, alpa = 0, izin = 1, sakit = 0;
                 if (sData && sData.rekap) {
                     hadir = sData.rekap.hadir !== undefined ? sData.rekap.hadir : hadir;
                     alpa = sData.rekap.alpa !== undefined ? sData.rekap.alpa : alpa;
@@ -11114,3 +12467,4 @@ ON CONFLICT (id) DO NOTHING;`;
     </script>
 </body>
 </html>
+
