@@ -919,29 +919,34 @@
                     <!-- SUBVIEW 1: ABSENSI HARIAN                                      -->
                     <!-- ============================================================= -->
                     <div id="subview-absen-harian" class="space-y-6">
-                        <!-- Header Card -->
-                        <div class="bg-white rounded-xl shadow-sm border border-slate-200/80 p-5">
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <!-- ============================================================= -->
+                        <!-- 1. PANEL STATUS & REKAPITULASI PRESENSI HARIAN (SELURUH KELAS) -->
+                        <!-- ============================================================= -->
+                        <div id="panelRekapStatusHarian" class="bg-white rounded-2xl shadow-sm border border-slate-200/90 p-5 space-y-4">
+                            <!-- Header Panel Status -->
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-100 pb-3.5">
                                 <div>
-                                    <h2 class="text-xl font-bold text-slate-800 flex items-center">
-                                        <i class="fa-solid fa-user-check text-emerald-600 mr-2"></i> Presensi Santri Harian (Per Kelas)
-                                    </h2>
-                                    <p class="text-xs text-slate-500 mt-0.5" id="descAbsensiSection">Pilih kelas madrasah untuk melihat atau menginput data kehadiran santri hari ini.</p>
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+                                            <i class="fa-solid fa-clipboard-check text-sm"></i>
+                                        </div>
+                                        <h3 class="text-base font-bold text-slate-800">Panel Status & Rekapitulasi Presensi Seluruh Kelas</h3>
+                                        <span id="labelTglStatusRekap" class="text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200 shadow-xs">
+                                            Hari Ini
+                                        </span>
+                                    </div>
+                                    <p class="text-xs text-slate-500 mt-1">Transparansi status presensi madrasah: Pantau kelas yang sudah tersimpan vs belum diabsen hari ini.</p>
                                 </div>
 
-                                <!-- Aksi Sekunder: Bagikan & Cetak (Sederhana & Rapi) -->
-                                <div class="flex items-center gap-2 self-start sm:self-center">
-                                    <!-- Read-Only Badge Info for Santri -->
-                                    <div class="rbac-santri-readonly hidden items-center space-x-1.5 px-3 py-1.5 bg-purple-50 text-purple-800 border border-purple-200 rounded-lg text-xs font-medium">
-                                        <i class="fa-solid fa-lock text-purple-600"></i>
-                                        <span>Mode Santri (Lihat Saja)</span>
+                                <!-- Date Picker Sync & Aksi Global -->
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <div class="flex items-center bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 gap-1.5 shadow-xs">
+                                        <i class="fa-solid fa-calendar-day text-emerald-600 text-xs"></i>
+                                        <label for="panelRekapTanggalInput" class="text-[11px] font-bold text-slate-600 uppercase">Tgl:</label>
+                                        <input type="date" id="panelRekapTanggalInput" onchange="syncPanelDateToAbsen(this.value)" class="text-xs bg-transparent border-0 font-bold text-slate-800 focus:outline-none cursor-pointer">
                                     </div>
-
-                                    <button type="button" onclick="openShareAbsenHarianWA('all')" class="px-3 py-1.5 rounded-lg text-xs font-bold border border-emerald-500/50 text-white bg-emerald-600 hover:bg-emerald-700 transition flex items-center shadow-xs" title="Bagikan rekap presensi seluruh kelas (disatukan Banin & Banat) ke WhatsApp">
-                                        <i class="fa-brands fa-whatsapp text-white text-sm mr-1.5"></i> Share WA (Semua Kelas)
-                                    </button>
-                                    <button type="button" onclick="openShareAbsenHarianWA('class')" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 text-slate-700 hover:bg-slate-100 bg-white transition flex items-center shadow-xs" title="Bagikan presensi kelas yang sedang dibuka saja">
-                                        <i class="fa-solid fa-share-nodes text-slate-500 text-xs mr-1.5"></i> Kelas Ini
+                                    <button type="button" onclick="openShareAbsenHarianWA('all')" class="px-3 py-1.5 rounded-lg text-xs font-bold border border-emerald-500/50 text-white bg-emerald-600 hover:bg-emerald-700 transition flex items-center shadow-xs" title="Bagikan rekap presensi seluruh kelas ke WhatsApp">
+                                        <i class="fa-brands fa-whatsapp text-white text-sm mr-1.5"></i> Share WA
                                     </button>
                                     <button type="button" onclick="window.print()" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 text-slate-600 hover:bg-slate-100 bg-white transition flex items-center shadow-xs">
                                         <i class="fa-solid fa-print text-slate-400 mr-1.5"></i> Cetak
@@ -949,199 +954,319 @@
                                 </div>
                             </div>
 
-                            <!-- Filter Bar WITH CLASS SELECTOR & KELOLA MENU (•••) -->
-                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 mt-4 pt-4 border-t border-slate-100">
-                                <!-- 1. KELAS SELECTOR DENGAN MENU (•••) -->
-                                <div>
-                                    <div class="flex items-center justify-between mb-1 gap-2">
-                                        <label class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider flex items-center shrink-0">
-                                            <i class="fa-solid fa-door-open mr-1 text-emerald-600"></i> Pilih Kelas:
-                                        </label>
-                                        <!-- Titik Tiga (•••) Kelola Kelas Dropdown -->
-                                        <div class="relative shrink-0" id="kelolaKelasDropdownContainer">
-                                            <button type="button" onclick="toggleKelolaKelasMenu(event)" id="btnKelolaKelasMenu" class="rbac-staff-only text-slate-600 hover:text-emerald-800 bg-slate-100 hover:bg-emerald-50 px-2.5 py-1 rounded-lg text-[10px] font-bold border border-slate-200 transition flex items-center gap-1.5 shadow-xs" title="Pengaturan & Kelola Kelas">
-                                                <i class="fa-solid fa-ellipsis-vertical text-xs"></i>
-                                                <span>Kelola</span>
-                                            </button>
-                                            <div id="menuKelolaKelasDropdown" class="hidden absolute right-0 top-full mt-1.5 w-48 sm:w-52 rounded-2xl shadow-2xl bg-white border border-slate-200 z-50 py-1 divide-y divide-slate-100 ring-1 ring-black/5">
-                                                <div class="py-1">
-                                                    <button type="button" onclick="openTambahKelasModal(); closeKelolaKelasMenu();" class="w-full text-left px-3.5 py-2 text-xs text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 flex items-center font-medium">
-                                                        <i class="fa-solid fa-folder-plus text-emerald-600 w-5"></i> + Buat Kelas Baru
-                                                    </button>
-                                                    <button type="button" onclick="openTambahSantriModal(); closeKelolaKelasMenu();" class="w-full text-left px-3.5 py-2 text-xs text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 flex items-center font-medium">
-                                                        <i class="fa-solid fa-user-plus text-emerald-600 w-5"></i> + Tambah Santri
-                                                    </button>
-                                                </div>
-                                                <div class="py-1">
-                                                    <button type="button" onclick="deleteCurrentClass(); closeKelolaKelasMenu();" class="w-full text-left px-3.5 py-2 text-xs text-rose-600 hover:bg-rose-50 flex items-center font-medium">
-                                                        <i class="fa-solid fa-trash-can text-rose-500 w-5"></i> Hapus Kelas Ini
-                                                    </button>
+                            <!-- Stat Cards 3 Kolom -->
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <div class="bg-gradient-to-br from-slate-50 to-slate-100/60 border border-slate-200/80 rounded-xl p-3.5 flex items-center justify-between">
+                                    <div class="space-y-0.5">
+                                        <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Total Kelas</p>
+                                        <p class="text-xl font-black text-slate-800" id="statRekapTotalKelas">0</p>
+                                        <p class="text-[10px] text-slate-400">Kelas aktif madrasah</p>
+                                    </div>
+                                    <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 text-slate-600 flex items-center justify-center text-base shadow-xs shrink-0">
+                                        <i class="fa-solid fa-school"></i>
+                                    </div>
+                                </div>
+                                <div class="bg-gradient-to-br from-emerald-50 to-emerald-100/40 border border-emerald-200/80 rounded-xl p-3.5 flex items-center justify-between">
+                                    <div class="space-y-0.5">
+                                        <p class="text-[11px] font-semibold text-emerald-700 uppercase tracking-wider">Sudah Diabsen</p>
+                                        <p class="text-xl font-black text-emerald-800" id="statRekapSudahDiabsen">0</p>
+                                        <p class="text-[10px] text-emerald-600 font-medium">Tersimpan di sistem</p>
+                                    </div>
+                                    <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-base shadow-xs shrink-0">
+                                        <i class="fa-solid fa-circle-check"></i>
+                                    </div>
+                                </div>
+                                <div class="bg-gradient-to-br from-amber-50 to-amber-100/40 border border-amber-200/80 rounded-xl p-3.5 flex items-center justify-between">
+                                    <div class="space-y-0.5">
+                                        <p class="text-[11px] font-semibold text-amber-700 uppercase tracking-wider">Belum Diabsen</p>
+                                        <p class="text-xl font-black text-amber-800" id="statRekapBelumDiabsen">0</p>
+                                        <p class="text-[10px] text-amber-600 font-medium">Menunggu penginputan</p>
+                                    </div>
+                                    <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center text-base shadow-xs shrink-0">
+                                        <i class="fa-solid fa-clock"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Filter Tabs Status Kelas -->
+                            <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                                <div class="flex flex-wrap items-center gap-1.5 text-xs">
+                                    <span class="text-[11px] font-bold text-slate-500 mr-1 flex items-center">
+                                        <i class="fa-solid fa-filter mr-1 text-emerald-600"></i> Filter Status:
+                                    </span>
+                                    <button type="button" id="btnFilterRekapAll" onclick="filterRekapStatus('all')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-emerald-600 text-white shadow-xs">
+                                        <span>Semua Kelas</span>
+                                        <span id="statRekapBadgeAll" class="px-1.5 py-0.2 bg-white/25 rounded-full text-[10px]">0</span>
+                                    </button>
+                                    <button type="button" id="btnFilterRekapSudah" onclick="filterRekapStatus('sudah')" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700">
+                                        <i class="fa-solid fa-circle-check text-emerald-600 text-xs"></i>
+                                        <span>Sudah Diabsen</span>
+                                        <span id="statRekapBadgeSudah" class="px-1.5 py-0.2 bg-emerald-100 text-emerald-800 rounded-full text-[10px] font-bold">0</span>
+                                    </button>
+                                    <button type="button" id="btnFilterRekapBelum" onclick="filterRekapStatus('belum')" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-amber-50 hover:text-amber-700">
+                                        <i class="fa-solid fa-clock text-amber-500 text-xs"></i>
+                                        <span>Belum Diabsen</span>
+                                        <span id="statRekapBadgeBelum" class="px-1.5 py-0.2 bg-amber-100 text-amber-800 rounded-full text-[10px] font-bold">0</span>
+                                    </button>
+                                </div>
+                                <div class="text-[11px] text-slate-400 flex items-center gap-1">
+                                    <i class="fa-solid fa-circle-info text-slate-400"></i>
+                                    <span>Klik <strong>"Revisi / Edit"</strong> untuk mengubah data yang tersimpan.</span>
+                                </div>
+                            </div>
+
+                            <!-- List / Tabel Rekap Status Seluruh Kelas -->
+                            <div id="rekapStatusKelasContainer" class="space-y-2.5 pt-1">
+                                <!-- Rendered dynamically by renderDailyAttendanceStatusPanel() -->
+                            </div>
+                        </div>
+
+                        <!-- ============================================================= -->
+                        <!-- 2. FORMULIR INPUT & REVISI PRESENSI SANTRI (KELAS TERPILIH)   -->
+                        <!-- ============================================================= -->
+                        <div id="formInputPresensiSection" class="space-y-4">
+                            <!-- Revision Alert Banner (Hidden by default) -->
+                            <div id="revisiNoticeBar" class="hidden bg-gradient-to-r from-amber-500 via-amber-600 to-emerald-600 text-white rounded-xl p-3.5 shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fade-in border border-amber-300">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
+                                        <i class="fa-solid fa-pen-to-square text-base text-white"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-black flex items-center gap-1.5 tracking-wide">
+                                            <span>MODE REVISI PRESENSI AKTIF</span>
+                                            <span class="px-2 py-0.5 rounded text-[10px] bg-white text-amber-900 font-extrabold uppercase">Mengubah Data Tersimpan</span>
+                                        </p>
+                                        <p class="text-[11px] text-amber-100 mt-0.5" id="revisiNoticeDetail">
+                                            Anda sedang mengubah presensi tersimpan. Silakan sesuaikan data kehadiran di bawah lalu simpan.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 self-end sm:self-center shrink-0">
+                                    <button type="button" onclick="cancelRevisiMode()" class="px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white rounded-lg text-xs font-bold transition flex items-center gap-1">
+                                        <i class="fa-solid fa-xmark"></i> Batal Revisi
+                                    </button>
+                                    <button type="button" onclick="saveAttendance()" class="px-3.5 py-1.5 bg-white text-amber-900 hover:bg-amber-50 rounded-lg text-xs font-black shadow-sm transition flex items-center gap-1.5">
+                                        <i class="fa-solid fa-check-double text-emerald-700"></i> Simpan Hasil Revisi
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Header & Filter Form Input Card -->
+                            <div class="bg-white rounded-xl shadow-sm border border-slate-200/80 p-5">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                                    <div>
+                                        <h2 class="text-base font-bold text-slate-800 flex items-center">
+                                            <i class="fa-solid fa-file-signature text-emerald-600 mr-2"></i> Formulir Input Presensi: <span id="labelKelasInputAktif" class="ml-1 text-emerald-700 font-extrabold">-</span>
+                                        </h2>
+                                        <p class="text-xs text-slate-500 mt-0.5" id="descAbsensiSection">Pilih parameter sesi pembelajaran, tandai kehadiran santri pada tabel, lalu simpan absensi.</p>
+                                    </div>
+
+                                    <!-- Read-Only Badge Info for Santri & Share Kelas Ini -->
+                                    <div class="flex items-center gap-2 self-start sm:self-center">
+                                        <div class="rbac-santri-readonly hidden items-center space-x-1.5 px-3 py-1.5 bg-purple-50 text-purple-800 border border-purple-200 rounded-lg text-xs font-medium">
+                                            <i class="fa-solid fa-lock text-purple-600"></i>
+                                            <span>Mode Santri (Lihat Saja)</span>
+                                        </div>
+                                        <button type="button" onclick="openShareAbsenHarianWA('class')" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 text-slate-700 hover:bg-slate-100 bg-white transition flex items-center shadow-xs" title="Bagikan presensi kelas yang sedang dibuka saja">
+                                            <i class="fa-solid fa-share-nodes text-slate-500 text-xs mr-1.5"></i> Share Kelas Ini
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Filter Bar WITH CLASS SELECTOR & KELOLA MENU (•••) -->
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 mt-4 pt-1">
+                                    <!-- 1. KELAS SELECTOR DENGAN MENU (•••) -->
+                                    <div>
+                                        <div class="flex items-center justify-between mb-1 gap-2">
+                                            <label class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider flex items-center shrink-0">
+                                                <i class="fa-solid fa-door-open mr-1 text-emerald-600"></i> Pilih Kelas:
+                                            </label>
+                                            <!-- Titik Tiga (•••) Kelola Kelas Dropdown -->
+                                            <div class="relative shrink-0" id="kelolaKelasDropdownContainer">
+                                                <button type="button" onclick="toggleKelolaKelasMenu(event)" id="btnKelolaKelasMenu" class="rbac-staff-only text-slate-600 hover:text-emerald-800 bg-slate-100 hover:bg-emerald-50 px-2.5 py-1 rounded-lg text-[10px] font-bold border border-slate-200 transition flex items-center gap-1.5 shadow-xs" title="Pengaturan & Kelola Kelas">
+                                                    <i class="fa-solid fa-ellipsis-vertical text-xs"></i>
+                                                    <span>Kelola</span>
+                                                </button>
+                                                <div id="menuKelolaKelasDropdown" class="hidden absolute right-0 top-full mt-1.5 w-48 sm:w-52 rounded-2xl shadow-2xl bg-white border border-slate-200 z-50 py-1 divide-y divide-slate-100 ring-1 ring-black/5">
+                                                    <div class="py-1">
+                                                        <button type="button" onclick="openTambahKelasModal(); closeKelolaKelasMenu();" class="w-full text-left px-3.5 py-2 text-xs text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 flex items-center font-medium">
+                                                            <i class="fa-solid fa-folder-plus text-emerald-600 w-5"></i> + Buat Kelas Baru
+                                                        </button>
+                                                        <button type="button" onclick="openTambahSantriModal(); closeKelolaKelasMenu();" class="w-full text-left px-3.5 py-2 text-xs text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 flex items-center font-medium">
+                                                            <i class="fa-solid fa-user-plus text-emerald-600 w-5"></i> + Tambah Santri
+                                                        </button>
+                                                    </div>
+                                                    <div class="py-1">
+                                                        <button type="button" onclick="deleteCurrentClass(); closeKelolaKelasMenu();" class="w-full text-left px-3.5 py-2 text-xs text-rose-600 hover:bg-rose-50 flex items-center font-medium">
+                                                            <i class="fa-solid fa-trash-can text-rose-500 w-5"></i> Hapus Kelas Ini
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        <select id="absenKelasSelector" onchange="handleClassSelectorChange(this)" onclick="handleClassSelectorClick(this)" class="w-full text-xs font-bold border-2 border-emerald-400 rounded-lg px-3 py-2 bg-emerald-50 text-emerald-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer shadow-sm">
+                                            <option value="">-- Memuat Kelas... --</option>
+                                        </select>
+                                        <div id="emptyClassQuickHelper" onclick="openTambahKelasModal()" class="hidden mt-1.5 p-2.5 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 rounded-lg flex items-center justify-between text-[11px] text-emerald-900 cursor-pointer transition shadow-xs">
+                                            <span class="font-medium flex items-center gap-1.5"><i class="fa-solid fa-circle-info text-emerald-600"></i> Belum ada kelas.</span>
+                                            <button type="button" onclick="event.stopPropagation(); openTambahKelasModal();" class="font-bold px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md flex items-center gap-1 shadow-xs transition text-[11px]">
+                                                <i class="fa-solid fa-plus-circle"></i> Buat Sekarang
+                                            </button>
+                                        </div>
                                     </div>
-                                    <select id="absenKelasSelector" onchange="handleClassSelectorChange(this)" onclick="handleClassSelectorClick(this)" class="w-full text-xs font-bold border-2 border-emerald-400 rounded-lg px-3 py-2 bg-emerald-50 text-emerald-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer shadow-sm">
-                                        <option value="">-- Memuat Kelas... --</option>
-                                    </select>
-                                    <div id="emptyClassQuickHelper" onclick="openTambahKelasModal()" class="hidden mt-1.5 p-2.5 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 rounded-lg flex items-center justify-between text-[11px] text-emerald-900 cursor-pointer transition shadow-xs">
-                                        <span class="font-medium flex items-center gap-1.5"><i class="fa-solid fa-circle-info text-emerald-600"></i> Belum ada kelas.</span>
-                                        <button type="button" onclick="event.stopPropagation(); openTambahKelasModal();" class="font-bold px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md flex items-center gap-1 shadow-xs transition text-[11px]">
-                                            <i class="fa-solid fa-plus-circle"></i> Buat Sekarang
-                                        </button>
-                                    </div>
-                                </div>
 
-                                <!-- 2. Tanggal -->
-                                <div>
-                                    <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1 flex items-center">
-                                        <i class="fa-solid fa-calendar mr-1 text-emerald-600"></i> Tanggal
-                                    </label>
-                                    <input type="date" id="absenTanggal" class="w-full text-xs border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium">
-                                </div>
-
-                                <!-- 3. Jam Pelajaran -->
-                                <div>
-                                    <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1 flex items-center">
-                                        <i class="fa-solid fa-clock mr-1 text-emerald-600"></i> Jam Pelajaran
-                                    </label>
-                                    <select id="absenJam" class="w-full text-xs border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium">
-                                        <option value="17.00 - 18.30 WIB" selected>Jam 1 (17.00 - 18.30 WIB)</option>
-                                        <option value="18.30 - 20.00 WIB">Jam 2 (18.30 - 20.00 WIB)</option>
-                                        <option value="20.00 - 21.30 WIB">Jam 3 (20.00 - 21.30 WIB)</option>
-                                        <option value="05.30 - 06.30 WIB">Jam 4 (05.30 - 06.30 WIB)</option>
-                                    </select>
-                                </div>
-
-                                <!-- 4. Mata Pelajaran / Kitab -->
-                                <div>
-                                    <div class="flex items-center justify-between mb-1">
-                                        <label class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider flex items-center">
-                                            <i class="fa-solid fa-book-quran mr-1 text-emerald-600"></i> Mata Pelajaran
+                                    <!-- 2. Tanggal -->
+                                    <div>
+                                        <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1 flex items-center">
+                                            <i class="fa-solid fa-calendar mr-1 text-emerald-600"></i> Tanggal
                                         </label>
-                                        <button type="button" onclick="openTambahMapelModal()" class="rbac-staff-only text-[10px] text-emerald-700 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 px-2 py-0.5 rounded font-bold border border-emerald-300 transition flex items-center gap-1 shadow-xs" title="Tambah Mata Pelajaran Bebas (Khusus Staff)">
-                                            <i class="fa-solid fa-plus-circle text-emerald-600"></i> + Tambah Mapel
-                                        </button>
+                                        <input type="date" id="absenTanggal" onchange="handleAbsenDateChange()" class="w-full text-xs border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium">
                                     </div>
-                                    <select id="absenKitab" onchange="handleAbsenKitabChange(this)" class="w-full text-xs border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium">
-                                        <option value="Fiqih (Fathul Qorib)" selected>Fiqih (Fathul Qorib)</option>
-                                        <option value="Nahwu (Al-Jurumiyyah)">Nahwu (Al-Jurumiyyah)</option>
-                                        <option value="Shorof (Al-Amtsilah At-Tashrifiyyah)">Shorof (Al-Amtsilah)</option>
-                                        <option value="Tahfidz Al-Qur'an">Tahfidz Al-Qur'an</option>
-                                        <option value="Hadits (Arba'in Nawawiyyah)">Hadits (Arba'in)</option>
-                                        <option value="Akhlaq & Adab (Ta'limul Muta'allim)">Akhlaq & Adab</option>
-                                        <option value="Tauhid / Aqidah (Aqidatul Awwam)">Tauhid / Aqidah</option>
-                                    </select>
-                                </div>
 
-                                <!-- 5. Ustadz Pengajar -->
-                                <div>
-                                    <div class="flex items-center justify-between mb-1">
-                                        <label class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider flex items-center">
-                                            <i class="fa-solid fa-user-tie mr-1 text-emerald-600"></i> Ust. Pengajar
+                                    <!-- 3. Jam Pelajaran -->
+                                    <div>
+                                        <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1 flex items-center">
+                                            <i class="fa-solid fa-clock mr-1 text-emerald-600"></i> Jam Pelajaran
                                         </label>
-                                        <button type="button" onclick="openTambahUstadzModal()" class="rbac-staff-only text-[10px] text-emerald-700 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 px-2 py-0.5 rounded font-bold border border-emerald-300 transition flex items-center gap-1 shadow-xs" title="Tambah Ustadz Kustom Bebas (Khusus Staff)">
-                                            <i class="fa-solid fa-plus-circle text-emerald-600"></i> + Tambah Ustadz
+                                        <select id="absenJam" class="w-full text-xs border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium">
+                                            <option value="17.00 - 18.30 WIB" selected>Jam 1 (17.00 - 18.30 WIB)</option>
+                                            <option value="18.30 - 20.00 WIB">Jam 2 (18.30 - 20.00 WIB)</option>
+                                            <option value="20.00 - 21.30 WIB">Jam 3 (20.00 - 21.30 WIB)</option>
+                                            <option value="05.30 - 06.30 WIB">Jam 4 (05.30 - 06.30 WIB)</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- 4. Mata Pelajaran / Kitab -->
+                                    <div>
+                                        <div class="flex items-center justify-between mb-1">
+                                            <label class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider flex items-center">
+                                                <i class="fa-solid fa-book-quran mr-1 text-emerald-600"></i> Mata Pelajaran
+                                            </label>
+                                            <button type="button" onclick="openTambahMapelModal()" class="rbac-staff-only text-[10px] text-emerald-700 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 px-2 py-0.5 rounded font-bold border border-emerald-300 transition flex items-center gap-1 shadow-xs" title="Tambah Mata Pelajaran Bebas (Khusus Staff)">
+                                                <i class="fa-solid fa-plus-circle text-emerald-600"></i> + Tambah Mapel
+                                            </button>
+                                        </div>
+                                        <select id="absenKitab" onchange="handleAbsenKitabChange(this)" class="w-full text-xs border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium">
+                                            <option value="Fiqih (Fathul Qorib)" selected>Fiqih (Fathul Qorib)</option>
+                                            <option value="Nahwu (Al-Jurumiyyah)">Nahwu (Al-Jurumiyyah)</option>
+                                            <option value="Shorof (Al-Amtsilah At-Tashrifiyyah)">Shorof (Al-Amtsilah)</option>
+                                            <option value="Tahfidz Al-Qur'an">Tahfidz Al-Qur'an</option>
+                                            <option value="Hadits (Arba'in Nawawiyyah)">Hadits (Arba'in)</option>
+                                            <option value="Akhlaq & Adab (Ta'limul Muta'allim)">Akhlaq & Adab</option>
+                                            <option value="Tauhid / Aqidah (Aqidatul Awwam)">Tauhid / Aqidah</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- 5. Ustadz Pengajar -->
+                                    <div>
+                                        <div class="flex items-center justify-between mb-1">
+                                            <label class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider flex items-center">
+                                                <i class="fa-solid fa-user-tie mr-1 text-emerald-600"></i> Ust. Pengajar
+                                            </label>
+                                            <button type="button" onclick="openTambahUstadzModal()" class="rbac-staff-only text-[10px] text-emerald-700 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 px-2 py-0.5 rounded font-bold border border-emerald-300 transition flex items-center gap-1 shadow-xs" title="Tambah Ustadz Kustom Bebas (Khusus Staff)">
+                                                <i class="fa-solid fa-plus-circle text-emerald-600"></i> + Tambah Ustadz
+                                            </button>
+                                        </div>
+                                        <select id="absenUstadzPengajar" onchange="handleAbsenUstadzChange(this)" class="w-full text-xs border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-slate-700">
+                                            <option value="Ust. Ahmad Fauzi, S.Pd.I" selected>Ust. Ahmad Fauzi, S.Pd.I</option>
+                                            <option value="Ust. M. Ridhwan, Lc">Ust. M. Ridhwan, Lc</option>
+                                            <option value="Ust. KH. Abdullah Abbas">Ust. KH. Abdullah Abbas</option>
+                                            <option value="Ustadzah Siti Maryam, M.Pd">Ustadzah Siti Maryam, M.Pd</option>
+                                            <option value="Ust. Nurul Huda, M.Ag">Ust. Nurul Huda, M.Ag</option>
+                                            <option value="Ust. Zarkasyi An-Najwa">Ust. Zarkasyi An-Najwa</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- 6. Cari Santri -->
+                                    <div>
+                                        <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1 flex items-center">
+                                            <i class="fa-solid fa-magnifying-glass mr-1 text-emerald-600"></i> Cari Santri
+                                        </label>
+                                        <div class="relative">
+                                            <input type="text" id="searchSantri" oninput="filterSantriTable()" placeholder="Ketik nama santri..." class="w-full text-xs border border-slate-200 rounded-lg pl-8 pr-3 py-2 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                            <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2.5 text-slate-400 text-xs"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Live Summary Counters & Operational Daily Actions -->
+                                <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mt-4 pt-3 border-t border-slate-100 text-xs">
+                                    <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                                        <span class="font-bold text-slate-500 self-center text-[11px]">Ringkasan:</span>
+                                        <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full font-bold flex items-center text-[11px]">
+                                            <span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5"></span> Hadir: <span id="countHadirBadge" class="ml-1">0</span>
+                                        </span>
+                                        <span class="px-2.5 py-1 bg-blue-100 text-blue-800 rounded-full font-semibold flex items-center text-[11px]">
+                                            <span class="w-2 h-2 rounded-full bg-blue-500 mr-1.5"></span> Sakit: <span id="countSakitBadge" class="ml-1">0</span>
+                                        </span>
+                                        <span class="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full font-semibold flex items-center text-[11px]">
+                                            <span class="w-2 h-2 rounded-full bg-amber-500 mr-1.5"></span> Izin: <span id="countIzinBadge" class="ml-1">0</span>
+                                        </span>
+                                        <span class="px-2.5 py-1 bg-rose-100 text-rose-800 rounded-full font-semibold flex items-center text-[11px]">
+                                            <span class="w-2 h-2 rounded-full bg-rose-500 mr-1.5"></span> Alpa: <span id="countAlpaBadge" class="ml-1">0</span>
+                                        </span>
+                                        <span class="text-slate-300 hidden lg:inline">|</span>
+                                        <span class="text-[11px] text-slate-500 hidden lg:inline">
+                                            Wali Kelas: <span id="currentWaliKelasLabel" class="font-bold text-slate-700">-</span>
+                                        </span>
+                                    </div>
+
+                                    <!-- Aksi Harian Operasional: Menonjol & Minim Human Error -->
+                                    <div class="flex items-center gap-2 self-stretch sm:self-auto justify-end">
+                                        <button type="button" onclick="setAllAttendance('Hadir')" class="rbac-can-edit flex-1 sm:flex-initial bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center shadow-sm">
+                                            <i class="fa-solid fa-check-double mr-1.5 text-emerald-600"></i> Set Semua Hadir
+                                        </button>
+                                        <button type="button" id="btnSimpanAbsenMain" onclick="saveAttendance()" class="rbac-can-edit flex-1 sm:flex-initial bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-xl text-xs font-bold shadow-md hover:shadow-lg transition flex items-center justify-center space-x-1.5">
+                                            <i class="fa-solid fa-floppy-disk"></i>
+                                            <span>Simpan Absensi</span>
                                         </button>
                                     </div>
-                                    <select id="absenUstadzPengajar" onchange="handleAbsenUstadzChange(this)" class="w-full text-xs border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-slate-700">
-                                        <option value="Ust. Ahmad Fauzi, S.Pd.I" selected>Ust. Ahmad Fauzi, S.Pd.I</option>
-                                        <option value="Ust. M. Ridhwan, Lc">Ust. M. Ridhwan, Lc</option>
-                                        <option value="Ust. KH. Abdullah Abbas">Ust. KH. Abdullah Abbas</option>
-                                        <option value="Ustadzah Siti Maryam, M.Pd">Ustadzah Siti Maryam, M.Pd</option>
-                                        <option value="Ust. Nurul Huda, M.Ag">Ust. Nurul Huda, M.Ag</option>
-                                        <option value="Ust. Zarkasyi An-Najwa">Ust. Zarkasyi An-Najwa</option>
-                                    </select>
-                                </div>
-
-                                <!-- 6. Cari Santri -->
-                                <div>
-                                    <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1 flex items-center">
-                                        <i class="fa-solid fa-magnifying-glass mr-1 text-emerald-600"></i> Cari Santri
-                                    </label>
-                                    <div class="relative">
-                                        <input type="text" id="searchSantri" oninput="filterSantriTable()" placeholder="Ketik nama santri..." class="w-full text-xs border border-slate-200 rounded-lg pl-8 pr-3 py-2 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                                        <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2.5 text-slate-400 text-xs"></i>
-                                    </div>
                                 </div>
                             </div>
 
-                            <!-- Live Summary Counters & Operational Daily Actions -->
-                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mt-4 pt-3 border-t border-slate-100 text-xs">
-                                <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                                    <span class="font-bold text-slate-500 self-center text-[11px]">Ringkasan:</span>
-                                    <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full font-bold flex items-center text-[11px]">
-                                        <span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5"></span> Hadir: <span id="countHadirBadge" class="ml-1">0</span>
+                            <!-- FILTER KATEGORI SANTRI (BANIN & BANAT) -->
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 bg-slate-50 border border-slate-200/80 p-2.5 rounded-xl text-xs shadow-xs">
+                                <div class="flex flex-wrap items-center gap-1.5">
+                                    <span class="text-[11px] font-bold text-slate-500 mr-1 flex items-center">
+                                        <i class="fa-solid fa-filter mr-1 text-emerald-600"></i> Kategori:
                                     </span>
-                                    <span class="px-2.5 py-1 bg-blue-100 text-blue-800 rounded-full font-semibold flex items-center text-[11px]">
-                                        <span class="w-2 h-2 rounded-full bg-blue-500 mr-1.5"></span> Sakit: <span id="countSakitBadge" class="ml-1">0</span>
-                                    </span>
-                                    <span class="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full font-semibold flex items-center text-[11px]">
-                                        <span class="w-2 h-2 rounded-full bg-amber-500 mr-1.5"></span> Izin: <span id="countIzinBadge" class="ml-1">0</span>
-                                    </span>
-                                    <span class="px-2.5 py-1 bg-rose-100 text-rose-800 rounded-full font-semibold flex items-center text-[11px]">
-                                        <span class="w-2 h-2 rounded-full bg-rose-500 mr-1.5"></span> Alpa: <span id="countAlpaBadge" class="ml-1">0</span>
-                                    </span>
-                                    <span class="text-slate-300 hidden lg:inline">|</span>
-                                    <span class="text-[11px] text-slate-500 hidden lg:inline">
-                                        Wali Kelas: <span id="currentWaliKelasLabel" class="font-bold text-slate-700">-</span>
-                                    </span>
-                                </div>
-
-                                <!-- Aksi Harian Operasional: Menonjol & Minim Human Error -->
-                                <div class="flex items-center gap-2 self-stretch sm:self-auto justify-end">
-                                    <button type="button" onclick="setAllAttendance('Hadir')" class="rbac-can-edit flex-1 sm:flex-initial bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center shadow-sm">
-                                        <i class="fa-solid fa-check-double mr-1.5 text-emerald-600"></i> Set Semua Hadir
+                                    <button type="button" id="btnFilterSantriAll" onclick="setSantriGenderFilter('all')" class="px-3 py-1.5 rounded-lg font-bold transition text-xs flex items-center bg-white text-emerald-800 shadow-xs border border-emerald-300">
+                                        <i class="fa-solid fa-users mr-1.5 text-emerald-600"></i> Semua (<span id="filterCountAll">0</span>)
                                     </button>
-                                    <button type="button" onclick="saveAttendance()" class="rbac-can-edit flex-1 sm:flex-initial bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-xl text-xs font-bold shadow-md hover:shadow-lg transition flex items-center justify-center space-x-1.5">
-                                        <i class="fa-solid fa-floppy-disk"></i>
-                                        <span>Simpan Absensi</span>
+                                    <button type="button" id="btnFilterSantriBanin" onclick="setSantriGenderFilter('banin')" class="px-3 py-1.5 rounded-lg font-semibold transition text-xs flex items-center text-slate-600 hover:text-blue-700 hover:bg-blue-50 border border-transparent">
+                                        <i class="fa-solid fa-person mr-1.5 text-blue-600"></i> Banin / Putra (<span id="filterCountBanin">0</span>)
+                                    </button>
+                                    <button type="button" id="btnFilterSantriBanat" onclick="setSantriGenderFilter('banat')" class="px-3 py-1.5 rounded-lg font-semibold transition text-xs flex items-center text-slate-600 hover:text-rose-700 hover:bg-rose-50 border border-transparent">
+                                        <i class="fa-solid fa-person-dress mr-1.5 text-rose-600"></i> Banat / Putri (<span id="filterCountBanat">0</span>)
                                     </button>
                                 </div>
+                                <div class="text-[11px] text-slate-500 flex items-center space-x-1">
+                                    <i class="fa-solid fa-circle-info text-emerald-600 text-xs"></i>
+                                    <span>Klik badge <b class="text-blue-700">Banin</b> / <b class="text-rose-700">Banat</b> di tabel untuk beralih gender.</span>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- FILTER KATEGORI SANTRI (BANIN & BANAT) -->
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 bg-slate-50 border border-slate-200/80 p-2.5 rounded-xl text-xs shadow-xs">
-                            <div class="flex flex-wrap items-center gap-1.5">
-                                <span class="text-[11px] font-bold text-slate-500 mr-1 flex items-center">
-                                    <i class="fa-solid fa-filter mr-1 text-emerald-600"></i> Kategori:
-                                </span>
-                                <button type="button" id="btnFilterSantriAll" onclick="setSantriGenderFilter('all')" class="px-3 py-1.5 rounded-lg font-bold transition text-xs flex items-center bg-white text-emerald-800 shadow-xs border border-emerald-300">
-                                    <i class="fa-solid fa-users mr-1.5 text-emerald-600"></i> Semua (<span id="filterCountAll">0</span>)
-                                </button>
-                                <button type="button" id="btnFilterSantriBanin" onclick="setSantriGenderFilter('banin')" class="px-3 py-1.5 rounded-lg font-semibold transition text-xs flex items-center text-slate-600 hover:text-blue-700 hover:bg-blue-50 border border-transparent">
-                                    <i class="fa-solid fa-person mr-1.5 text-blue-600"></i> Banin / Putra (<span id="filterCountBanin">0</span>)
-                                </button>
-                                <button type="button" id="btnFilterSantriBanat" onclick="setSantriGenderFilter('banat')" class="px-3 py-1.5 rounded-lg font-semibold transition text-xs flex items-center text-slate-600 hover:text-rose-700 hover:bg-rose-50 border border-transparent">
-                                    <i class="fa-solid fa-person-dress mr-1.5 text-rose-600"></i> Banat / Putri (<span id="filterCountBanat">0</span>)
-                                </button>
+                            <!-- Santri Attendance Table (Per Kelas) -->
+                            <div class="bg-white rounded-xl shadow-sm border border-slate-200/80 overflow-hidden">
+                                <div class="overflow-x-auto custom-scrollbar">
+                                    <table class="w-full text-left text-xs">
+                                        <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200 uppercase tracking-wider text-[11px]">
+                                            <tr>
+                                                <th class="py-3 px-4 w-12 text-center">No</th>
+                                                <th class="py-3 px-4 w-28">NIS</th>
+                                                <th class="py-3 px-4 min-w-[200px]">Nama Santri</th>
+                                                <th class="py-3 px-4 text-center min-w-[280px]">Status Kehadiran</th>
+                                                <th class="py-3 px-4 min-w-[180px]">Keterangan / Alasan</th>
+                                                <th class="py-3 px-4 text-center w-20 rbac-staff-only">Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="santriTableBody" class="divide-y divide-slate-100">
+                                            <!-- Populated by JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                            <div class="text-[11px] text-slate-500 flex items-center space-x-1">
-                                <i class="fa-solid fa-circle-info text-emerald-600 text-xs"></i>
-                                <span>Klik badge <b class="text-blue-700">Banin</b> / <b class="text-rose-700">Banat</b> di tabel untuk beralih gender.</span>
-                            </div>
-                        </div>
-
-                        <!-- Santri Attendance Table (Per Kelas) -->
-                        <div class="bg-white rounded-xl shadow-sm border border-slate-200/80 overflow-hidden">
-                            <div class="overflow-x-auto custom-scrollbar">
-                                <table class="w-full text-left text-xs">
-                                    <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200 uppercase tracking-wider text-[11px]">
-                                        <tr>
-                                            <th class="py-3 px-4 w-12 text-center">No</th>
-                                            <th class="py-3 px-4 w-28">NIS</th>
-                                            <th class="py-3 px-4 min-w-[200px]">Nama Santri</th>
-                                            <th class="py-3 px-4 text-center min-w-[280px]">Status Kehadiran</th>
-                                            <th class="py-3 px-4 min-w-[180px]">Keterangan / Alasan</th>
-                                            <th class="py-3 px-4 text-center w-20 rbac-staff-only">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="santriTableBody" class="divide-y divide-slate-100">
-                                        <!-- Populated by JS -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                        </div> <!-- End #formInputPresensiSection -->
 
                         <!-- REKAPITULASI SESI ABSENSI HARIAN (TERKELOMPOK PER JAM & USTADZ) -->
                         <div class="bg-white rounded-xl shadow-sm border border-slate-200/80 p-5 space-y-3">
@@ -1855,7 +1980,7 @@
                         <i class="fa-solid fa-check-double mr-1.5 text-emerald-600"></i>
                         <span class="hidden sm:inline">Set Semua </span>Hadir
                     </button>
-                    <button type="button" onclick="saveAttendance()" class="rbac-can-edit px-4 py-1.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-md hover:shadow-lg transition flex items-center space-x-1.5">
+                    <button type="button" id="btnSimpanAbsenSticky" onclick="saveAttendance()" class="rbac-can-edit px-4 py-1.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-md hover:shadow-lg transition flex items-center space-x-1.5">
                         <i class="fa-solid fa-floppy-disk"></i>
                         <span>Simpan Absensi</span>
                     </button>
@@ -3165,6 +3290,7 @@
                         attData.forEach(r => { if (r && r.id) attMap.set(r.id, r); });
                         const mergedLogs = Array.from(attMap.values());
                         localStorage.setItem('siak_attendance_logs', JSON.stringify(mergedLogs));
+                        renderDailyAttendanceStatusPanel();
                         renderDailyAttendanceSessionsList();
                     }
                 } catch (attErr) {
@@ -5064,6 +5190,7 @@ ON CONFLICT (id) DO NOTHING;`;
             // Inisialisasi data pendukung profil & sesi
             applyUstadzPresensiUI();
             populateUstadzChartClassSelector();
+            renderDailyAttendanceStatusPanel();
             renderDailyAttendanceSessionsList();
 
             // ROLE A: STAFF (ADMIN - FULL CONTROL)
@@ -5463,12 +5590,357 @@ ON CONFLICT (id) DO NOTHING;`;
         // =========================================================================
         // HELPER: REKAP SESI ABSENSI HARIAN LOG (TERKELOMPOK PER JAM & USTADZ)
         // =========================================================================
-        function getAttendanceLogs() {
-            try {
-                return JSON.parse(localStorage.getItem('siak_attendance_logs') || '[]');
-            } catch (e) {
-                return [];
+        // =========================================================================
+        // HELPER & CONTROLLER: PANEL STATUS REKAPITULASI ABSENSI HARIAN (SELURUH KELAS)
+        // =========================================================================
+        let currentRevisiSessionId = null;
+        let currentRekapStatusFilter = 'all'; // 'all' | 'sudah' | 'belum'
+
+        function syncPanelDateToAbsen(val) {
+            const mainDate = document.getElementById('absenTanggal');
+            if (mainDate) mainDate.value = val;
+            handleAbsenDateChange();
+        }
+
+        function handleAbsenDateChange() {
+            const tgl = document.getElementById('absenTanggal')?.value || new Date().toISOString().split('T')[0];
+            const panelDateInput = document.getElementById('panelRekapTanggalInput');
+            if (panelDateInput && panelDateInput.value !== tgl) {
+                panelDateInput.value = tgl;
             }
+            const lblTgl = document.getElementById('labelTglStatusRekap');
+            if (lblTgl) lblTgl.textContent = formatIndoDate(tgl);
+
+            renderDailyAttendanceStatusPanel();
+            renderDailyAttendanceSessionsList();
+        }
+
+        function filterRekapStatus(filter) {
+            currentRekapStatusFilter = filter;
+            const btnAll = document.getElementById('btnFilterRekapAll');
+            const btnSudah = document.getElementById('btnFilterRekapSudah');
+            const btnBelum = document.getElementById('btnFilterRekapBelum');
+
+            if (btnAll) {
+                if (filter === 'all') {
+                    btnAll.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-emerald-600 text-white shadow-xs";
+                } else {
+                    btnAll.className = "px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700";
+                }
+            }
+            if (btnSudah) {
+                if (filter === 'sudah') {
+                    btnSudah.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-emerald-600 text-white shadow-xs";
+                } else {
+                    btnSudah.className = "px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700";
+                }
+            }
+            if (btnBelum) {
+                if (filter === 'belum') {
+                    btnBelum.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-amber-600 text-white shadow-xs";
+                } else {
+                    btnBelum.className = "px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-amber-50 hover:text-amber-700";
+                }
+            }
+
+            renderDailyAttendanceStatusPanel();
+        }
+
+        function renderDailyAttendanceStatusPanel() {
+            const container = document.getElementById('rekapStatusKelasContainer');
+            if (!container) return;
+
+            const allClasses = getAllClassesData();
+            const deletedClasses = JSON.parse(localStorage.getItem('siak_deleted_classes') || '[]');
+            const activeClassKeys = Object.keys(allClasses).filter(k => !deletedClasses.includes(k));
+
+            const tgl = document.getElementById('absenTanggal')?.value || new Date().toISOString().split('T')[0];
+            const lblTgl = document.getElementById('labelTglStatusRekap');
+            if (lblTgl) lblTgl.textContent = formatIndoDate(tgl);
+
+            const panelDateInput = document.getElementById('panelRekapTanggalInput');
+            if (panelDateInput && panelDateInput.value !== tgl) {
+                panelDateInput.value = tgl;
+            }
+
+            const logs = getAttendanceLogs();
+            const tglLogs = logs.filter(l => l.tanggal === tgl);
+
+            // Periksa status setiap kelas untuk tanggal aktif
+            const classDataList = activeClassKeys.map(key => {
+                const cls = allClasses[key] || { name: key, wali: '-', santri: [] };
+                const matchingLogs = tglLogs.filter(l => l.class_id === key);
+                const isSudah = matchingLogs.length > 0;
+                return {
+                    key: key,
+                    data: cls,
+                    isSudah: isSudah,
+                    logs: matchingLogs
+                };
+            });
+
+            const totalKelas = classDataList.length;
+            const sudahCount = classDataList.filter(c => c.isSudah).length;
+            const belumCount = totalKelas - sudahCount;
+
+            // Update Counter Badges
+            const statTotal = document.getElementById('statRekapTotalKelas');
+            const statSudah = document.getElementById('statRekapSudahDiabsen');
+            const statBelum = document.getElementById('statRekapBelumDiabsen');
+            const badgeAll = document.getElementById('statRekapBadgeAll');
+            const badgeSudah = document.getElementById('statRekapBadgeSudah');
+            const badgeBelum = document.getElementById('statRekapBadgeBelum');
+
+            if (statTotal) statTotal.textContent = totalKelas;
+            if (statSudah) statSudah.textContent = sudahCount;
+            if (statBelum) statBelum.textContent = belumCount;
+            if (badgeAll) badgeAll.textContent = totalKelas;
+            if (badgeSudah) badgeSudah.textContent = sudahCount;
+            if (badgeBelum) badgeBelum.textContent = belumCount;
+
+            // Filter tampilan berdasarkan tab status
+            let displayList = classDataList;
+            if (currentRekapStatusFilter === 'sudah') {
+                displayList = classDataList.filter(c => c.isSudah);
+            } else if (currentRekapStatusFilter === 'belum') {
+                displayList = classDataList.filter(c => !c.isSudah);
+            }
+
+            if (displayList.length === 0) {
+                container.innerHTML = `
+                    <div class="py-7 text-center text-slate-400 bg-slate-50/70 rounded-xl border border-dashed border-slate-200">
+                        <i class="fa-solid fa-list-check text-2xl text-slate-300 mb-2"></i>
+                        <p class="font-semibold text-xs text-slate-600">Tidak ada kelas pada kategori "${currentRekapStatusFilter === 'sudah' ? 'Sudah Diabsen' : (currentRekapStatusFilter === 'belum' ? 'Belum Diabsen' : 'Semua Kelas')}".</p>
+                        <p class="text-[11px] text-slate-400 mt-0.5">Pilih filter "Semua Kelas" untuk menampilkan status seluruh kelas madrasah.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = displayList.map(item => {
+                const cls = item.data;
+                const key = item.key;
+                const isCurrentActive = (key === selectedClassId);
+                const isBanat = (cls.kategori === 'banat') || (!cls.kategori && ((cls.name || '').toLowerCase().includes('banat') || (cls.name || '').toLowerCase().includes('putri')));
+                const totalSantri = cls.santri ? cls.santri.length : 0;
+
+                if (item.isSudah) {
+                    return `
+                        <div class="bg-white border ${isCurrentActive ? 'border-emerald-400 ring-2 ring-emerald-400/20' : 'border-slate-200/90 hover:border-emerald-300'} rounded-xl p-3.5 space-y-2.5 transition shadow-xs">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
+                                    <h4 class="font-bold text-xs sm:text-sm text-slate-800">${cls.name}</h4>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isBanat ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-blue-50 text-blue-700 border border-blue-200'}">
+                                        ${isBanat ? 'Banat (Putri)' : 'Banin (Putra)'}
+                                    </span>
+                                    <span class="text-[11px] text-slate-500">Wali: <strong class="text-slate-700">${cls.wali || '-'}</strong></span>
+                                    <span class="text-[11px] text-slate-400">(${totalSantri} Santri)</span>
+                                    ${isCurrentActive ? '<span class="px-2 py-0.5 bg-emerald-50 text-emerald-800 text-[10px] font-extrabold rounded border border-emerald-200">Aktif di Formulir</span>' : ''}
+                                </div>
+                                <div class="flex items-center gap-2 self-start sm:self-center shrink-0">
+                                    <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1.5 shadow-xs">
+                                        <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                                        <span>Sudah Diabsen (${item.logs.length} Sesi)</span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Rincian Sesi Tersimpan untuk Kelas Ini -->
+                            <div class="space-y-2 pt-1 border-t border-slate-100">
+                                ${item.logs.map(session => {
+                                    const sum = session.summary || {};
+                                    return `
+                                        <div class="bg-slate-50/90 border border-slate-200/70 rounded-lg p-2.5 flex flex-col md:flex-row md:items-center justify-between gap-2">
+                                            <div class="flex flex-wrap items-center gap-2 text-xs">
+                                                <span class="px-2 py-0.5 bg-white text-slate-700 font-bold rounded border border-slate-200 text-[11px] flex items-center gap-1 shadow-xs">
+                                                    <i class="fa-regular fa-clock text-emerald-600"></i> ${session.jam}
+                                                </span>
+                                                <span class="font-bold text-slate-800">${session.mapel || 'Pelajaran'}</span>
+                                                <span class="text-slate-400">•</span>
+                                                <span class="text-slate-600 flex items-center gap-1">
+                                                    <i class="fa-solid fa-user-tie text-emerald-600 text-[10px]"></i> ${session.ustadz || '-'}
+                                                </span>
+                                                <div class="flex items-center gap-1 ml-1 text-[10px]">
+                                                    <span class="px-1.5 py-0.2 bg-emerald-100 text-emerald-800 font-bold rounded">H: ${sum.hadir || 0}</span>
+                                                    <span class="px-1.5 py-0.2 bg-blue-100 text-blue-800 font-semibold rounded">S: ${sum.sakit || 0}</span>
+                                                    <span class="px-1.5 py-0.2 bg-amber-100 text-amber-800 font-semibold rounded">I: ${sum.izin || 0}</span>
+                                                    <span class="px-1.5 py-0.2 bg-rose-100 text-rose-800 font-semibold rounded">A: ${sum.alpa || 0}</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-1.5 self-end md:self-center shrink-0">
+                                                <button type="button" onclick="revisiPresensiKelas('${key}', '${session.id}')" class="rbac-can-edit px-2.5 py-1 bg-white hover:bg-emerald-50 text-emerald-800 hover:text-emerald-900 border border-emerald-300 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-xs" title="Muat sesi ini ke formulir untuk merevisi status santri">
+                                                    <i class="fa-solid fa-pen-to-square text-emerald-600"></i>
+                                                    <span>Revisi / Edit Absen</span>
+                                                </button>
+                                                <button type="button" onclick="shareSpecificSessionWA('${session.id}')" class="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-xs" title="Bagikan Laporan WA Khusus Sesi Ini">
+                                                    <i class="fa-brands fa-whatsapp text-white"></i>
+                                                    <span class="hidden sm:inline">WA</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    return `
+                        <div class="bg-amber-50/30 border ${isCurrentActive ? 'border-amber-400 ring-2 ring-amber-400/20' : 'border-amber-200/70 hover:border-amber-300'} rounded-xl p-3.5 space-y-2.5 transition shadow-xs">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0 animate-pulse"></span>
+                                    <h4 class="font-bold text-xs sm:text-sm text-slate-800">${cls.name}</h4>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isBanat ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-blue-50 text-blue-700 border border-blue-200'}">
+                                        ${isBanat ? 'Banat (Putri)' : 'Banin (Putra)'}
+                                    </span>
+                                    <span class="text-[11px] text-slate-500">Wali: <strong class="text-slate-700">${cls.wali || '-'}</strong></span>
+                                    <span class="text-[11px] text-slate-400">(${totalSantri} Santri)</span>
+                                    ${isCurrentActive ? '<span class="px-2 py-0.5 bg-amber-100 text-amber-900 text-[10px] font-extrabold rounded border border-amber-300">Aktif di Formulir</span>' : ''}
+                                </div>
+                                <div class="flex items-center gap-2 self-start sm:self-center shrink-0">
+                                    <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-300 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-clock text-amber-600"></i>
+                                        <span>Belum Diabsen</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-amber-100">
+                                <p class="text-xs text-amber-800 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-triangle-exclamation text-amber-500"></i>
+                                    <span>Presensi belum disimpan untuk tanggal <strong>${formatIndoDate(tgl)}</strong>.</span>
+                                </p>
+                                <button type="button" onclick="bukaFormInputPresensi('${key}')" class="rbac-can-edit self-end sm:self-center px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-xs">
+                                    <i class="fa-solid fa-clipboard-user"></i>
+                                    <span>Isi Presensi Sekarang</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+            }).join('');
+
+            // Terapkan proteksi RBAC: sembunyikan tombol aksi jika akun santri
+            if (currentUser && currentUser.role === 'santri') {
+                container.querySelectorAll('.rbac-can-edit').forEach(el => el.classList.add('hidden'));
+            }
+        }
+
+        function revisiPresensiKelas(classKey, sessionId) {
+            if (!checkCanEdit('Melakukan Revisi Absensi')) return;
+
+            const logs = getAttendanceLogs();
+            const session = logs.find(l => l.id === sessionId);
+            if (!session) {
+                showToast('Data sesi absensi tidak ditemukan.', 'error');
+                return;
+            }
+
+            // 1. Pindah kelas aktif jika berbeda
+            if (selectedClassId !== classKey) {
+                switchClass(classKey);
+            }
+
+            const classData = getCurrentClassData();
+            if (!classData || !classData.santri) return;
+
+            // 2. Set form controls sesuai data sesi tersimpan
+            const jamEl = document.getElementById('absenJam');
+            if (jamEl && session.jam) jamEl.value = session.jam;
+
+            const kitabEl = document.getElementById('absenKitab');
+            if (kitabEl && session.mapel) kitabEl.value = session.mapel;
+
+            const ustadzEl = document.getElementById('absenUstadzPengajar');
+            if (ustadzEl && session.ustadz) ustadzEl.value = session.ustadz;
+
+            const tglEl = document.getElementById('absenTanggal');
+            if (tglEl && session.tanggal) tglEl.value = session.tanggal;
+
+            // 3. Muat kembali status dan keterangan setiap santri dari riwayat session.records
+            const sessionRecordsMap = {};
+            (session.records || []).forEach(r => {
+                if (r.nis) sessionRecordsMap[r.nis] = r;
+                else if (r.nama) sessionRecordsMap[r.nama] = r;
+            });
+
+            classData.santri.forEach(s => {
+                const savedRec = sessionRecordsMap[s.nis] || sessionRecordsMap[s.nama];
+                if (savedRec) {
+                    s.status = savedRec.status || 'Hadir';
+                    s.keterangan = savedRec.keterangan || '';
+                }
+            });
+
+            // Simpan ke local sementara untuk preview di tabel
+            saveCurrentClassSantri(classData.santri);
+
+            // 4. Render tabel santri dengan data yang sudah dipulihkan
+            renderSantriTable();
+
+            // 5. Tandai mode revisi aktif & tampilkan banner
+            currentRevisiSessionId = sessionId;
+            const banner = document.getElementById('revisiNoticeBar');
+            const noticeDetail = document.getElementById('revisiNoticeDetail');
+            if (banner) {
+                banner.classList.remove('hidden');
+                if (noticeDetail) {
+                    noticeDetail.innerHTML = `Anda sedang mengubah presensi tersimpan untuk Kelas <strong>${classData.name}</strong> - <strong>${session.jam}</strong> (<em>${session.mapel}</em>) oleh <strong>${session.ustadz}</strong>.`;
+                }
+            }
+
+            // Ubah teks tombol Simpan Absensi
+            updateSimpanButtonText(true);
+
+            // 6. Scroll halus ke formulir input
+            const formSection = document.getElementById('formInputPresensiSection');
+            if (formSection) {
+                formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            showToast(`Mode Revisi Aktif: Data presensi Kelas ${classData.name} dimuat kembali. Silakan sesuaikan lalu simpan.`);
+        }
+
+        function bukaFormInputPresensi(classKey) {
+            if (currentRevisiSessionId) {
+                cancelRevisiMode();
+            }
+            if (selectedClassId !== classKey) {
+                switchClass(classKey);
+            }
+            const classData = getCurrentClassData();
+            const formSection = document.getElementById('formInputPresensiSection');
+            if (formSection) {
+                formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            showToast(`Formulir input presensi dibuka untuk Kelas ${classData.name}.`);
+        }
+
+        function cancelRevisiMode() {
+            currentRevisiSessionId = null;
+            const banner = document.getElementById('revisiNoticeBar');
+            if (banner) banner.classList.add('hidden');
+            updateSimpanButtonText(false);
+            showToast('Mode revisi dibatalkan.');
+        }
+
+        function updateSimpanButtonText(isRevisi) {
+            const btnMain = document.getElementById('btnSimpanAbsenMain');
+            const btnSticky = document.getElementById('btnSimpanAbsenSticky');
+            const text = isRevisi ? 'Simpan Revisi Absensi' : 'Simpan Absensi';
+            const icon = isRevisi ? 'fa-solid fa-arrows-rotate' : 'fa-solid fa-floppy-disk';
+
+            [btnMain, btnSticky].forEach(btn => {
+                if (!btn) return;
+                btn.innerHTML = `<i class="${icon}"></i> <span>${text}</span>`;
+                if (isRevisi) {
+                    btn.classList.remove('bg-emerald-600', 'hover:bg-emerald-700');
+                    btn.classList.add('bg-amber-600', 'hover:bg-amber-700');
+                } else {
+                    btn.classList.remove('bg-amber-600', 'hover:bg-amber-700');
+                    btn.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
+                }
+            });
         }
 
         function renderDailyAttendanceSessionsList() {
@@ -5812,6 +6284,8 @@ ON CONFLICT (id) DO NOTHING;`;
             document.getElementById('sidebarWaliName').textContent = current.wali;
             document.getElementById('dashCurrentClassName').textContent = current.name;
             document.getElementById('currentWaliKelasLabel').textContent = current.wali;
+            const lblInputAktif = document.getElementById('labelKelasInputAktif');
+            if (lblInputAktif) lblInputAktif.textContent = current.name;
             document.getElementById('laporanClassName').textContent = current.name;
             document.getElementById('laporanWaliName').textContent = current.wali;
             document.getElementById('laporanTtdWali').textContent = current.wali;
@@ -6156,7 +6630,7 @@ ON CONFLICT (id) DO NOTHING;`;
             saveCurrentClassSantri(classData.santri);
 
             // 2. Simpan riwayat absensi log sesi
-            const recId = `${selectedClassId}_${tgl}_${jam.replace(/[^a-zA-Z0-9]/g, '')}_${ustadz.replace(/[^a-zA-Z0-9]/g, '')}`;
+            const recId = currentRevisiSessionId || `${selectedClassId}_${tgl}_${jam.replace(/[^a-zA-Z0-9]/g, '')}_${ustadz.replace(/[^a-zA-Z0-9]/g, '')}`;
             const attendanceRecord = {
                 id: recId,
                 class_id: selectedClassId,
@@ -6184,7 +6658,7 @@ ON CONFLICT (id) DO NOTHING;`;
             };
 
             const logs = getAttendanceLogs();
-            const existingIdx = logs.findIndex(l => l.id === recId || (l.class_id === selectedClassId && l.tanggal === tgl && l.jam === jam && l.ustadz === ustadz));
+            const existingIdx = logs.findIndex(l => (currentRevisiSessionId && l.id === currentRevisiSessionId) || l.id === recId || (l.class_id === selectedClassId && l.tanggal === tgl && l.jam === jam && l.ustadz === ustadz));
             if (existingIdx >= 0) {
                 logs[existingIdx] = attendanceRecord;
             } else {
@@ -6195,10 +6669,19 @@ ON CONFLICT (id) DO NOTHING;`;
             // 3. Sinkronisasi ke Supabase Cloud
             syncAttendanceToCloud(attendanceRecord);
 
-            // 4. Render ulang daftar riwayat sesi harian secara langsung
+            const isRevisiSave = !!currentRevisiSessionId;
+            currentRevisiSessionId = null;
+            const revBanner = document.getElementById('revisiNoticeBar');
+            if (revBanner) revBanner.classList.add('hidden');
+            updateSimpanButtonText(false);
+
+            // 4. Render ulang status panel dan sesi harian secara langsung
+            renderDailyAttendanceStatusPanel();
             renderDailyAttendanceSessionsList();
 
-            showToast(`Alhamdulillah, absensi sesi ${jam} (${mapel}) berhasil disimpan & terekap permanen!`);
+            showToast(isRevisiSave 
+                ? `Alhamdulillah, revisi absensi kelas ${classData.name} sesi ${jam} berhasil diperbarui!`
+                : `Alhamdulillah, absensi sesi ${jam} (${mapel}) berhasil disimpan & terekap permanen!`);
         }
 
         function filterSantriTable() {
@@ -6264,7 +6747,11 @@ ON CONFLICT (id) DO NOTHING;`;
                 }
             });
 
-            if (subview === 'harian') renderSantriTable();
+            if (subview === 'harian') {
+                renderSantriTable();
+                renderDailyAttendanceStatusPanel();
+                renderDailyAttendanceSessionsList();
+            }
             else if (subview === 'mingguan') renderRekapMingguanTable();
             else if (subview === 'bulanan') renderRekapBulananTable();
             else if (subview === 'grafik') renderAbsensiCharts();
@@ -8212,6 +8699,8 @@ ON CONFLICT (id) DO NOTHING;`;
             populateUstadzMapelDropdowns();
             renderMapelManager();
             renderSantriTable();
+            renderDailyAttendanceStatusPanel();
+            renderDailyAttendanceSessionsList();
             renderRekapMingguanTable();
             renderRekapBulananTable();
             renderJurnalList();
@@ -8237,6 +8726,10 @@ ON CONFLICT (id) DO NOTHING;`;
             const today = new Date().toISOString().split('T')[0];
             const dateInput = document.getElementById('absenTanggal');
             if (dateInput) dateInput.value = today;
+            const panelDateInput = document.getElementById('panelRekapTanggalInput');
+            if (panelDateInput) panelDateInput.value = today;
+            const lblTgl = document.getElementById('labelTglStatusRekap');
+            if (lblTgl) lblTgl.textContent = formatIndoDate(today);
 
             // Inisialisasi dropdown kelas dan pengajar secara dinamis
             renderAllClassSelectors();
