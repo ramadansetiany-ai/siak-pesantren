@@ -3245,18 +3245,30 @@
             <div>
                 <div class="flex items-center justify-between mb-1">
                     <label class="block text-xs font-semibold text-slate-700">Preview Format Pesan WhatsApp Resmi:</label>
-                    <button type="button" onclick="copyWAText()" class="text-[11px] text-emerald-600 hover:text-emerald-800 font-semibold flex items-center">
+                    <button type="button" onclick="copyWAText()" class="text-[11px] text-emerald-700 hover:text-emerald-900 font-bold flex items-center bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1 rounded-lg border border-emerald-200 transition cursor-pointer">
                         <i class="fa-solid fa-copy mr-1"></i> Salin Teks
                     </button>
                 </div>
-                <textarea id="waMessagePreview" rows="14" readonly class="w-full border border-slate-200 rounded-xl p-3.5 text-xs font-mono bg-slate-50 text-slate-700 focus:outline-none custom-scrollbar leading-relaxed h-80 resize-y"></textarea>
+                <textarea id="waMessagePreview" rows="14" class="w-full border border-slate-200 rounded-xl p-3.5 text-xs font-mono bg-slate-50 text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 custom-scrollbar leading-relaxed h-80 resize-y" placeholder="Format pesan WhatsApp akan tampil di sini..."></textarea>
+                <p class="text-[10px] text-slate-400 mt-1">Anda dapat mengedit atau menambahkan catatan tambahan langsung di kotak teks di atas.</p>
             </div>
 
-            <div class="flex justify-end space-x-2 pt-2 border-t border-slate-100">
-                <button type="button" onclick="closeShareWAModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium text-xs">Batal</button>
-                <button type="button" onclick="sendToWhatsApp()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold shadow-sm text-xs flex items-center">
-                    <i class="fa-brands fa-whatsapp text-sm mr-1.5"></i> Buka WhatsApp & Kirim
+            <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100">
+                <button type="button" onclick="copyWAText()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-xs flex items-center gap-1.5 transition cursor-pointer">
+                    <i class="fa-solid fa-copy text-xs"></i>
+                    <span>Salin Teks</span>
                 </button>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="closeShareWAModal()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium text-xs transition cursor-pointer">Batal</button>
+                    <button type="button" onclick="sendToWhatsApp(true)" class="px-3.5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-xs transition cursor-pointer" title="Buka langsung via WhatsApp Web">
+                        <i class="fa-solid fa-globe text-xs"></i>
+                        <span class="hidden sm:inline">WhatsApp Web</span>
+                    </button>
+                    <button type="button" onclick="sendToWhatsApp(false)" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-sm transition cursor-pointer" title="Buka Aplikasi WhatsApp & Kirim">
+                        <i class="fa-brands fa-whatsapp text-sm"></i>
+                        <span>Buka WhatsApp</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -7422,7 +7434,7 @@ ON CONFLICT (id) DO NOTHING;`;
 
             function formatNumbered(arr) {
                 if (!arr || arr.length === 0) return "";
-                return arr.map((name, i) => `${i + 1}. ${name}`).join(', \n') + '\n';
+                return arr.map((name, i) => `${i + 1}. ${name}`).join('\n') + '\n';
             }
 
             const total = (item.records || []).length || 1;
@@ -7438,10 +7450,10 @@ ON CONFLICT (id) DO NOTHING;`;
                        `📌 *KELAS: ${classData.name.toUpperCase()}*\n` +
                        `• *Total*      : ${total} Santri (H: ${hadirList.length} | S: ${sakitList.length} | I: ${izinList.length} | A: ${alpaList.length})\n`;
 
-            if (hadirList.length > 0) text += `• *Hadir (${hadirList.length})* : \n` + formatNumbered(hadirList);
-            if (sakitList.length > 0) text += `• *Sakit (${sakitList.length})* : \n` + formatNumbered(sakitList);
-            if (izinList.length > 0) text += `• *Izin (${izinList.length})*  : \n` + formatNumbered(izinList);
-            if (alpaList.length > 0) text += `• *Alpa (${alpaList.length})*  : \n` + formatNumbered(alpaList);
+            if (hadirList.length > 0) text += `\n• *Hadir (${hadirList.length})* : \n` + formatNumbered(hadirList);
+            if (sakitList.length > 0) text += `\n• *Sakit (${sakitList.length})* : \n` + formatNumbered(sakitList);
+            if (izinList.length > 0) text += `\n• *Izin (${izinList.length})*  : \n` + formatNumbered(izinList);
+            if (alpaList.length > 0) text += `\n• *Alpa (${alpaList.length})*  : \n` + formatNumbered(alpaList);
 
             text += `\n📊 *REKAPITULASI TOTAL KELAS ${classData.name.toUpperCase()}*\n` +
                     `========================================\n` +
@@ -7451,9 +7463,19 @@ ON CONFLICT (id) DO NOTHING;`;
                     `• *Izin*         : ${izinList.length} Santri\n` +
                     `• *Alpa*         : ${alpaList.length} Santri\n` +
                     `========================================\n` +
-                    `_Laporan presensi otomatis SIAK LMS  Ma'had Aly Adzkiya Mansyaul Hikam_`;
+                    `_Laporan presensi otomatis SIAK LMS Ma'had Aly Adzkiya Mansyaul Hikam_`;
 
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+            activeWAMessage = text;
+            const scopeContainer = document.getElementById('waScopeSelectorContainer');
+            if (scopeContainer) scopeContainer.classList.add('hidden');
+            const titleEl = document.getElementById('waModalTitleText');
+            if (titleEl) titleEl.textContent = `Bagikan Presensi Sesi: ${classData.name} (${item.jam})`;
+            const previewEl = document.getElementById('waMessagePreview');
+            if (previewEl) previewEl.value = text;
+            const recipientInput = document.getElementById('waRecipientNumber');
+            if (recipientInput) recipientInput.value = "";
+            const modalEl = document.getElementById('modalShareWA');
+            if (modalEl) modalEl.classList.remove('hidden');
         }
 
         // =========================================================================
@@ -9117,17 +9139,17 @@ ON CONFLICT (id) DO NOTHING;`;
                     return b;
                 }
 
-                if (hadir.length > 0) {
-                    b += `• *Hadir (${hadir.length})* : \n` + formatSantriNumberedList(hadir);
-                }
                 if (sakit.length > 0) {
-                    b += `• *Sakit (${sakit.length})* : \n` + formatSantriNumberedList(sakit);
+                    b += `• *Sakit (${sakit.length})* : ${sakit.join(', ')}\n`;
                 }
                 if (izin.length > 0) {
-                    b += `• *Izin (${izin.length})*  : \n` + formatSantriNumberedList(izin);
+                    b += `• *Izin (${izin.length})*  : ${izin.join(', ')}\n`;
                 }
                 if (alpa.length > 0) {
-                    b += `• *Alpa (${alpa.length})*  : \n` + formatSantriNumberedList(alpa);
+                    b += `• *Alpa (${alpa.length})*  : ${alpa.join(', ')}\n`;
+                }
+                if (sakit.length === 0 && izin.length === 0 && alpa.length === 0) {
+                    b += `• *Status*     : Seluruh santri hadir lengkap (${hadir.length} Santri)\n`;
                 }
                 b += `\n`;
                 return b;
@@ -9517,32 +9539,103 @@ ON CONFLICT (id) DO NOTHING;`;
         }
 
         function copyWAText() {
-            const text = document.getElementById('waMessagePreview').value;
-            navigator.clipboard.writeText(text).then(() => {
-                showToast('Teks laporan berhasil disalin ke clipboard!');
-            }).catch(() => {
-                showToast('Teks disalin!');
-            });
+            const preview = document.getElementById('waMessagePreview');
+            const text = (preview && preview.value.trim()) ? preview.value : (activeWAMessage || '');
+            if (!text) {
+                showToast('Tidak ada teks laporan untuk disalin.');
+                return;
+            }
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('Teks laporan berhasil disalin ke clipboard!');
+                }).catch(() => {
+                    fallbackCopyWAText(text);
+                });
+            } else {
+                fallbackCopyWAText(text);
+            }
         }
 
-        function sendToWhatsApp() {
-            let phone = document.getElementById('waRecipientNumber').value.trim();
+        function fallbackCopyWAText(text) {
+            const preview = document.getElementById('waMessagePreview');
+            if (preview) {
+                try {
+                    preview.focus();
+                    preview.select();
+                    preview.setSelectionRange(0, 99999);
+                    const successful = document.execCommand('copy');
+                    if (successful) {
+                        showToast('Teks laporan berhasil disalin ke clipboard!');
+                        return;
+                    }
+                } catch (e) {}
+            }
+            showToast('Silakan salin manual dari kotak preview.');
+        }
+
+        function sendToWhatsApp(isWeb = false) {
+            let phone = document.getElementById('waRecipientNumber')?.value.trim() || '';
             phone = phone.replace(/[^0-9]/g, '');
             if (phone.startsWith('0')) {
                 phone = '62' + phone.substring(1);
             }
 
-            const encoded = encodeURIComponent(activeWAMessage || document.getElementById('waMessagePreview').value);
-            let url = "";
-            if (phone.length > 5) {
-                url = `https://wa.me/${phone}?text=${encoded}`;
-            } else {
-                url = `https://api.whatsapp.com/send?text=${encoded}`;
+            const preview = document.getElementById('waMessagePreview');
+            // Prioritaskan teks dari textarea agar hasil revisi/edit manual user terkirim
+            const rawText = (preview && preview.value.trim()) ? preview.value : (activeWAMessage || '');
+
+            if (!rawText) {
+                showToast('Teks pesan WhatsApp masih kosong.');
+                return;
             }
 
-            window.open(url, '_blank');
+            // Selalu salin teks lengkap ke clipboard pengguna sebagai jaminan keamanan
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(rawText).catch(() => {});
+            }
+
+            // Cegah error HTTP 414 URI Too Long dengan batas aman text URL
+            let textToSend = rawText;
+            const maxUrlTextLen = 1800;
+            if (textToSend.length > maxUrlTextLen) {
+                textToSend = textToSend.substring(0, maxUrlTextLen) + '\n\n...(Teks lengkap telah otomatis disalin ke clipboard! Silakan Paste/Tempel langsung di WhatsApp)';
+            }
+
+            const encoded = encodeURIComponent(textToSend);
+            let url = "";
+
+            if (isWeb) {
+                if (phone.length > 5) {
+                    url = `https://web.whatsapp.com/send?phone=${phone}&text=${encoded}`;
+                } else {
+                    url = `https://web.whatsapp.com/send?text=${encoded}`;
+                }
+            } else {
+                if (phone.length > 5) {
+                    url = `https://api.whatsapp.com/send?phone=${phone}&text=${encoded}`;
+                } else {
+                    url = `https://api.whatsapp.com/send?text=${encoded}`;
+                }
+            }
+
+            // Gunakan synthetic anchor click agar tidak diblokir oleh popup-blocker browser
+            try {
+                const a = document.createElement('a');
+                a.href = url;
+                a.target = '_blank';
+                a.rel = 'noopener noreferrer';
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => {
+                    if (document.body.contains(a)) document.body.removeChild(a);
+                }, 200);
+            } catch (e) {
+                window.open(url, '_blank');
+            }
+
             closeShareWAModal();
-            showToast('Membuka WhatsApp...');
+            showToast('Membuka WhatsApp & teks disalin ke clipboard...');
         }
 
         function closeShareWAModal() {
