@@ -68,23 +68,18 @@
             width: 100%;
         }
 
-        /* Custom Dark Mode Theme khusus saat Akun Santri login (Persis Gambar Referensi) */
+        /* Tema Dashboard Khusus Santri (Selaras dengan Tema Hijau Pesantren) */
         body.theme-santri-dark {
-            background-color: #060c1c !important;
-            color: #f1f5f9 !important;
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
         }
         body.theme-santri-dark header {
-            background: #091228 !important;
-            border-bottom: 1px solid rgba(30, 58, 138, 0.4) !important;
-        }
-        body.theme-santri-dark #sidebarNav > div {
-            background-color: #091228 !important;
-            border-color: rgba(30, 58, 138, 0.4) !important;
-            color: #e2e8f0;
+            background: #047857 !important;
+            border-bottom: 1px solid rgba(16, 185, 129, 0.3) !important;
         }
         body.theme-santri-dark .mobile-bottom-nav {
-            background-color: #070e22 !important;
-            border-top: 1px solid rgba(30, 58, 138, 0.5) !important;
+            background-color: #ffffff !important;
+            border-top: 1px solid #e2e8f0 !important;
         }
 
         .custom-scrollbar::-webkit-scrollbar {
@@ -588,274 +583,293 @@
                 <!-- ============================================== -->
                 <!-- SECTION: DASHBOARD UTAMA SANTRI (PERSIS REFERENSI) -->
                 <!-- ============================================== -->
-                <section id="tab-profil-santri" class="tab-content hidden space-y-4">
-                    <!-- 1. KARTU IDENTITAS SANTRI (DARK MODE GLASSMORPHISM) -->
-                    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-b from-[#111e42] via-[#0d1633] to-[#090f24] p-5 border border-blue-800/40 shadow-xl shadow-blue-950/50 text-white">
-                        <!-- Glow ambient light -->
-                        <div class="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-blue-500/10 blur-3xl pointer-events-none"></div>
+                <section id="tab-profil-santri" class="tab-content hidden space-y-5 max-w-4xl mx-auto">
+                    <!-- ========================================================= -->
+                    <!-- 1. KARTU IDENTITAS SANTRI (TEMA HIJAU PESANTREN ELEGAN)    -->
+                    <!-- ========================================================= -->
+                    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-800 via-emerald-700 to-teal-800 p-5 sm:p-6 border border-emerald-600/40 shadow-xl shadow-emerald-950/20 text-white">
+                        <!-- Watermark & Glow Pattern -->
+                        <div class="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-emerald-400/15 blur-3xl pointer-events-none"></div>
+                        <div class="absolute -bottom-8 -left-8 w-40 h-40 rounded-full bg-teal-400/10 blur-2xl pointer-events-none"></div>
+                        <i class="fa-solid fa-mosque absolute -bottom-6 -right-6 text-9xl text-white/5 pointer-events-none"></i>
 
-                        <!-- Top Row: Detail Santri & Pakta Integritas Button -->
-                        <div class="flex items-center justify-between relative z-10">
-                            <span class="text-[11px] font-extrabold uppercase tracking-widest text-blue-300/80">DETAIL SANTRI</span>
-                            <button type="button" onclick="openPaktaIntegritasModal()" class="px-3.5 py-1.5 bg-white hover:bg-slate-100 active:scale-95 text-slate-900 font-bold text-xs rounded-full shadow-md flex items-center gap-1.5 transition cursor-pointer">
-                                <i class="fa-regular fa-file-lines text-xs text-slate-700"></i>
-                                <span>Pakta Integritas</span>
-                            </button>
-                        </div>
-
-                        <!-- Identity: Full Name & NIS -->
-                        <div class="mt-4 relative z-10 space-y-1">
-                            <h2 class="text-xl sm:text-2xl font-black text-white tracking-tight leading-snug" id="santriProfilNama">
-                                Muhammad Salman Abi Hasan Mahnaturrahman
-                            </h2>
-                            <div class="flex items-center gap-2 text-slate-300 text-sm">
-                                <span id="santriProfilNisDisplay" class="font-mono tracking-wider text-slate-300 font-bold">2688858032</span>
-                                <button type="button" onclick="copySantriNis()" class="text-slate-400 hover:text-white transition cursor-pointer p-1" title="Salin ID Santri">
-                                    <i class="fa-regular fa-copy"></i>
+                        <!-- Top Row: Label & Tombol Aksi (Pakta Integritas & Edit Staff) -->
+                        <div class="flex items-center justify-between relative z-10 pb-3 border-b border-emerald-600/40">
+                            <span class="text-xs font-black uppercase tracking-widest text-emerald-200 flex items-center gap-1.5">
+                                <i class="fa-solid fa-id-card-clip text-emerald-300"></i>
+                                <span>DETAIL SANTRI</span>
+                            </span>
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="openPaktaIntegritasModal()" class="px-3.5 py-1.5 bg-white/95 hover:bg-white text-emerald-900 font-bold text-xs rounded-full shadow-sm flex items-center gap-1.5 transition active:scale-95 cursor-pointer">
+                                    <i class="fa-regular fa-file-lines text-xs text-emerald-700"></i>
+                                    <span>Pakta Integritas</span>
+                                </button>
+                                <button type="button" onclick="openModalEditSantriByStaff()" class="px-3 py-1.5 bg-emerald-600/80 hover:bg-emerald-500 border border-emerald-400/40 text-white font-bold text-xs rounded-full shadow-sm flex items-center gap-1.5 transition active:scale-95 cursor-pointer" title="Ubah & Perbarui Data Profil Santri oleh Staff">
+                                    <i class="fa-solid fa-user-pen text-xs"></i>
+                                    <span class="text-[11px]">Ubah Data</span>
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Circular Quick Action Buttons (Pembayaran, Pesan, Event, KHS) -->
-                        <div class="grid grid-cols-4 gap-2 pt-5 border-t border-blue-900/40 mt-5 text-center relative z-10">
-                            <!-- 1. Pembayaran -->
-                            <button type="button" onclick="openSantriPembayaranModal()" class="flex flex-col items-center group cursor-pointer">
-                                <div class="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 flex items-center justify-center text-white text-base shadow-sm backdrop-blur-xs transition group-active:scale-95">
-                                    <i class="fa-regular fa-credit-card"></i>
-                                </div>
-                                <span class="text-[11px] text-blue-100/90 font-medium mt-1.5">Pembayaran</span>
-                            </button>
+                        <!-- Card Body: Foto Profil Santri, Nama Lengkap, Kelas, Alamat, ID/NIM -->
+                        <div class="mt-4 relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-5">
+                            <!-- Foto Profil Santri -->
+                            <div class="relative shrink-0">
+                                <img id="santriProfilAvatarImg" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80" alt="Foto Santri" class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover border-2 border-white/80 shadow-md bg-emerald-900/40">
+                                <span class="w-4 h-4 rounded-full bg-emerald-400 border-2 border-emerald-800 absolute -bottom-1 -right-1 shadow-xs" title="Santri Aktif"></span>
+                            </div>
 
-                            <!-- 2. Pesan -->
-                            <button type="button" onclick="openSantriPesanModal()" class="flex flex-col items-center group cursor-pointer">
-                                <div class="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 flex items-center justify-center text-white text-base shadow-sm backdrop-blur-xs transition group-active:scale-95">
-                                    <i class="fa-regular fa-envelope"></i>
+                            <!-- Detail Identitas Santri -->
+                            <div class="space-y-1.5 flex-1 min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-white/20 text-emerald-100 border border-white/25" id="santriProfilKelasDisplay">
+                                        1 Aly Banin
+                                    </span>
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/40 text-emerald-100 border border-emerald-400/30">
+                                        Mahasantri Aktif
+                                    </span>
                                 </div>
-                                <span class="text-[11px] text-blue-100/90 font-medium mt-1.5">Pesan</span>
-                            </button>
 
-                            <!-- 3. Event -->
-                            <button type="button" onclick="openSantriEventModal()" class="flex flex-col items-center group cursor-pointer">
-                                <div class="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 flex items-center justify-center text-white text-base shadow-sm backdrop-blur-xs transition group-active:scale-95">
-                                    <i class="fa-regular fa-calendar-days"></i>
-                                </div>
-                                <span class="text-[11px] text-blue-100/90 font-medium mt-1.5">Event</span>
-                            </button>
+                                <h2 class="text-lg sm:text-2xl font-black text-white leading-tight tracking-tight truncate" id="santriProfilNama">
+                                    Muhammad Salman Abi Hasan Mahnaturrahman
+                                </h2>
 
-                            <!-- 4. KHS -->
-                            <button type="button" onclick="switchTab('ujian')" class="flex flex-col items-center group cursor-pointer">
-                                <div class="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 flex items-center justify-center text-white text-base shadow-sm backdrop-blur-xs transition group-active:scale-95">
-                                    <i class="fa-regular fa-newspaper"></i>
+                                <p class="text-xs text-emerald-100/95 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-location-dot text-emerald-300"></i>
+                                    <span id="santriProfilAlamatDisplay">Asrama Al-Ghazali, Kampus Putra</span>
+                                </p>
+
+                                <div class="flex items-center gap-2 pt-1">
+                                    <span class="text-[11px] font-bold text-emerald-200 uppercase tracking-wider">ID / NIM:</span>
+                                    <span class="font-mono text-xs font-extrabold text-white bg-black/25 px-2.5 py-0.5 rounded-lg border border-white/20" id="santriProfilNisDisplay">
+                                        2688858032
+                                    </span>
+                                    <button type="button" onclick="copySantriNis()" class="text-emerald-200 hover:text-white transition cursor-pointer p-1" title="Salin ID Santri">
+                                        <i class="fa-regular fa-copy"></i>
+                                    </button>
                                 </div>
-                                <span class="text-[11px] text-blue-100/90 font-medium mt-1.5">KHS</span>
-                            </button>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- 2. STATUS KEAKTIFAN & PILIHAN SEMESTER -->
+                    <!-- ========================================================= -->
+                    <!-- 2. STATUS KEAKTIFAN & PILIHAN SEMESTER                     -->
+                    <!-- ========================================================= -->
                     <div class="flex items-center justify-between px-1">
                         <div class="flex items-center gap-2">
                             <span class="relative flex h-2.5 w-2.5">
                                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-600"></span>
                             </span>
-                            <span class="text-xs font-black tracking-wider text-emerald-400 uppercase">AKTIF</span>
+                            <span class="text-xs font-black tracking-wider text-emerald-800 uppercase">AKTIF</span>
                         </div>
 
                         <div class="relative">
-                            <button type="button" onclick="toggleSantriSemesterDropdown()" class="bg-[#121c3b] hover:bg-[#182650] border border-blue-900/50 text-blue-200 text-xs px-3.5 py-1.5 rounded-full font-semibold flex items-center gap-2 transition cursor-pointer shadow-xs">
+                            <button type="button" onclick="toggleSantriSemesterDropdown()" class="bg-white hover:bg-emerald-50 border border-slate-200 text-slate-700 text-xs px-3.5 py-1.5 rounded-full font-semibold flex items-center gap-2 transition cursor-pointer shadow-xs">
                                 <span id="labelActiveSemester">Semester 2 (Dua)</span>
-                                <i class="fa-solid fa-chevron-down text-[10px] text-blue-400"></i>
+                                <i class="fa-solid fa-chevron-down text-[10px] text-emerald-600"></i>
                             </button>
-                            <div id="dropdownSantriSemester" class="hidden absolute right-0 mt-1.5 w-44 bg-[#0e1630] border border-blue-800/60 rounded-xl shadow-xl z-30 py-1 text-xs divide-y divide-blue-950">
-                                <button type="button" onclick="selectSantriSemester('Semester 1 (Ganjil)')" class="w-full text-left px-3 py-2 text-slate-300 hover:bg-blue-900/40 hover:text-white transition">Semester 1 (Ganjil)</button>
-                                <button type="button" onclick="selectSantriSemester('Semester 2 (Dua)')" class="w-full text-left px-3 py-2 text-emerald-400 font-bold hover:bg-blue-900/40 transition">Semester 2 (Dua)</button>
+                            <div id="dropdownSantriSemester" class="hidden absolute right-0 mt-1.5 w-44 bg-white border border-slate-200 rounded-2xl shadow-xl z-30 py-1 text-xs divide-y divide-slate-100">
+                                <button type="button" onclick="selectSantriSemester('Semester 1 (Ganjil)')" class="w-full text-left px-3.5 py-2 text-slate-600 hover:bg-emerald-50 hover:text-emerald-800 transition">Semester 1 (Ganjil)</button>
+                                <button type="button" onclick="selectSantriSemester('Semester 2 (Dua)')" class="w-full text-left px-3.5 py-2 text-emerald-700 font-bold hover:bg-emerald-50 transition">Semester 2 (Dua)</button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- 3. JADWAL HARI INI -->
-                    <div class="space-y-2.5">
+                    <!-- ========================================================= -->
+                    <!-- 3. BAGIAN JADWAL & JAM PELAJARAN ASATIDZ                   -->
+                    <!-- ========================================================= -->
+                    <div class="space-y-3">
                         <div class="flex items-center justify-between px-1">
-                            <h3 class="text-sm font-bold text-white tracking-wide">Jadwal Hari Ini</h3>
-                            <button type="button" onclick="refreshSantriSchedule()" class="text-xs font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-1.5 bg-[#121c3b] border border-blue-900/50 px-2.5 py-1 rounded-lg transition active:scale-95 cursor-pointer">
-                                <i class="fa-solid fa-arrows-rotate text-[11px]"></i>
-                                <span>Perbarui</span>
-                            </button>
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center text-xs font-bold">
+                                    <i class="fa-solid fa-book-open"></i>
+                                </div>
+                                <h3 class="text-sm font-extrabold text-slate-800 tracking-wide">Jadwal & Jam Pelajaran Asatidz</h3>
+                            </div>
+                            <span class="text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 shadow-2xs">
+                                Jadwal Harian
+                            </span>
                         </div>
 
-                        <!-- Schedule Card (Interactive, exactly matching reference image) -->
-                        <div class="bg-[#111c3a] border border-blue-900/40 rounded-2xl p-4 text-white shadow-md space-y-3">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-1.5 text-xs text-slate-300 font-mono">
-                                    <i class="fa-regular fa-clock text-blue-400"></i>
-                                    <span id="santriJadwalJam">14.00 - 15.30</span>
+                        <div class="space-y-2.5">
+                            <!-- Sesi 1: 17.00 - 18.30 (Idofi & Hadist) -->
+                            <div class="bg-white border border-slate-200/90 hover:border-emerald-300 rounded-2xl p-4 transition shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div class="space-y-1.5">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <span class="px-2.5 py-1 bg-emerald-50 text-emerald-800 font-mono font-bold text-xs rounded-lg border border-emerald-200 flex items-center gap-1.5">
+                                            <i class="fa-regular fa-clock text-emerald-600"></i> 17.00 - 18.30 WIB
+                                        </span>
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200">
+                                            Sore
+                                        </span>
+                                    </div>
+                                    <h4 class="text-base font-extrabold text-slate-800">Pelajaran Idofi &amp; Hadist</h4>
+                                    <p class="text-xs text-slate-600 flex items-start gap-1.5">
+                                        <i class="fa-solid fa-chalkboard-user text-emerald-600 mt-0.5 shrink-0"></i>
+                                        <span><strong>Asatidz:</strong> Abina KH. M. Nurpahmi H. S.Pd., M.Pd. &amp; Ustaz Nuriman Saputra</span>
+                                    </p>
                                 </div>
-                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30" id="santriJadwalStatusBadge">
-                                    Selesai
-                                </span>
+                                <div class="flex items-center gap-2 self-start sm:self-center shrink-0">
+                                    <span class="px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1 shadow-2xs">
+                                        <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                                        <span>Hadir</span>
+                                    </span>
+                                </div>
                             </div>
 
-                            <div>
-                                <h4 class="text-base font-extrabold text-white" id="santriJadwalMapel">Metodologi Penelitian Hukum</h4>
-                                <p class="text-xs text-slate-400 flex items-center gap-1.5 mt-1">
-                                    <i class="fa-regular fa-user text-slate-400"></i>
-                                    <span id="santriJadwalUstadz">Dr. Muhammad Zuhdi, M.H.I.</span>
-                                </p>
-                                <p class="text-xs text-slate-400 flex items-center gap-1.5 mt-0.5">
-                                    <i class="fa-solid fa-users-rectangle text-slate-400"></i>
-                                    <span id="santriJadwalRuang">Breakout: Ruang 8 (LANTAI 3 MABNA ABUY...) 📍</span>
-                                </p>
+                            <!-- Sesi 2: 18.30 - 20.00 (Fikih) -->
+                            <div class="bg-white border border-slate-200/90 hover:border-emerald-300 rounded-2xl p-4 transition shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div class="space-y-1.5">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <span class="px-2.5 py-1 bg-emerald-50 text-emerald-800 font-mono font-bold text-xs rounded-lg border border-emerald-200 flex items-center gap-1.5">
+                                            <i class="fa-regular fa-clock text-emerald-600"></i> 18.30 - 20.00 WIB
+                                        </span>
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                            Maghrib
+                                        </span>
+                                    </div>
+                                    <h4 class="text-base font-extrabold text-slate-800">Pelajaran Fikih</h4>
+                                    <p class="text-xs text-slate-600 flex items-start gap-1.5">
+                                        <i class="fa-solid fa-chalkboard-user text-emerald-600 mt-0.5 shrink-0"></i>
+                                        <span><strong>Asatidz:</strong> Abina KH. M. Nurpahmi H. S.Pd., M.Pd. &amp; Ustaz M. Salman Abi Hasan, S.H.</span>
+                                    </p>
+                                </div>
+                                <div class="flex items-center gap-2 self-start sm:self-center shrink-0">
+                                    <span class="px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1 shadow-2xs">
+                                        <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                                        <span>Hadir</span>
+                                    </span>
+                                </div>
                             </div>
 
-                            <div class="pt-2.5 border-t border-blue-900/30 flex items-center justify-between text-xs">
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30" id="santriJadwalStatusHadir">
-                                    Hadir
-                                </span>
-                                <span class="text-slate-400 text-[11px]">Perkuliahan selesai</span>
-                                <button type="button" onclick="showToast('Sesi perkuliahan ini telah selesai.')" class="px-3 py-1 bg-blue-900/40 hover:bg-blue-900/60 border border-blue-700/40 text-blue-200 text-xs rounded-full flex items-center gap-1 cursor-pointer">
-                                    <i class="fa-solid fa-clock-rotate-left text-[10px]"></i> Selesai
-                                </button>
+                            <!-- Sesi 3: 20.00 - 21.30 (Tauhid) -->
+                            <div class="bg-white border border-slate-200/90 hover:border-emerald-300 rounded-2xl p-4 transition shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div class="space-y-1.5">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <span class="px-2.5 py-1 bg-emerald-50 text-emerald-800 font-mono font-bold text-xs rounded-lg border border-emerald-200 flex items-center gap-1.5">
+                                            <i class="fa-regular fa-clock text-emerald-600"></i> 20.00 - 21.30 WIB
+                                        </span>
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                                            Malam / Isya
+                                        </span>
+                                    </div>
+                                    <h4 class="text-base font-extrabold text-slate-800">Pelajaran Tauhid</h4>
+                                    <p class="text-xs text-slate-600 flex items-start gap-1.5">
+                                        <i class="fa-solid fa-chalkboard-user text-emerald-600 mt-0.5 shrink-0"></i>
+                                        <span><strong>Asatidz:</strong> Abina KH. M. Nurpahmi H. S.Pd., M.Pd. &amp; Ustaz Alifudin Fathul Muin</span>
+                                    </p>
+                                </div>
+                                <div class="flex items-center gap-2 self-start sm:self-center shrink-0">
+                                    <span class="px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1 shadow-2xs">
+                                        <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                                        <span>Hadir</span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Sesi 4: 05.30 - 06.30 (Tafsir Pagi) -->
+                            <div class="bg-white border border-slate-200/90 hover:border-emerald-300 rounded-2xl p-4 transition shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div class="space-y-1.5">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <span class="px-2.5 py-1 bg-amber-50 text-amber-800 font-mono font-bold text-xs rounded-lg border border-amber-200 flex items-center gap-1.5">
+                                            <i class="fa-regular fa-clock text-amber-600"></i> 05.30 - 06.30 WIB (Pagi)
+                                        </span>
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                                            Subuh / Pagi
+                                        </span>
+                                    </div>
+                                    <h4 class="text-base font-extrabold text-slate-800">Pelajaran Tafsir</h4>
+                                    <p class="text-xs text-slate-600 flex items-start gap-1.5">
+                                        <i class="fa-solid fa-chalkboard-user text-emerald-600 mt-0.5 shrink-0"></i>
+                                        <span><strong>Asatidz:</strong> Abina KH. M. Nurpahmi H. S.Pd., M.Pd. &amp; Ustaz Arif Khairul Fahmi</span>
+                                    </p>
+                                </div>
+                                <div class="flex items-center gap-2 self-start sm:self-center shrink-0">
+                                    <span class="px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1 shadow-2xs">
+                                        <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                                        <span>Hadir</span>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- 4. REKAP KEHADIRAN SEMESTER INI -->
-                    <div class="space-y-2.5">
-                        <h3 class="text-sm font-bold text-white tracking-wide px-1">Rekap Kehadiran Semester Ini</h3>
-                        <div class="grid grid-cols-4 gap-2">
-                            <!-- Hadir -->
-                            <div class="bg-[#111c3a] border border-emerald-900/40 rounded-2xl p-2.5 sm:p-3 text-center flex flex-col items-center justify-between shadow-xs">
-                                <div class="w-7 h-7 rounded-full bg-emerald-500/15 text-emerald-400 flex items-center justify-center text-xs relative mb-1">
+                    <!-- ========================================================= -->
+                    <!-- 4. REKAP KEHADIRAN SEMESTER INI                            -->
+                    <!-- ========================================================= -->
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between px-1">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center text-xs font-bold">
+                                    <i class="fa-solid fa-chart-pie"></i>
+                                </div>
+                                <h3 class="text-sm font-extrabold text-slate-800 tracking-wide">Rekap Kehadiran Semester Ini</h3>
+                            </div>
+                            <span class="text-[11px] font-bold text-slate-500">Semester 2 (Dua)</span>
+                        </div>
+
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            <!-- 1. Hadir -->
+                            <div class="bg-emerald-50/70 border border-emerald-200/90 rounded-2xl p-4 flex flex-col items-center justify-between shadow-xs text-center transition hover:border-emerald-400">
+                                <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-base shadow-xs mb-1">
                                     <i class="fa-solid fa-check"></i>
-                                    <span class="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 text-[8px] font-black rounded-full flex items-center justify-center text-slate-900">!</span>
                                 </div>
-                                <span class="text-xl font-black text-white leading-tight" id="santriBoxHadir">12</span>
-                                <span class="text-[10px] text-slate-400 font-semibold mt-0.5">Hadir</span>
+                                <span class="text-2xl sm:text-3xl font-black text-emerald-900 leading-tight" id="santriBoxHadir">12</span>
+                                <span class="text-xs text-emerald-700 font-bold mt-0.5">Jumlah Hadir</span>
                             </div>
 
-                            <!-- Alpa -->
-                            <div class="bg-[#111c3a] border border-rose-900/40 rounded-2xl p-2.5 sm:p-3 text-center flex flex-col items-center justify-between shadow-xs">
-                                <div class="w-7 h-7 rounded-full bg-rose-500/15 text-rose-400 flex items-center justify-center text-xs relative mb-1">
+                            <!-- 2. Alfa -->
+                            <div class="bg-rose-50/70 border border-rose-200/90 rounded-2xl p-4 flex flex-col items-center justify-between shadow-xs text-center transition hover:border-rose-400">
+                                <div class="w-10 h-10 rounded-xl bg-rose-600 text-white flex items-center justify-center text-base shadow-xs mb-1">
                                     <i class="fa-solid fa-xmark"></i>
-                                    <span class="absolute -top-1 -right-1 w-3 h-3 bg-rose-500 text-[8px] font-black rounded-full flex items-center justify-center text-white">!</span>
                                 </div>
-                                <span class="text-xl font-black text-white leading-tight" id="santriBoxAlpa">4</span>
-                                <span class="text-[10px] text-slate-400 font-semibold mt-0.5">Alpa</span>
+                                <span class="text-2xl sm:text-3xl font-black text-rose-900 leading-tight" id="santriBoxAlpa">4</span>
+                                <span class="text-xs text-rose-700 font-bold mt-0.5">Jumlah Alfa</span>
                             </div>
 
-                            <!-- Izin -->
-                            <div class="bg-[#111c3a] border border-amber-900/40 rounded-2xl p-2.5 sm:p-3 text-center flex flex-col items-center justify-between shadow-xs">
-                                <div class="w-7 h-7 rounded-full bg-amber-500/15 text-amber-400 flex items-center justify-center text-xs mb-1">
+                            <!-- 3. Izin -->
+                            <div class="bg-amber-50/70 border border-amber-200/90 rounded-2xl p-4 flex flex-col items-center justify-between shadow-xs text-center transition hover:border-amber-400">
+                                <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center text-base shadow-xs mb-1">
                                     <i class="fa-regular fa-file-lines"></i>
                                 </div>
-                                <span class="text-xl font-black text-white leading-tight" id="santriBoxIzin">4</span>
-                                <span class="text-[10px] text-slate-400 font-semibold mt-0.5">Izin</span>
+                                <span class="text-2xl sm:text-3xl font-black text-amber-900 leading-tight" id="santriBoxIzin">4</span>
+                                <span class="text-xs text-amber-700 font-bold mt-0.5">Jumlah Izin</span>
                             </div>
 
-                            <!-- Sakit -->
-                            <div class="bg-[#111c3a] border border-cyan-900/40 rounded-2xl p-2.5 sm:p-3 text-center flex flex-col items-center justify-between shadow-xs">
-                                <div class="w-7 h-7 rounded-full bg-cyan-500/15 text-cyan-400 flex items-center justify-center text-xs mb-1">
-                                    <i class="fa-solid fa-suitcase-medical"></i>
+                            <!-- 4. Sakit -->
+                            <div class="bg-sky-50/70 border border-sky-200/90 rounded-2xl p-4 flex flex-col items-center justify-between shadow-xs text-center transition hover:border-sky-400">
+                                <div class="w-10 h-10 rounded-xl bg-sky-600 text-white flex items-center justify-center text-base shadow-xs mb-1">
+                                    <i class="fa-solid fa-notes-medical"></i>
                                 </div>
-                                <span class="text-xl font-black text-white leading-tight" id="santriBoxSakit">2</span>
-                                <span class="text-[10px] text-slate-400 font-semibold mt-0.5">Sakit</span>
+                                <span class="text-2xl sm:text-3xl font-black text-sky-900 leading-tight" id="santriBoxSakit">2</span>
+                                <span class="text-xs text-sky-700 font-bold mt-0.5">Jumlah Sakit</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- 5. GRID MENU NAVIGASI LAYANAN (ICONS IN CIRCULAR BUTTONS) -->
-                    <div class="grid grid-cols-4 gap-y-4 gap-x-2 py-3">
-                        <!-- 1. KRS -->
-                        <button type="button" onclick="openSantriKRSModal()" class="flex flex-col items-center group cursor-pointer">
-                            <div class="w-13 h-13 rounded-full bg-[#121f44] hover:bg-[#1a2d5e] border border-blue-800/40 flex items-center justify-center text-blue-300 text-lg transition group-active:scale-95 shadow-md shadow-blue-950/40">
-                                <i class="fa-regular fa-id-card"></i>
-                            </div>
-                            <span class="text-[10px] text-slate-300 font-semibold text-center mt-1.5">KRS</span>
-                        </button>
-
-                        <!-- 2. Jadwal Kuliah -->
-                        <button type="button" onclick="openSantriJadwalModal()" class="flex flex-col items-center group cursor-pointer">
-                            <div class="w-13 h-13 rounded-full bg-[#121f44] hover:bg-[#1a2d5e] border border-blue-800/40 flex items-center justify-center text-blue-300 text-lg transition group-active:scale-95 shadow-md shadow-blue-950/40">
-                                <i class="fa-regular fa-calendar-check"></i>
-                            </div>
-                            <span class="text-[10px] text-slate-300 font-semibold text-center mt-1.5">Jadwal Kuliah</span>
-                        </button>
-
-                        <!-- 3. UAS -->
-                        <button type="button" onclick="switchTab('ujian')" class="flex flex-col items-center group cursor-pointer">
-                            <div class="w-13 h-13 rounded-full bg-[#121f44] hover:bg-[#1a2d5e] border border-blue-800/40 flex items-center justify-center text-blue-300 text-lg transition group-active:scale-95 shadow-md shadow-blue-950/40">
-                                <i class="fa-regular fa-file-powerpoint"></i>
-                            </div>
-                            <span class="text-[10px] text-slate-300 font-semibold text-center mt-1.5">UAS</span>
-                        </button>
-
-                        <!-- 4. Pendaftaran Sidang -->
-                        <button type="button" onclick="openSantriLayananModal('Pendaftaran Sidang / Imtihan Syafahi')" class="flex flex-col items-center group cursor-pointer">
-                            <div class="w-13 h-13 rounded-full bg-[#121f44] hover:bg-[#1a2d5e] border border-blue-800/40 flex items-center justify-center text-blue-300 text-lg transition group-active:scale-95 shadow-md shadow-blue-950/40">
-                                <i class="fa-solid fa-users-viewfinder"></i>
-                            </div>
-                            <span class="text-[10px] text-slate-300 font-semibold text-center mt-1.5">Pendaftaran Sidang</span>
-                        </button>
-
-                        <!-- 5. Pendaftaran Wisuda -->
-                        <button type="button" onclick="openSantriLayananModal('Pendaftaran Wisuda / Haflah Takharruj')" class="flex flex-col items-center group cursor-pointer">
-                            <div class="w-13 h-13 rounded-full bg-[#121f44] hover:bg-[#1a2d5e] border border-blue-800/40 flex items-center justify-center text-blue-300 text-lg transition group-active:scale-95 shadow-md shadow-blue-950/40">
-                                <i class="fa-solid fa-graduation-cap"></i>
-                            </div>
-                            <span class="text-[10px] text-slate-300 font-semibold text-center mt-1.5">Pendaftaran Wisuda</span>
-                        </button>
-
-                        <!-- 6. Ijazah -->
-                        <button type="button" onclick="openSantriLayananModal('Ijazah & Transkrip Syahadah')" class="flex flex-col items-center group cursor-pointer">
-                            <div class="w-13 h-13 rounded-full bg-[#121f44] hover:bg-[#1a2d5e] border border-blue-800/40 flex items-center justify-center text-blue-300 text-lg transition group-active:scale-95 shadow-md shadow-blue-950/40">
-                                <i class="fa-solid fa-award"></i>
-                            </div>
-                            <span class="text-[10px] text-slate-300 font-semibold text-center mt-1.5">Ijazah</span>
-                        </button>
-
-                        <!-- 7. Lainnya -->
-                        <button type="button" onclick="openSantriLayananModal('Layanan Akademik Lainnya')" class="flex flex-col items-center group cursor-pointer">
-                            <div class="w-13 h-13 rounded-full bg-[#121f44] hover:bg-[#1a2d5e] border border-blue-800/40 flex items-center justify-center text-blue-300 text-lg transition group-active:scale-95 shadow-md shadow-blue-950/40">
-                                <i class="fa-solid fa-ellipsis"></i>
-                            </div>
-                            <span class="text-[10px] text-slate-300 font-semibold text-center mt-1.5">Lainnya</span>
-                        </button>
+                    <!-- HIDDEN PRESERVED ELEMENTS (Menjamin 100% kompatibilitas skrip lama) -->
+                    <div class="hidden" aria-hidden="true">
+                        <span id="santriProfilAvatar">A</span>
+                        <span id="santriProfilNis"></span>
+                        <span id="santriProfilWali"></span>
+                        <span id="santriProfilHp"></span>
+                        <span id="santriProfilAsramaHeader"></span>
+                        <span id="santriProfilAsrama"></span>
+                        <span id="santriProfilPctHadir"></span>
+                        <span id="santriProfilDetailAbsen"></span>
+                        <span id="santriProfilRataNilai"></span>
+                        <span id="santriProfilStatusLulus"></span>
+                        <span id="santriJadwalJam"></span>
+                        <span id="santriJadwalStatusBadge"></span>
+                        <span id="santriJadwalMapel"></span>
+                        <span id="santriJadwalUstadz"></span>
+                        <span id="santriJadwalRuang"></span>
+                        <span id="santriJadwalStatusHadir"></span>
+                        <canvas id="chartSantriPie"></canvas>
+                        <canvas id="chartSantriWeekly"></canvas>
                     </div>
-
-                    <!-- 6. BANNER SLIDER / INFO PENGUMUMAN -->
-                    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-950 via-blue-900 to-indigo-950 p-4 border border-blue-800/50 shadow-lg text-white">
-                        <div class="flex items-center justify-between gap-3">
-                            <div class="space-y-1">
-                                <p class="text-xs font-semibold text-blue-300">Aplikasi Mobile Santri</p>
-                                <h4 class="text-sm sm:text-base font-extrabold text-white leading-tight">
-                                    Download Sekarang,<br>Nikmati Kemudahannya
-                                </h4>
-                                <p class="text-[10px] text-blue-200/80">Pantau presensi, tugas & nilai langsung dari genggaman.</p>
-                            </div>
-                            <div class="w-14 h-14 rounded-xl bg-white/10 border border-white/20 flex flex-col items-center justify-center text-white shrink-0 p-1">
-                                <i class="fa-solid fa-qrcode text-2xl text-blue-200"></i>
-                                <span class="text-[8px] font-bold text-blue-100 mt-0.5">Scan App</span>
-                            </div>
-                        </div>
-                        <!-- Dots indicator -->
-                        <div class="flex items-center justify-center gap-1.5 mt-3">
-                            <span class="w-3.5 h-1.5 rounded-full bg-blue-400"></span>
-                            <span class="w-1.5 h-1.5 rounded-full bg-blue-700"></span>
-                        </div>
-                    </div>
-
-                    <!-- 7. TOMBOL LAYANAN AKADEMIK BAWAH -->
-                    <div class="grid grid-cols-2 gap-3 pt-1">
-                        <button type="button" onclick="openSuratAktifModal()" class="py-3 px-4 bg-[#1748a3] hover:bg-[#1c55c2] active:scale-[0.99] text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-blue-950/50 transition cursor-pointer">
-                            <i class="fa-regular fa-file-lines text-sm"></i>
-                            <span>Surat Aktif</span>
-                        </button>
-                        <button type="button" onclick="openLayananAkademikModal()" class="py-3 px-4 bg-[#1748a3] hover:bg-[#1c55c2] active:scale-[0.99] text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-blue-950/50 transition cursor-pointer">
-                            <i class="fa-solid fa-cloud text-sm"></i>
-                            <span>Layanan Akademik</span>
-                        </button>
-                    </div>
+                </section>
 
                     <!-- HIDDEN PRESERVED ELEMENTS (Menjamin 100% kompatibilitas skrip lama) -->
                     <div class="hidden" aria-hidden="true">
@@ -3498,47 +3512,106 @@
     <!-- MODAL KHUSUS SANTRI (SESUAI DESAIN GAMBAR REFERENSI)                      -->
     <!-- ========================================================================= -->
 
-    <!-- 1. MODAL PAKTA INTEGRITAS -->
-    <div id="modalPaktaIntegritas" onclick="if(event.target === this) closePaktaIntegritasModal()" class="fixed inset-0 bg-slate-950/80 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-[#0b132b] border border-blue-900/60 rounded-3xl max-w-md w-full p-6 text-white shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
-            <div class="flex items-center justify-between pb-3 border-b border-blue-900/40">
+    <!-- 1. MODAL PAKTA INTEGRITAS (TEMA HIJAU PESANTREN) -->
+    <div id="modalPaktaIntegritas" onclick="if(event.target === this) closePaktaIntegritasModal()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 text-slate-800 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-9 h-9 rounded-xl bg-blue-900/40 border border-blue-700/50 flex items-center justify-center text-blue-300">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-100 border border-emerald-200 flex items-center justify-center text-emerald-800">
                         <i class="fa-regular fa-file-lines text-base"></i>
                     </div>
                     <div>
-                        <h3 class="text-sm font-bold text-white">Pakta Integritas Mahasantri</h3>
-                        <p class="text-[10px] text-blue-200/70">Dokumen Komitmen Belajar & Akhlak</p>
+                        <h3 class="text-sm font-bold text-slate-800">Pakta Integritas Mahasantri</h3>
+                        <p class="text-[10px] text-slate-500">Dokumen Komitmen Belajar & Akhlak</p>
                     </div>
                 </div>
-                <button type="button" onclick="closePaktaIntegritasModal()" class="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-slate-300 flex items-center justify-center cursor-pointer">
+                <button type="button" onclick="closePaktaIntegritasModal()" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center cursor-pointer transition">
                     <i class="fa-solid fa-xmark text-xs"></i>
                 </button>
             </div>
 
-            <div class="space-y-3 text-xs text-slate-200/90 leading-relaxed bg-[#080d20] p-4 rounded-2xl border border-blue-950">
-                <p class="font-semibold text-blue-300">Dengan ini saya menyatakan:</p>
-                <ol class="list-decimal pl-4 space-y-1.5 text-[11px] text-slate-300">
+            <div class="space-y-3 text-xs text-slate-700 leading-relaxed bg-emerald-50/50 p-4 rounded-2xl border border-emerald-100">
+                <p class="font-bold text-emerald-900">Dengan ini saya menyatakan:</p>
+                <ol class="list-decimal pl-4 space-y-1.5 text-[11px] text-slate-700">
                     <li>Bersungguh-sungguh dalam menuntut ilmu agama dan mengamalkannya dengan penuh keikhlasan.</li>
                     <li>Menjaga adab, akhlakul karimah, serta kehormatan almamater Ma'had Aly baik di dalam maupun di luar pesantren.</li>
                     <li>Mematuhi seluruh tata tertib madrasah, jadwal KBM, kajian kitab turats, dan peraturan asrama santri.</li>
                     <li>Menjaga integritas dan kejujuran dalam seluruh proses evaluasi, imtihan tahriri, dan syafahi.</li>
                 </ol>
-                <div class="mt-4 pt-3 border-t border-blue-900/30 flex justify-between items-center text-[10px] text-slate-400 font-mono">
+                <div class="mt-4 pt-3 border-t border-emerald-200/60 flex justify-between items-center text-[10px] text-slate-500 font-mono">
                     <span>Status: Terverifikasi Digital</span>
-                    <span class="text-emerald-400 font-bold">AKTIF</span>
+                    <span class="text-emerald-700 font-bold bg-emerald-100 px-2 py-0.5 rounded-full">AKTIF</span>
                 </div>
             </div>
 
             <div class="flex gap-2 pt-2">
-                <button type="button" onclick="showToast('Dokumen Pakta Integritas siap dicetak / diunduh.'); closePaktaIntegritasModal();" class="flex-1 py-2.5 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5 shadow-md shadow-blue-950">
+                <button type="button" onclick="showToast('Dokumen Pakta Integritas siap dicetak / diunduh.'); closePaktaIntegritasModal();" class="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5 shadow-md shadow-emerald-900/20 cursor-pointer">
                     <i class="fa-solid fa-download text-xs"></i>
                     <span>Unduh PDF</span>
                 </button>
-                <button type="button" onclick="closePaktaIntegritasModal()" class="py-2.5 px-4 bg-white/10 hover:bg-white/20 text-slate-300 font-bold text-xs rounded-xl transition cursor-pointer">
+                <button type="button" onclick="closePaktaIntegritasModal()" class="py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition cursor-pointer">
                     Tutup
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- 1B. MODAL EDIT DETAIL SANTRI OLEH STAFF -->
+    <div id="modalEditSantriByStaff" onclick="if(event.target === this) closeModalEditSantriByStaff()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 text-slate-800 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-100 border border-emerald-200 flex items-center justify-center text-emerald-800">
+                        <i class="fa-solid fa-user-pen text-base"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-800">Ubah Data Santri (Staff & Admin)</h3>
+                        <p class="text-[10px] text-slate-500">Perbarui identitas profil santri pada kartu utama</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeModalEditSantriByStaff()" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center cursor-pointer transition">
+                    <i class="fa-solid fa-xmark text-xs"></i>
+                </button>
+            </div>
+
+            <form id="formEditSantriByStaff" onsubmit="handleSaveSantriByStaff(event)" class="space-y-3.5 text-xs">
+                <div>
+                    <label class="block text-slate-700 font-bold mb-1">Nama Lengkap Santri</label>
+                    <input type="text" id="inputEditSantriNama" required class="w-full px-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-emerald-500 text-slate-800 font-medium">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-slate-700 font-bold mb-1">ID / NIM Santri</label>
+                        <input type="text" id="inputEditSantriNis" required class="w-full px-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-emerald-500 text-slate-800 font-mono font-medium">
+                    </div>
+                    <div>
+                        <label class="block text-slate-700 font-bold mb-1">Kelas</label>
+                        <input type="text" id="inputEditSantriKelas" placeholder="Misal: 1 Aly Banin" required class="w-full px-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-emerald-500 text-slate-800 font-medium">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-slate-700 font-bold mb-1">Alamat / Asrama</label>
+                    <input type="text" id="inputEditSantriAlamat" placeholder="Misal: Asrama Al-Ghazali, Kampus Putra" required class="w-full px-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-emerald-500 text-slate-800 font-medium">
+                </div>
+
+                <div>
+                    <label class="block text-slate-700 font-bold mb-1">URL Foto Profil Santri</label>
+                    <input type="url" id="inputEditSantriAvatar" placeholder="https://..." class="w-full px-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-emerald-500 text-slate-800 font-mono text-[11px]">
+                    <p class="text-[10px] text-slate-400 mt-1">Masukkan URL gambar foto santri yang valid.</p>
+                </div>
+
+                <div class="flex gap-2 pt-2">
+                    <button type="submit" class="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5 shadow-md shadow-emerald-900/20 cursor-pointer">
+                        <i class="fa-solid fa-floppy-disk text-xs"></i>
+                        <span>Simpan Perubahan</span>
+                    </button>
+                    <button type="button" onclick="closeModalEditSantriByStaff()" class="py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition cursor-pointer">
+                        Batal
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -6555,12 +6628,12 @@ ON CONFLICT (id) DO NOTHING;`;
             }
             // ROLE C: SANTRI / MURID (STRICT READ-ONLY & DESAIN KHUSUS SESUAI GAMBAR REFERENSI)
             else if (user.role === 'santri') {
-                // Aktifkan Tema Dark Mode Elegan Khusus Santri (Persis Gambar Referensi)
-                document.body.classList.add('theme-santri-dark');
+                // Terapkan Tema Hijau Pesantren yang Selaras dengan Dashboard Utama
+                document.body.classList.remove('theme-santri-dark');
                 const sHdrCtrl = document.getElementById('santriHeaderControls');
                 const stdHdrCtrl = document.getElementById('standardMobileHeaderControls');
-                if (sHdrCtrl) { sHdrCtrl.classList.remove('hidden'); sHdrCtrl.classList.add('flex'); }
-                if (stdHdrCtrl) { stdHdrCtrl.classList.add('hidden'); }
+                if (sHdrCtrl) { sHdrCtrl.classList.add('hidden'); sHdrCtrl.classList.remove('flex'); }
+                if (stdHdrCtrl) { stdHdrCtrl.classList.remove('hidden'); }
 
                 if (roleBadge) roleBadge.textContent = "Santri / Read-Only";
                 if (headerBadge) headerBadge.textContent = "Santri Active";
@@ -9797,39 +9870,39 @@ ON CONFLICT (id) DO NOTHING;`;
             if (isSantri) {
                 nav.innerHTML = `
                     <!-- 1. Beranda (Santri) -->
-                    <button type="button" id="bottomNavBtn_profil-santri" onclick="switchTab('profil-santri')" class="bottom-nav-item flex-1 py-1 px-1 flex flex-col items-center justify-center text-blue-400 font-bold transition-all cursor-pointer relative group">
-                        <div class="bottom-nav-icon-box w-7 h-7 flex items-center justify-center rounded-xl transition-all mb-0.5 text-blue-400">
+                    <button type="button" id="bottomNavBtn_profil-santri" onclick="switchTab('profil-santri')" class="bottom-nav-item flex-1 py-1 px-1 flex flex-col items-center justify-center text-slate-500 hover:text-emerald-700 transition-all cursor-pointer relative group">
+                        <div class="bottom-nav-icon-box w-7 h-7 flex items-center justify-center rounded-xl transition-all mb-0.5">
                             <i class="fa-solid fa-house text-sm sm:text-base"></i>
                         </div>
                         <span class="text-[10px] leading-none tracking-tight bottom-nav-label">Beranda</span>
                     </button>
 
                     <!-- 2. Pengaturan -->
-                    <button type="button" id="bottomNavBtn_santri_pengaturan" onclick="openSantriSettingsModal()" class="bottom-nav-item flex-1 py-1 px-1 flex flex-col items-center justify-center text-slate-400 hover:text-blue-300 transition-all cursor-pointer relative group">
-                        <div class="bottom-nav-icon-box w-7 h-7 flex items-center justify-center rounded-xl transition-all mb-0.5 text-slate-400">
+                    <button type="button" id="bottomNavBtn_santri_pengaturan" onclick="openSantriSettingsModal()" class="bottom-nav-item flex-1 py-1 px-1 flex flex-col items-center justify-center text-slate-500 hover:text-emerald-700 transition-all cursor-pointer relative group">
+                        <div class="bottom-nav-icon-box w-7 h-7 flex items-center justify-center rounded-xl transition-all mb-0.5">
                             <i class="fa-solid fa-gear text-sm sm:text-base"></i>
                         </div>
                         <span class="text-[10px] leading-none tracking-tight bottom-nav-label">Pengaturan</span>
                     </button>
 
-                    <!-- 3. Elevated Floating Center Bot Avatar (PERSIS GAMBAR REFERENSI) -->
+                    <!-- 3. Elevated Floating Center Bot Avatar (Tema Hijau Pesantren) -->
                     <div class="flex flex-col items-center justify-center px-1 relative -top-3">
-                        <button type="button" onclick="openSantriAIAssistantModal()" class="w-13 h-13 rounded-full bg-gradient-to-tr from-blue-600 via-cyan-500 to-sky-400 border-3 border-[#070e22] shadow-xl shadow-cyan-500/25 flex items-center justify-center text-white text-xl transition-transform active:scale-90 cursor-pointer" title="Asisten Pintar Santri AI">
+                        <button type="button" onclick="openSantriAIAssistantModal()" class="w-13 h-13 rounded-full bg-gradient-to-tr from-emerald-700 via-emerald-600 to-teal-500 border-3 border-white shadow-xl shadow-emerald-700/30 flex items-center justify-center text-white text-xl transition-transform active:scale-90 cursor-pointer" title="Asisten Pintar Santri AI">
                             <i class="fa-solid fa-robot"></i>
                         </button>
                     </div>
 
                     <!-- 4. Akun -->
-                    <button type="button" id="bottomNavBtn_santri_akun" onclick="openBiodataProfilSaya()" class="bottom-nav-item flex-1 py-1 px-1 flex flex-col items-center justify-center text-slate-400 hover:text-blue-300 transition-all cursor-pointer relative group">
-                        <div class="bottom-nav-icon-box w-7 h-7 flex items-center justify-center rounded-xl transition-all mb-0.5 text-slate-400">
+                    <button type="button" id="bottomNavBtn_santri_akun" onclick="openBiodataProfilSaya()" class="bottom-nav-item flex-1 py-1 px-1 flex flex-col items-center justify-center text-slate-500 hover:text-emerald-700 transition-all cursor-pointer relative group">
+                        <div class="bottom-nav-icon-box w-7 h-7 flex items-center justify-center rounded-xl transition-all mb-0.5">
                             <i class="fa-solid fa-user text-sm sm:text-base"></i>
                         </div>
                         <span class="text-[10px] leading-none tracking-tight bottom-nav-label">Akun</span>
                     </button>
 
                     <!-- 5. Logout -->
-                    <button type="button" onclick="handleLogout()" class="bottom-nav-item flex-1 py-1 px-1 flex flex-col items-center justify-center text-rose-400 hover:text-rose-300 transition-all cursor-pointer relative group">
-                        <div class="bottom-nav-icon-box w-7 h-7 flex items-center justify-center rounded-xl transition-all mb-0.5 text-rose-400">
+                    <button type="button" onclick="handleLogout()" class="bottom-nav-item flex-1 py-1 px-1 flex flex-col items-center justify-center text-rose-500 hover:text-rose-700 transition-all cursor-pointer relative group">
+                        <div class="bottom-nav-icon-box w-7 h-7 flex items-center justify-center rounded-xl transition-all mb-0.5">
                             <i class="fa-solid fa-right-from-bracket text-sm sm:text-base"></i>
                         </div>
                         <span class="text-[10px] leading-none tracking-tight bottom-nav-label">Logout</span>
@@ -9895,10 +9968,10 @@ ON CONFLICT (id) DO NOTHING;`;
 
             document.querySelectorAll('.bottom-nav-item').forEach(btn => {
                 btn.classList.remove('text-emerald-700', 'text-blue-400', 'font-bold');
-                btn.classList.add(isSantri ? 'text-slate-400' : 'text-slate-500');
+                btn.classList.add('text-slate-500');
                 const iconBox = btn.querySelector('.bottom-nav-icon-box');
                 if (iconBox) {
-                    iconBox.className = `bottom-nav-icon-box w-7 h-7 flex items-center justify-center rounded-xl transition-all mb-0.5 ${isSantri ? 'text-slate-400' : 'text-slate-500'}`;
+                    iconBox.className = "bottom-nav-icon-box w-7 h-7 flex items-center justify-center rounded-xl transition-all mb-0.5 text-slate-500";
                 }
             });
 
@@ -9911,27 +9984,94 @@ ON CONFLICT (id) DO NOTHING;`;
             const activeBtn = document.getElementById(`bottomNavBtn_${targetId}`);
             if (activeBtn) {
                 activeBtn.classList.remove('text-slate-500', 'text-slate-400');
-                if (isSantri) {
-                    activeBtn.classList.add('text-blue-400', 'font-bold');
-                    const iconBox = activeBtn.querySelector('.bottom-nav-icon-box');
-                    if (iconBox) {
-                        iconBox.className = "bottom-nav-icon-box w-7 h-7 flex items-center justify-center rounded-xl transition-all mb-0.5 bg-blue-900/60 text-blue-300 shadow-xs";
-                    }
-                } else {
-                    activeBtn.classList.add('text-emerald-700', 'font-bold');
-                    const iconBox = activeBtn.querySelector('.bottom-nav-icon-box');
-                    if (iconBox) {
-                        iconBox.className = "bottom-nav-icon-box w-7 h-7 flex items-center justify-center rounded-xl transition-all mb-0.5 bg-emerald-100 text-emerald-700 shadow-xs";
-                    }
+                activeBtn.classList.add('text-emerald-700', 'font-bold');
+                const iconBox = activeBtn.querySelector('.bottom-nav-icon-box');
+                if (iconBox) {
+                    iconBox.className = "bottom-nav-icon-box w-7 h-7 flex items-center justify-center rounded-xl transition-all mb-0.5 bg-emerald-100 text-emerald-700 shadow-xs";
                 }
             }
         }
 
         // =========================================================================
-        // SANTRI DASHBOARD CONTROLLERS & ACTIONS (PERSIS GAMBAR REFERENSI)
+        // SANTRI DASHBOARD CONTROLLERS & ACTIONS (TEMA HIJAU PESANTREN)
         // =========================================================================
+        const DEFAULT_SANTRI_EXTRA = {
+            nama: "Muhammad Salman Abi Hasan Mahnaturrahman",
+            nis: "2688858032",
+            kelas: "1 Aly Banin",
+            alamat: "Asrama Al-Ghazali, Kampus Putra",
+            avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80"
+        };
+
+        function getSantriExtraProfile() {
+            try {
+                const stored = localStorage.getItem('siak_santri_profil_extra');
+                if (stored) return JSON.parse(stored);
+            } catch (e) {
+                console.warn("Gagal membaca profil santri extra:", e);
+            }
+            return { ...DEFAULT_SANTRI_EXTRA };
+        }
+
+        function saveSantriExtraProfile(data) {
+            try {
+                localStorage.setItem('siak_santri_profil_extra', JSON.stringify(data));
+            } catch (e) {
+                console.warn("Gagal menyimpan profil santri extra:", e);
+            }
+        }
+
+        function openModalEditSantriByStaff() {
+            const extra = getSantriExtraProfile();
+            const elNama = document.getElementById('inputEditSantriNama');
+            const elNis = document.getElementById('inputEditSantriNis');
+            const elKelas = document.getElementById('inputEditSantriKelas');
+            const elAlamat = document.getElementById('inputEditSantriAlamat');
+            const elAvatar = document.getElementById('inputEditSantriAvatar');
+
+            if (elNama) elNama.value = extra.nama || '';
+            if (elNis) elNis.value = extra.nis || '';
+            if (elKelas) elKelas.value = extra.kelas || '';
+            if (elAlamat) elAlamat.value = extra.alamat || '';
+            if (elAvatar) elAvatar.value = extra.avatar || '';
+
+            const m = document.getElementById('modalEditSantriByStaff');
+            if (m) m.classList.remove('hidden');
+        }
+
+        function closeModalEditSantriByStaff() {
+            const m = document.getElementById('modalEditSantriByStaff');
+            if (m) m.classList.add('hidden');
+        }
+
+        function handleSaveSantriByStaff(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            const elNama = document.getElementById('inputEditSantriNama');
+            const elNis = document.getElementById('inputEditSantriNis');
+            const elKelas = document.getElementById('inputEditSantriKelas');
+            const elAlamat = document.getElementById('inputEditSantriAlamat');
+            const elAvatar = document.getElementById('inputEditSantriAvatar');
+
+            const updated = {
+                nama: elNama && elNama.value.trim() ? elNama.value.trim() : DEFAULT_SANTRI_EXTRA.nama,
+                nis: elNis && elNis.value.trim() ? elNis.value.trim() : DEFAULT_SANTRI_EXTRA.nis,
+                kelas: elKelas && elKelas.value.trim() ? elKelas.value.trim() : DEFAULT_SANTRI_EXTRA.kelas,
+                alamat: elAlamat && elAlamat.value.trim() ? elAlamat.value.trim() : DEFAULT_SANTRI_EXTRA.alamat,
+                avatar: elAvatar && elAvatar.value.trim() ? elAvatar.value.trim() : DEFAULT_SANTRI_EXTRA.avatar
+            };
+
+            saveSantriExtraProfile(updated);
+
+            // Update UI langsung
+            updateSantriDashboardUI(currentUser || { role: 'santri' });
+
+            closeModalEditSantriByStaff();
+            showToast('Data identitas santri berhasil diperbarui oleh staff.');
+        }
+
         function copySantriNis() {
-            const nis = (currentUser && (currentUser.nis || currentUser.id)) || document.getElementById('santriProfilNisDisplay')?.textContent || '2688858032';
+            const extra = getSantriExtraProfile();
+            const nis = (currentUser && (currentUser.nis || currentUser.id)) || extra.nis || document.getElementById('santriProfilNisDisplay')?.textContent || '2688858032';
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(nis).then(() => {
                     showToast('Nomor Induk Santri (ID) berhasil disalin!');
@@ -9960,46 +10100,64 @@ ON CONFLICT (id) DO NOTHING;`;
             const isDark = document.body.classList.contains('theme-santri-dark');
             if (isDark) {
                 document.body.classList.remove('theme-santri-dark');
-                showToast('Beralih ke mode terang (Light Mode).');
+                showToast('Beralih ke mode tema default.');
             } else {
                 document.body.classList.add('theme-santri-dark');
-                showToast('Beralih ke mode gelap elegan (Dark Mode).');
+                showToast('Tema Hijau Pesantren aktif.');
             }
         }
 
         function refreshSantriSchedule() {
-            showToast('Jadwal perkuliahan hari ini telah diperbarui.');
+            showToast('Jadwal perkuliahan harian telah diperbarui.');
         }
 
         function updateSantriDashboardUI(user) {
-            if (!user) return;
+            const extra = getSantriExtraProfile();
+            const nama = extra.nama || (user && user.nama) || DEFAULT_SANTRI_EXTRA.nama;
+            const nis = extra.nis || (user && (user.nis || user.id)) || DEFAULT_SANTRI_EXTRA.nis;
+            const kelas = extra.kelas || (user && (user.kelasId || user.kelas_id)) || DEFAULT_SANTRI_EXTRA.kelas;
+            const alamat = extra.alamat || DEFAULT_SANTRI_EXTRA.alamat;
+            const avatar = extra.avatar || DEFAULT_SANTRI_EXTRA.avatar;
+
             const elNama = document.getElementById('santriProfilNama');
-            if (elNama) elNama.textContent = user.nama || 'Muhammad Salman Abi Hasan Mahnaturrahman';
+            if (elNama) elNama.textContent = nama;
 
             const elNis = document.getElementById('santriProfilNisDisplay');
-            if (elNis) elNis.textContent = user.nis || user.id || '2688858032';
+            if (elNis) elNis.textContent = nis;
+
+            const elKelas = document.getElementById('santriProfilKelasDisplay');
+            if (elKelas) elKelas.textContent = kelas;
+
+            const elAlamat = document.getElementById('santriProfilAlamatDisplay');
+            if (elAlamat) elAlamat.textContent = alamat;
+
+            const elAvatar = document.getElementById('santriProfilAvatarImg');
+            if (elAvatar) {
+                elAvatar.src = avatar;
+                elAvatar.onerror = function() {
+                    this.src = DEFAULT_SANTRI_EXTRA.avatar;
+                };
+            }
 
             const elSuratNama = document.getElementById('suratAktifNamaPreview');
-            if (elSuratNama) elSuratNama.textContent = user.nama || 'Muhammad Salman Abi Hasan Mahnaturrahman';
+            if (elSuratNama) elSuratNama.textContent = nama;
 
             const elSuratNis = document.getElementById('suratAktifNisPreview');
-            if (elSuratNis) elSuratNis.textContent = user.nis || user.id || '2688858032';
+            if (elSuratNis) elSuratNis.textContent = nis;
 
             // Hitung statistik presensi mahasiswa
             try {
                 const classData = getCurrentClassData();
-                const santriList = classData.santri || [];
-                const sData = santriList.find(s => s && (s.nis === user.nis || s.nama === user.nama));
+                const santriList = (classData && classData.santri) ? classData.santri : [];
+                const sData = santriList.find(s => s && (s.nis === nis || s.nama === nama));
                 
-                // Nilai default persis gambar referensi (Hadir: 12, Alpa: 4, Izin: 4, Sakit: 2)
+                // Nilai default spesifik sesuai ketentuan (Hadir: 12, Alfa: 4, Izin: 4, Sakit: 2)
                 let hadir = 12, alpa = 4, izin = 4, sakit = 2;
-                if (sData) {
-                    if (sData.rekap) {
-                        hadir = sData.rekap.hadir || hadir;
-                        alpa = sData.rekap.alpa || alpa;
-                        izin = sData.rekap.izin || izin;
-                        sakit = sData.rekap.sakit || sakit;
-                    }
+                if (sData && sData.rekap) {
+                    hadir = sData.rekap.hadir !== undefined ? sData.rekap.hadir : hadir;
+                    alpa = sData.rekap.alpa !== undefined ? sData.rekap.alpa : alpa;
+                    izin = sData.rekap.izin !== undefined ? sData.rekap.izin : izin;
+                    sakit = sData.rekap.sakit !== undefined ? sData.rekap.sakit : sakit;
                 }
                 const bHadir = document.getElementById('santriBoxHadir');
                 const bAlpa = document.getElementById('santriBoxAlpa');
