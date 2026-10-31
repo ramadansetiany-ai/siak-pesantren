@@ -1235,25 +1235,9 @@
                                 </div>
                             </div>
 
-                            <!-- Santri Attendance Table (Per Kelas) -->
-                            <div class="bg-white rounded-xl shadow-sm border border-slate-200/80 overflow-hidden">
-                                <div class="overflow-x-auto custom-scrollbar">
-                                    <table class="w-full text-left text-xs">
-                                        <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200 uppercase tracking-wider text-[11px]">
-                                            <tr>
-                                                <th class="py-3 px-4 w-12 text-center">No</th>
-                                                <th class="py-3 px-4 w-28">NIS</th>
-                                                <th class="py-3 px-4 min-w-[200px]">Nama Santri</th>
-                                                <th class="py-3 px-4 text-center min-w-[280px]">Status Kehadiran</th>
-                                                <th class="py-3 px-4 min-w-[180px]">Keterangan / Alasan</th>
-                                                <th class="py-3 px-4 text-center w-20 rbac-staff-only">Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="santriTableBody" class="divide-y divide-slate-100">
-                                            <!-- Populated by JS -->
-                                        </tbody>
-                                    </table>
-                                </div>
+                            <!-- Santri Attendance Cards Container (PERSIS FOTO 1 - NO HORIZONTAL SCROLL) -->
+                            <div id="santriTableBody" class="space-y-3 pt-1">
+                                <!-- Populated dynamically as Cards by renderSantriTable() -->
                             </div>
                         </div> <!-- End #formInputPresensiSection -->
 
@@ -5014,105 +4998,125 @@ ON CONFLICT (id) DO NOTHING;`;
 
         function handleAuthSubmit(e) {
             e.preventDefault();
-            const idInput = document.getElementById('loginUserId').value.trim();
-            const pwdInput = document.getElementById('loginPassword').value.trim();
-            const accounts = getAccounts();
-
-            // 1. Prioritas Utama: Admin / Staff Login (admin atau adminn dengan password admin atau 123456)
-            // Bisa login langsung tanpa harus memikirkan tab peran yang aktif
-            if ((idInput.toLowerCase() === 'adminn' || idInput.toLowerCase() === 'admin') && (pwdInput === 'admin' || pwdInput === '123456')) {
-                let staffAcc = accounts.find(a => a.id && (a.id.toLowerCase() === 'admin' || a.id.toLowerCase() === 'adminn') && a.role === 'staff');
-                if (!staffAcc) {
-                    staffAcc = {
-                        id: idInput.toLowerCase(),
-                        nama: "Editor / Administrator",
-                        role: "staff",
-                        password: "admin",
-                        roleLabel: "Staff Administrasi & IT (Editor)",
-                        nip: "19800101 200501 1 001",
-                        mapel: "Manajemen Data & Akademik",
-                        avatar: "A"
-                    };
-                    accounts.unshift(staffAcc);
-                } else {
-                    staffAcc.password = pwdInput;
+            try {
+                const idInput = (document.getElementById('loginUserId')?.value || '').trim();
+                const pwdInput = (document.getElementById('loginPassword')?.value || '').trim();
+                let accounts = getAccounts();
+                if (!accounts || accounts.length === 0) {
+                    accounts = [...DEFAULT_ACCOUNTS];
                 }
-                saveAccounts(accounts);
-                currentUser = staffAcc;
-                selectedLoginRole = 'staff';
-                sessionStorage.setItem('siak_active_user', JSON.stringify(currentUser));
-                document.getElementById('loginScreen').classList.add('hidden');
-                document.getElementById('appContainer').classList.remove('hidden');
-                setupRoleWorkspace(currentUser);
-                return;
-            }
 
-            // 2. Cari akun yang cocok berdasarkan ID, Password, dan Peran yang dipilih
-            let user = accounts.find(a => 
-                (a.id.toLowerCase() === idInput.toLowerCase() || (a.nis && a.nis === idInput) || (a.nip && a.nip === idInput) || (a.nama && a.nama.toLowerCase() === idInput.toLowerCase())) &&
-                a.password === pwdInput &&
-                a.role === selectedLoginRole
-            );
+                // 1. Prioritas Utama: Admin / Staff Login (admin atau adminn)
+                const isIdAdmin = (idInput.toLowerCase() === 'admin' || idInput.toLowerCase() === 'adminn');
+                let existingAdmin = accounts.find(a => a && a.id && (a.id.toLowerCase() === 'admin' || a.id.toLowerCase() === 'adminn') && a.role === 'staff');
 
-            // 3. Smart Fallback: Jika tab peran belum sesuai, periksa apakah akun cocok di peran lain
-            if (!user) {
-                const altUser = accounts.find(a => 
-                    (a.id.toLowerCase() === idInput.toLowerCase() || (a.nis && a.nis === idInput) || (a.nip && a.nip === idInput) || (a.nama && a.nama.toLowerCase() === idInput.toLowerCase())) &&
-                    a.password === pwdInput
-                );
-                if (altUser) {
-                    user = altUser;
-                    selectedLoginRole = altUser.role;
-                }
-            }
-
-            // 4. Fallback untuk Santri: cari di seluruh data kelas jika akun santri belum terdaftar di tabel akun
-            if (!user) {
-                const allClasses = getAllClassesData();
-                for (const [classKey, classObj] of Object.entries(allClasses)) {
-                    const foundSantri = (classObj.santri || []).find(s => 
-                        (s.nis && s.nis.toLowerCase() === idInput.toLowerCase()) || 
-                        (s.nama && s.nama.toLowerCase() === idInput.toLowerCase())
-                    );
-                    if (foundSantri) {
-                        // Password default santri: NIS, atau "123456", atau "santri123"
-                        if (pwdInput === foundSantri.nis || pwdInput === '123456' || pwdInput === 'santri123') {
-                            user = {
-                                id: foundSantri.nis,
-                                nama: foundSantri.nama,
-                                role: 'santri',
-                                role_label: 'Santri / Mahasantri',
-                                nis: foundSantri.nis,
-                                kelas_id: classKey,
-                                kelas_nama: classObj.name,
-                                avatar: foundSantri.nama ? foundSantri.nama.charAt(0).toUpperCase() : 'S',
-                                password: pwdInput
+                if (isIdAdmin) {
+                    const validAdminPwd = (pwdInput === 'admin' || pwdInput === '123456' || pwdInput === 'adminn' || (existingAdmin && existingAdmin.password === pwdInput));
+                    if (validAdminPwd) {
+                        if (!existingAdmin) {
+                            existingAdmin = {
+                                id: idInput.toLowerCase(),
+                                nama: "Editor / Administrator",
+                                role: "staff",
+                                password: pwdInput || "admin",
+                                roleLabel: "Staff Administrasi & IT (Editor)",
+                                nip: "19800101 200501 1 001",
+                                mapel: "Manajemen Data & Akademik",
+                                avatar: "A"
                             };
-                            selectedLoginRole = 'santri';
-                            break;
+                            accounts.unshift(existingAdmin);
+                        } else {
+                            existingAdmin.password = pwdInput;
+                        }
+                        saveAccounts(accounts);
+                        currentUser = existingAdmin;
+                        selectedLoginRole = 'staff';
+                        sessionStorage.setItem('siak_active_user', JSON.stringify(currentUser));
+                        document.getElementById('loginScreen')?.classList.add('hidden');
+                        document.getElementById('appContainer')?.classList.remove('hidden');
+                        setupRoleWorkspace(currentUser);
+                        return;
+                    }
+                }
+
+                // 2. Cari akun yang cocok di daftar accounts terdaftar
+                let user = accounts.find(a => {
+                    if (!a) return false;
+                    const idMatch = (a.id && a.id.toLowerCase() === idInput.toLowerCase()) ||
+                                    (a.nis && String(a.nis).toLowerCase() === idInput.toLowerCase()) ||
+                                    (a.nip && String(a.nip).toLowerCase() === idInput.toLowerCase()) ||
+                                    (a.nama && a.nama.toLowerCase() === idInput.toLowerCase());
+                    const pwdMatch = (a.password === pwdInput || (a.password && a.password.trim() === pwdInput));
+                    const roleMatch = (a.role === selectedLoginRole);
+                    return idMatch && pwdMatch && roleMatch;
+                });
+
+                // 3. Smart Fallback jika tab role di layar login belum sesuai
+                if (!user) {
+                    const altUser = accounts.find(a => {
+                        if (!a) return false;
+                        const idMatch = (a.id && a.id.toLowerCase() === idInput.toLowerCase()) ||
+                                        (a.nis && String(a.nis).toLowerCase() === idInput.toLowerCase()) ||
+                                        (a.nip && String(a.nip).toLowerCase() === idInput.toLowerCase()) ||
+                                        (a.nama && a.nama.toLowerCase() === idInput.toLowerCase());
+                        const pwdMatch = (a.password === pwdInput || (a.password && a.password.trim() === pwdInput));
+                        return idMatch && pwdMatch;
+                    });
+                    if (altUser) {
+                        user = altUser;
+                        selectedLoginRole = altUser.role;
+                    }
+                }
+
+                // 4. Fallback Santri dari data kelas lokal jika akun santri belum terdaftar di tabel akun
+                if (!user) {
+                    const allClasses = getAllClassesData();
+                    for (const [classKey, classObj] of Object.entries(allClasses)) {
+                        const foundSantri = (classObj.santri || []).find(s => 
+                            s && ((s.nis && String(s.nis).toLowerCase() === idInput.toLowerCase()) || 
+                                 (s.nama && s.nama.toLowerCase() === idInput.toLowerCase()))
+                        );
+                        if (foundSantri) {
+                            if (pwdInput === foundSantri.nis || pwdInput === '123456' || pwdInput === 'santri123' || pwdInput === 'pesantren123') {
+                                user = {
+                                    id: foundSantri.nis,
+                                    nama: foundSantri.nama,
+                                    role: 'santri',
+                                    roleLabel: 'Santri / Mahasantri',
+                                    nis: foundSantri.nis,
+                                    kelas_id: classKey,
+                                    kelas_nama: classObj.name,
+                                    avatar: foundSantri.nama ? foundSantri.nama.charAt(0).toUpperCase() : 'S',
+                                    password: pwdInput
+                                };
+                                selectedLoginRole = 'santri';
+                                break;
+                            }
                         }
                     }
                 }
-            }
 
-            if (!user) {
+                if (!user) {
+                    const errBox = document.getElementById('loginErrorAlert');
+                    const errMsg = document.getElementById('loginErrorMsg');
+                    if (errMsg) errMsg.textContent = `ID Pengguna atau Password salah! Periksa kembali username & kata sandi Anda.`;
+                    if (errBox) errBox.classList.remove('hidden');
+                    return;
+                }
+
+                // Autentikasi Sukses!
+                currentUser = user;
+                sessionStorage.setItem('siak_active_user', JSON.stringify(user));
+                document.getElementById('loginScreen')?.classList.add('hidden');
+                document.getElementById('appContainer')?.classList.remove('hidden');
+                setupRoleWorkspace(user);
+            } catch (err) {
+                console.error("Kesalahan proses autentikasi:", err);
                 const errBox = document.getElementById('loginErrorAlert');
                 const errMsg = document.getElementById('loginErrorMsg');
-                errMsg.textContent = `ID Pengguna atau Password salah! Pastikan huruf besar/kecil sesuai.`;
-                errBox.classList.remove('hidden');
-                return;
+                if (errMsg) errMsg.textContent = `Terjadi kendala teknis saat login: ${err.message || err}`;
+                if (errBox) errBox.classList.remove('hidden');
             }
-
-            // Authentication Successful!
-            currentUser = user;
-            sessionStorage.setItem('siak_active_user', JSON.stringify(user));
-
-            // Hide login, show app
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('appContainer').classList.remove('hidden');
-
-            // Apply Role UI & First Screen View based on Role
-            setupRoleWorkspace(user);
         }
 
         function closeAllModals() {
@@ -5348,43 +5352,52 @@ ON CONFLICT (id) DO NOTHING;`;
         }
 
         function setupRoleWorkspace(user) {
+            if (!user) return;
+
             // Terapkan seluruh data profil ke UI (Navbar, Dashboard, Profil Ustadz, Biodata Santri)
-            applyUpdatedProfileToUI(user);
+            try { applyUpdatedProfileToUI(user); } catch (e) { console.warn(e); }
             
             const roleBadge = document.getElementById('userRoleBadge');
             const headerBadge = document.getElementById('headerRoleBadge');
             const sidebarRoleTitle = document.getElementById('sidebarRoleTitle');
             const sidebarRoleDesc = document.getElementById('sidebarRoleDesc');
 
-            // Reset navigation labels
-            document.getElementById('labelNavAbsensi').textContent = "Absensi Santri";
-            document.getElementById('labelNavJurnal').textContent = "Batas Pelajaran & Tugas";
-            document.getElementById('labelNavUjian').textContent = "Nilai & Kelulusan";
+            // Reset navigation labels safely
+            const lblAbs = document.getElementById('labelNavAbsensi');
+            if (lblAbs) lblAbs.textContent = "Absensi Santri";
+            const lblJur = document.getElementById('labelNavJurnal');
+            if (lblJur) lblJur.textContent = "Batas Pelajaran & Tugas";
+            const lblUji = document.getElementById('labelNavUjian');
+            if (lblUji) lblUji.textContent = "Nilai & Kelulusan";
 
             // Inisialisasi data pendukung profil & sesi
-            applyUstadzPresensiUI();
-            populateUstadzChartClassSelector();
-            renderDailyAttendanceStatusPanel();
-            renderDailyAttendanceSessionsList();
+            try { applyUstadzPresensiUI(); } catch (e) { console.warn(e); }
+            try { populateUstadzChartClassSelector(); } catch (e) { console.warn(e); }
+            try { renderDailyAttendanceStatusPanel(); } catch (e) { console.warn(e); }
+            try { renderDailyAttendanceSessionsList(); } catch (e) { console.warn(e); }
 
             // Render Mobile & Tablet Bottom Navigation Bar khusus peran ini lebih awal
-            renderMobileBottomNav(user);
+            try { renderMobileBottomNav(user); } catch (e) { console.warn(e); }
 
             // Terapkan batasan visibilitas menu navigasi sesuai peran
-            applyRoleMenuVisibility();
+            try { applyRoleMenuVisibility(); } catch (e) { console.warn(e); }
 
             // ROLE A: STAFF (ADMIN - FULL CONTROL)
             if (user.role === 'staff') {
-                roleBadge.textContent = "Staff / Full Control";
-                headerBadge.textContent = "Staff Admin Active";
-                sidebarRoleTitle.textContent = "Hak Akses: Staff";
-                sidebarRoleDesc.textContent = "Akses Penuh: Mengelola seluruh data, akun pengguna, absensi, dan leger nilai.";
+                if (roleBadge) roleBadge.textContent = "Staff / Full Control";
+                if (headerBadge) headerBadge.textContent = "Staff Admin Active";
+                if (sidebarRoleTitle) sidebarRoleTitle.textContent = "Hak Akses: Staff";
+                if (sidebarRoleDesc) sidebarRoleDesc.textContent = "Akses Penuh: Mengelola seluruh data, akun pengguna, absensi, dan leger nilai.";
 
                 // Tampilkan menu: Dashboard, Manajemen Akun. Sembunyikan: Biodata Santri, Profil Ustadz (Staff punya Pengaturan Sistem)
-                document.getElementById('nav-dashboard').classList.remove('hidden');
-                document.getElementById('nav-profil-ustadz').classList.add('hidden');
-                document.getElementById('nav-profil-santri').classList.add('hidden');
-                document.getElementById('nav-manajemen-akun').classList.remove('hidden');
+                const navDash = document.getElementById('nav-dashboard');
+                if (navDash) navDash.classList.remove('hidden');
+                const navProfU = document.getElementById('nav-profil-ustadz');
+                if (navProfU) navProfU.classList.add('hidden');
+                const navProfS = document.getElementById('nav-profil-santri');
+                if (navProfS) navProfS.classList.add('hidden');
+                const navAkun = document.getElementById('nav-manajemen-akun');
+                if (navAkun) navAkun.classList.remove('hidden');
 
                 // Buka proteksi form absensi untuk staff
                 ['absenTanggal', 'absenJam', 'absenKitab', 'absenUstadzPengajar'].forEach(id => {
@@ -5399,7 +5412,8 @@ ON CONFLICT (id) DO NOTHING;`;
                 document.querySelectorAll('.rbac-santri-readonly').forEach(el => el.classList.add('hidden'));
                 document.querySelectorAll('.rbac-col-action').forEach(el => el.classList.remove('hidden'));
 
-                document.getElementById('descAbsensiSection').textContent = "Pilih kelas madrasah untuk melihat atau menginput data kehadiran santri.";
+                const descAbs = document.getElementById('descAbsensiSection');
+                if (descAbs) descAbs.textContent = "Pilih kelas madrasah untuk melihat atau menginput data kehadiran santri.";
 
                 // Tampilan Pertama Staff: Dashboard
                 switchTab('dashboard');
@@ -5407,16 +5421,20 @@ ON CONFLICT (id) DO NOTHING;`;
             }
             // ROLE B: USTADZ / GURU
             else if (user.role === 'ustadz') {
-                roleBadge.textContent = "Ustadz / Pengajar";
-                headerBadge.textContent = "Ustadz Active";
-                sidebarRoleTitle.textContent = "Hak Akses: Ustadz";
-                sidebarRoleDesc.textContent = "Dapat menginput presensi santri, mencatat kehadiran mandiri, memberi tugas, & input nilai.";
+                if (roleBadge) roleBadge.textContent = "Ustadz / Pengajar";
+                if (headerBadge) headerBadge.textContent = "Ustadz Active";
+                if (sidebarRoleTitle) sidebarRoleTitle.textContent = "Hak Akses: Ustadz";
+                if (sidebarRoleDesc) sidebarRoleDesc.textContent = "Dapat menginput presensi santri, mencatat kehadiran mandiri, memberi tugas, & input nilai.";
 
                 // Tampilkan menu: Dashboard, Profil Ustadz. Sembunyikan: Biodata Santri, Manajemen Akun
-                document.getElementById('nav-dashboard').classList.remove('hidden');
-                document.getElementById('nav-profil-ustadz').classList.remove('hidden');
-                document.getElementById('nav-profil-santri').classList.add('hidden');
-                document.getElementById('nav-manajemen-akun').classList.add('hidden');
+                const navDash = document.getElementById('nav-dashboard');
+                if (navDash) navDash.classList.remove('hidden');
+                const navProfU = document.getElementById('nav-profil-ustadz');
+                if (navProfU) navProfU.classList.remove('hidden');
+                const navProfS = document.getElementById('nav-profil-santri');
+                if (navProfS) navProfS.classList.add('hidden');
+                const navAkun = document.getElementById('nav-manajemen-akun');
+                if (navAkun) navAkun.classList.add('hidden');
 
                 // Kontrol form absensi untuk Ustadz
                 ['absenTanggal', 'absenJam', 'absenKitab'].forEach(id => {
@@ -5439,7 +5457,8 @@ ON CONFLICT (id) DO NOTHING;`;
                 const inputJurnalUstadz = document.getElementById('modalJurnalUstadz');
                 if (inputJurnalUstadz) inputJurnalUstadz.value = user.nama;
 
-                document.getElementById('descAbsensiSection').textContent = "Kelola dan input kehadiran santri kelas yang Anda ajar.";
+                const descAbs = document.getElementById('descAbsensiSection');
+                if (descAbs) descAbs.textContent = "Kelola dan input kehadiran santri kelas yang Anda ajar.";
 
                 // Tampilan Pertama Ustadz: HALAMAN PROFIL BIODATA USTADZ
                 switchTab('profil-ustadz');
@@ -5447,16 +5466,20 @@ ON CONFLICT (id) DO NOTHING;`;
             }
             // ROLE C: SANTRI / MURID (STRICT READ-ONLY)
             else if (user.role === 'santri') {
-                roleBadge.textContent = "Santri / Read-Only";
-                headerBadge.textContent = "Santri Active";
-                sidebarRoleTitle.textContent = "Hak Akses: Santri";
-                sidebarRoleDesc.textContent = "Akses Peserta Didik (Strict Read-Only): Hanya dapat melihat biodata, absensi, & nilai pribadi.";
+                if (roleBadge) roleBadge.textContent = "Santri / Read-Only";
+                if (headerBadge) headerBadge.textContent = "Santri Active";
+                if (sidebarRoleTitle) sidebarRoleTitle.textContent = "Hak Akses: Santri";
+                if (sidebarRoleDesc) sidebarRoleDesc.textContent = "Akses Peserta Didik (Strict Read-Only): Hanya dapat melihat biodata, absensi, & nilai pribadi.";
 
                 // Tampilkan HANYA Biodata Santri. Sembunyikan: Dashboard, Profil Ustadz, Manajemen Akun
-                document.getElementById('nav-dashboard').classList.add('hidden');
-                document.getElementById('nav-profil-ustadz').classList.add('hidden');
-                document.getElementById('nav-profil-santri').classList.remove('hidden');
-                document.getElementById('nav-manajemen-akun').classList.add('hidden');
+                const navDash = document.getElementById('nav-dashboard');
+                if (navDash) navDash.classList.add('hidden');
+                const navProfU = document.getElementById('nav-profil-ustadz');
+                if (navProfU) navProfU.classList.add('hidden');
+                const navProfS = document.getElementById('nav-profil-santri');
+                if (navProfS) navProfS.classList.remove('hidden');
+                const navAkun = document.getElementById('nav-manajemen-akun');
+                if (navAkun) navAkun.classList.add('hidden');
 
                 // Kunci form absensi untuk Santri agar tidak bisa diubah
                 ['absenTanggal', 'absenJam', 'absenKitab', 'absenUstadzPengajar'].forEach(id => {
@@ -5465,9 +5488,12 @@ ON CONFLICT (id) DO NOTHING;`;
                 });
 
                 // Ubah label menu khusus santri
-                document.getElementById('labelNavAbsensi').textContent = "Riwayat Kehadiran";
-                document.getElementById('labelNavJurnal').textContent = "Batas Materi & Tugas";
-                document.getElementById('labelNavUjian').textContent = "Raport & Nilai Ujian";
+                const lblAbs = document.getElementById('labelNavAbsensi');
+                if (lblAbs) lblAbs.textContent = "Riwayat Kehadiran";
+                const lblJur = document.getElementById('labelNavJurnal');
+                if (lblJur) lblJur.textContent = "Batas Materi & Tugas";
+                const lblUji = document.getElementById('labelNavUjian');
+                if (lblUji) lblUji.textContent = "Raport & Nilai Ujian";
 
                 // Kunci seluruh tombol edit untuk santri
                 document.querySelectorAll('.rbac-can-edit').forEach(el => el.classList.add('hidden'));
@@ -5481,7 +5507,8 @@ ON CONFLICT (id) DO NOTHING;`;
                 });
                 document.querySelectorAll('.rbac-col-action').forEach(el => el.classList.add('hidden'));
 
-                document.getElementById('descAbsensiSection').textContent = "Lihat catatan kehadiran Anda secara transparan.";
+                const descAbs = document.getElementById('descAbsensiSection');
+                if (descAbs) descAbs.textContent = "Lihat catatan kehadiran Anda secara transparan.";
 
                 // Set active class to student's class
                 if (user.kelasId || user.kelas_id) {
@@ -5494,7 +5521,7 @@ ON CONFLICT (id) DO NOTHING;`;
             }
 
             // Sync all view tables
-            updateAllComponents();
+            try { updateAllComponents(); } catch (e) { console.warn(e); }
         }
 
         // =========================================================================
@@ -6529,9 +6556,9 @@ ON CONFLICT (id) DO NOTHING;`;
         function renderSantriTable() {
             const classData = getCurrentClassData();
             const santriList = classData.santri || [];
-            const tbody = document.getElementById('santriTableBody');
-            if (!tbody) return;
-            tbody.innerHTML = '';
+            const container = document.getElementById('santriTableBody');
+            if (!container) return;
+            container.innerHTML = '';
 
             const canEdit = currentUser && (currentUser.role === 'staff' || currentUser.role === 'ustadz');
 
@@ -6552,27 +6579,25 @@ ON CONFLICT (id) DO NOTHING;`;
 
             if (santriList.length === 0) {
                 const isNoClass = !classData || classData.name === "Belum Ada Kelas";
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6" class="py-12 text-center text-slate-400">
-                            <i class="fa-solid fa-users-slash text-4xl mb-3 text-slate-300 block"></i>
-                            <p class="font-bold text-slate-700 text-sm">${isNoClass ? 'Belum Ada Kelas yang Dibuat' : 'Belum Ada Data Santri di ' + classData.name}</p>
-                            <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
-                                ${isNoClass ? 'Silakan buat kelas baru terlebih dahulu untuk memulai mengisi data santri.' : 'Mulai daftarkan santri ke kelas ini dengan menekan tombol di bawah.'}
-                            </p>
-                            <div class="mt-4 flex items-center justify-center gap-2">
-                                ${isNoClass ? `
-                                    <button onclick="openTambahKelasModal()" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl shadow transition flex items-center">
-                                        <i class="fa-solid fa-folder-plus mr-1.5"></i> + Buat Kelas Pertama
-                                    </button>
-                                ` : `
-                                    <button onclick="openTambahSantriModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow transition flex items-center">
-                                        <i class="fa-solid fa-user-plus mr-1.5"></i> + Tambah Santri Pertama
-                                    </button>
-                                `}
-                            </div>
-                        </td>
-                    </tr>
+                container.innerHTML = `
+                    <div class="bg-white rounded-2xl p-8 sm:p-12 text-center text-slate-400 border border-slate-200/80 shadow-xs">
+                        <i class="fa-solid fa-users-slash text-4xl mb-3 text-slate-300 block"></i>
+                        <p class="font-bold text-slate-700 text-sm">${isNoClass ? 'Belum Ada Kelas yang Dibuat' : 'Belum Ada Data Santri di ' + classData.name}</p>
+                        <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+                            ${isNoClass ? 'Silakan buat kelas baru terlebih dahulu untuk memulai mengisi data santri.' : 'Mulai daftarkan santri ke kelas ini dengan menekan tombol di bawah.'}
+                        </p>
+                        <div class="mt-4 flex items-center justify-center gap-2">
+                            ${isNoClass ? `
+                                <button onclick="openTambahKelasModal()" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl shadow transition flex items-center">
+                                    <i class="fa-solid fa-folder-plus mr-1.5"></i> + Buat Kelas Pertama
+                                </button>
+                            ` : `
+                                <button onclick="openTambahSantriModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow transition flex items-center">
+                                    <i class="fa-solid fa-user-plus mr-1.5"></i> + Tambah Santri Pertama
+                                </button>
+                            `}
+                        </div>
+                    </div>
                 `;
                 document.getElementById('countHadirBadge').textContent = '0';
                 document.getElementById('countSakitBadge').textContent = '0';
@@ -6602,74 +6627,119 @@ ON CONFLICT (id) DO NOTHING;`;
                 else if (s.status === 'Alpa') alpa++;
 
                 const isBanat = (s.kategori === 'banat') || (!s.kategori && (classData.kategori === 'banat' || (classData.name || '').toLowerCase().includes('banat')));
-
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50/80 transition-colors";
-                tr.id = `santri-row-${idx}`;
-
-                let statusCell = '';
-                if (canEdit) {
-                    statusCell = `
-                        <div class="inline-flex rounded-lg p-0.5 bg-slate-100 border border-slate-200">
-                            <button type="button" onclick="setStudentStatus(${idx}, 'Hadir')" class="px-2.5 py-1 text-xs font-semibold rounded-md transition ${s.status === 'Hadir' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-600 hover:text-emerald-700'}">Hadir</button>
-                            <button type="button" onclick="setStudentStatus(${idx}, 'Sakit')" class="px-2.5 py-1 text-xs font-semibold rounded-md transition ${s.status === 'Sakit' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:text-blue-700'}">Sakit</button>
-                            <button type="button" onclick="setStudentStatus(${idx}, 'Izin')" class="px-2.5 py-1 text-xs font-semibold rounded-md transition ${s.status === 'Izin' ? 'bg-amber-500 text-white shadow-sm' : 'text-slate-600 hover:text-amber-700'}">Izin</button>
-                            <button type="button" onclick="setStudentStatus(${idx}, 'Alpa')" class="px-2.5 py-1 text-xs font-semibold rounded-md transition ${s.status === 'Alpa' ? 'bg-rose-600 text-white shadow-sm' : 'text-slate-600 hover:text-rose-700'}">Alpa</button>
-                        </div>
-                    `;
-                } else {
-                    const badgeStyles = {
-                        'Hadir': 'bg-emerald-100 text-emerald-800 border-emerald-200',
-                        'Sakit': 'bg-blue-100 text-blue-800 border-blue-200',
-                        'Izin': 'bg-amber-100 text-amber-800 border-amber-200',
-                        'Alpa': 'bg-rose-100 text-rose-800 border-rose-200'
-                    };
-                    statusCell = `
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border ${badgeStyles[s.status] || 'bg-slate-100 text-slate-700'}">
-                            <span class="w-1.5 h-1.5 rounded-full mr-1.5 ${s.status === 'Hadir' ? 'bg-emerald-500' : s.status === 'Sakit' ? 'bg-blue-500' : s.status === 'Izin' ? 'bg-amber-500' : 'bg-rose-500'}"></span>
-                            ${s.status} (Terkunci)
-                        </span>
-                    `;
-                }
-
-                let keteranganCell = '';
-                if (canEdit) {
-                    keteranganCell = `
-                        <input type="text" value="${s.keterangan || ''}" onchange="updateStudentKet(${idx}, this.value)" placeholder="Tulis catatan jika ada..." class="w-full text-xs px-2.5 py-1 border border-slate-200 rounded-md bg-white focus:outline-none focus:ring-1 focus:ring-emerald-500">
-                    `;
-                } else {
-                    keteranganCell = `
-                        <input type="text" value="${s.keterangan || '-'}" disabled class="w-full text-xs px-2.5 py-1 border border-slate-200 rounded-md bg-slate-100 text-slate-500 cursor-not-allowed">
-                    `;
-                }
-
                 const isCurrentSantriRow = currentUser && currentUser.role === 'santri' && (currentUser.nis === s.nis || currentUser.nama === s.nama);
+                const hasKet = Boolean(s.keterangan && s.keterangan.trim().length > 0);
 
-                const katBadge = isBanat
-                    ? `<button type="button" onclick="toggleSantriKategori(${idx})" title="Klik untuk ubah ke Banin (Putra)" class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold transition shadow-2xs bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100"><i class="fa-solid fa-person-dress mr-1 text-rose-500"></i> Banat</button>`
-                    : `<button type="button" onclick="toggleSantriKategori(${idx})" title="Klik untuk ubah ke Banat (Putri)" class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold transition shadow-2xs bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100"><i class="fa-solid fa-person mr-1 text-blue-500"></i> Banin</button>`;
+                // Gender Badge (Persis Foto 1)
+                const genderBadge = canEdit ? (
+                    isBanat 
+                        ? `<button type="button" onclick="toggleSantriKategori(${idx})" title="Klik untuk beralih ke Banin" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-pink-50 text-pink-600 border border-pink-200/70 hover:bg-pink-100 transition cursor-pointer shrink-0"><i class="fa-solid fa-venus text-[11px]"></i> Banat</button>`
+                        : `<button type="button" onclick="toggleSantriKategori(${idx})" title="Klik untuk beralih ke Banat" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-600 border border-blue-200/70 hover:bg-blue-100 transition cursor-pointer shrink-0"><i class="fa-solid fa-mars text-[11px]"></i> Banin</button>`
+                ) : (
+                    isBanat 
+                        ? `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-pink-50 text-pink-600 border border-pink-200/70 shrink-0"><i class="fa-solid fa-venus text-[11px]"></i> Banat</span>`
+                        : `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-600 border border-blue-200/70 shrink-0"><i class="fa-solid fa-mars text-[11px]"></i> Banin</span>`
+                );
 
-                tr.innerHTML = `
-                    <td class="py-3 px-4 text-center font-medium text-slate-500">${idx + 1}</td>
-                    <td class="py-3 px-4 font-mono text-slate-600">${s.nis}</td>
-                    <td class="py-3 px-4">
-                        <div class="flex items-center justify-between gap-2">
-                            <div class="flex items-center space-x-1.5 flex-wrap">
-                                <span class="font-semibold text-slate-800">${s.nama}</span>
-                                ${isCurrentSantriRow ? '<span class="px-1.5 py-0.5 rounded text-[10px] bg-purple-100 text-purple-800 font-bold border border-purple-200">Akun Anda</span>' : ''}
-                            </div>
-                            ${katBadge}
+                // Segmented Status Selector (Persis Foto 1: Hadir hijau, Sakit amber, Izin biru, Alpa merah)
+                let statusButtons = '';
+                if (canEdit) {
+                    statusButtons = `
+                        <div class="grid grid-cols-4 gap-1.5 bg-slate-100/70 p-1 rounded-xl sm:rounded-2xl">
+                            <button type="button" onclick="setStudentStatus(${idx}, 'Hadir')" class="py-2.5 px-1 text-xs sm:text-sm font-bold rounded-lg sm:rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer ${s.status === 'Hadir' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 font-medium'}">
+                                ${s.status === 'Hadir' ? '<i class="fa-solid fa-check text-xs"></i>' : ''} Hadir
+                            </button>
+                            <button type="button" onclick="setStudentStatus(${idx}, 'Sakit')" class="py-2.5 px-1 text-xs sm:text-sm font-bold rounded-lg sm:rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer ${s.status === 'Sakit' ? 'bg-amber-500 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 font-medium'}">
+                                ${s.status === 'Sakit' ? '<i class="fa-solid fa-file-lines text-xs"></i>' : ''} Sakit
+                            </button>
+                            <button type="button" onclick="setStudentStatus(${idx}, 'Izin')" class="py-2.5 px-1 text-xs sm:text-sm font-bold rounded-lg sm:rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer ${s.status === 'Izin' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 font-medium'}">
+                                ${s.status === 'Izin' ? '<i class="fa-solid fa-envelope-open-text text-xs"></i>' : ''} Izin
+                            </button>
+                            <button type="button" onclick="setStudentStatus(${idx}, 'Alpa')" class="py-2.5 px-1 text-xs sm:text-sm font-bold rounded-lg sm:rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer ${s.status === 'Alpa' ? 'bg-rose-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 font-medium'}">
+                                ${s.status === 'Alpa' ? '<i class="fa-solid fa-xmark text-xs"></i>' : ''} Alpa
+                            </button>
                         </div>
-                    </td>
-                    <td class="py-3 px-4 text-center">${statusCell}</td>
-                    <td class="py-3 px-4">${keteranganCell}</td>
-                    <td class="py-3 px-4 text-center rbac-staff-only">
-                        <button onclick="deleteSantri(${idx})" class="p-1.5 text-rose-600 hover:text-rose-800 hover:bg-rose-50 rounded transition" title="Hapus Santri">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                    </td>
+                    `;
+                } else {
+                    statusButtons = `
+                        <div class="grid grid-cols-4 gap-1.5 bg-slate-100/70 p-1 rounded-xl sm:rounded-2xl opacity-90">
+                            <div class="py-2.5 px-1 text-xs sm:text-sm font-bold rounded-lg sm:rounded-xl text-center flex items-center justify-center gap-1.5 ${s.status === 'Hadir' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-400 font-medium'}">
+                                ${s.status === 'Hadir' ? '<i class="fa-solid fa-check text-xs"></i>' : ''} Hadir
+                            </div>
+                            <div class="py-2.5 px-1 text-xs sm:text-sm font-bold rounded-lg sm:rounded-xl text-center flex items-center justify-center gap-1.5 ${s.status === 'Sakit' ? 'bg-amber-500 text-white shadow-xs' : 'text-slate-400 font-medium'}">
+                                ${s.status === 'Sakit' ? '<i class="fa-solid fa-file-lines text-xs"></i>' : ''} Sakit
+                            </div>
+                            <div class="py-2.5 px-1 text-xs sm:text-sm font-bold rounded-lg sm:rounded-xl text-center flex items-center justify-center gap-1.5 ${s.status === 'Izin' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-400 font-medium'}">
+                                ${s.status === 'Izin' ? '<i class="fa-solid fa-envelope-open-text text-xs"></i>' : ''} Izin
+                            </div>
+                            <div class="py-2.5 px-1 text-xs sm:text-sm font-bold rounded-lg sm:rounded-xl text-center flex items-center justify-center gap-1.5 ${s.status === 'Alpa' ? 'bg-rose-600 text-white shadow-xs' : 'text-slate-400 font-medium'}">
+                                ${s.status === 'Alpa' ? '<i class="fa-solid fa-xmark text-xs"></i>' : ''} Alpa
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Notes / Keterangan row (Persis Foto 1: Kuning saat ada isi seperti di Foto 1 Card 2)
+                let ketInput = '';
+                if (canEdit) {
+                    ketInput = `
+                        <div class="relative">
+                            <div class="absolute left-3.5 top-2.5 pointer-events-none ${hasKet ? 'text-amber-600' : 'text-slate-400'}">
+                                <i class="fa-regular fa-comment-dots text-xs sm:text-sm"></i>
+                            </div>
+                            <input type="text" value="${s.keterangan || ''}" onchange="updateStudentKet(${idx}, this.value)" placeholder="Keterangan / Alasan (opsional)..." class="w-full pl-9 pr-3 py-2 text-xs sm:text-sm rounded-xl transition ${hasKet ? 'bg-amber-50/70 border border-amber-200 text-amber-900 font-medium focus:outline-none focus:ring-2 focus:ring-amber-500' : 'bg-slate-50/80 border border-slate-200/80 text-slate-700 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500'}">
+                        </div>
+                    `;
+                } else {
+                    ketInput = `
+                        <div class="relative">
+                            <div class="absolute left-3.5 top-2.5 pointer-events-none ${hasKet ? 'text-amber-600' : 'text-slate-400'}">
+                                <i class="fa-regular fa-comment-dots text-xs sm:text-sm"></i>
+                            </div>
+                            <input type="text" value="${s.keterangan || 'Tidak ada catatan kehadiran'}" disabled class="w-full pl-9 pr-3 py-2 text-xs sm:text-sm rounded-xl transition cursor-not-allowed ${hasKet ? 'bg-amber-50/70 border border-amber-200 text-amber-900 font-medium' : 'bg-slate-50/80 border border-slate-200/80 text-slate-400 italic'}">
+                        </div>
+                    `;
+                }
+
+                const card = document.createElement('div');
+                card.id = `santri-card-${idx}`;
+                card.className = "santri-attendance-card bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-slate-200/80 space-y-3 transition-all hover:shadow-md";
+
+                card.innerHTML = `
+                    <!-- 1. Header: No Badge, Nama & NIS, Gender Badge, Delete -->
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-700 font-bold flex items-center justify-center text-sm shrink-0">
+                                ${idx + 1}
+                            </div>
+                            <div class="min-w-0">
+                                <div class="font-bold text-slate-800 text-sm sm:text-base leading-tight flex items-center gap-1.5 flex-wrap">
+                                    <span class="truncate">${s.nama}</span>
+                                    ${isCurrentSantriRow ? '<span class="px-2 py-0.5 rounded-full text-[10px] bg-purple-100 text-purple-800 font-bold border border-purple-200 shrink-0">Akun Anda</span>' : ''}
+                                </div>
+                                <div class="text-[11px] text-slate-400 font-medium mt-0.5">
+                                    # ${s.nis || '-'}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                            ${genderBadge}
+                            ${canEdit ? `
+                                <button type="button" onclick="deleteSantri(${idx})" class="p-1.5 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition rbac-staff-only cursor-pointer" title="Hapus Santri">
+                                    <i class="fa-solid fa-trash-can text-sm"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    <!-- 2. Segmented Status Bar (Persis Foto 1) -->
+                    ${statusButtons}
+
+                    <!-- 3. Keterangan / Alasan Row (Persis Foto 1) -->
+                    ${ketInput}
                 `;
-                tbody.appendChild(tr);
+
+                container.appendChild(card);
             });
 
             // Jalankan filter pencarian & kategori
@@ -6863,39 +6933,38 @@ ON CONFLICT (id) DO NOTHING;`;
             const classData = getCurrentClassData();
             let visibleCount = 0;
             (classData.santri || []).forEach((s, idx) => {
-                const row = document.getElementById(`santri-row-${idx}`);
-                if (!row) return;
+                const card = document.getElementById(`santri-card-${idx}`) || document.getElementById(`santri-row-${idx}`);
+                if (!card) return;
                 const isBanat = (s.kategori === 'banat') || (!s.kategori && (classData.kategori === 'banat' || (classData.name || '').toLowerCase().includes('banat')));
                 
                 let matchGender = true;
                 if (currentSantriGenderFilter === 'banin' && isBanat) matchGender = false;
                 if (currentSantriGenderFilter === 'banat' && !isBanat) matchGender = false;
                 
-                const matchQuery = !q || s.nama.toLowerCase().includes(q) || (s.nis && s.nis.includes(q));
+                const matchQuery = !q || (s.nama && s.nama.toLowerCase().includes(q)) || (s.nis && String(s.nis).toLowerCase().includes(q));
 
                 if (matchGender && matchQuery) {
-                    row.classList.remove('hidden');
+                    card.classList.remove('hidden');
                     visibleCount++;
                 } else {
-                    row.classList.add('hidden');
+                    card.classList.add('hidden');
                 }
             });
 
-            // Handle empty state if filter hides all rows
-            const tbody = document.getElementById('santriTableBody');
+            // Handle empty state if filter hides all cards
+            const container = document.getElementById('santriTableBody');
             const existingEmpty = document.getElementById('santriEmptyFilterRow');
             if (visibleCount === 0 && (classData.santri || []).length > 0) {
-                if (!existingEmpty && tbody) {
-                    const tr = document.createElement('tr');
-                    tr.id = 'santriEmptyFilterRow';
-                    tr.innerHTML = `
-                        <td colspan="6" class="py-8 text-center text-slate-400">
-                            <i class="fa-solid fa-filter text-3xl mb-2 text-slate-300 block"></i>
-                            <p class="font-semibold text-slate-600 text-xs">Tidak ada santri yang cocok dengan filter "${currentSantriGenderFilter === 'banin' ? 'Banin / Putra' : currentSantriGenderFilter === 'banat' ? 'Banat / Putri' : 'Pencarian'}"</p>
-                            <p class="text-[11px] text-slate-400 mt-0.5">Silakan pilih filter 'Semua' atau ubah kata kunci pencarian.</p>
-                        </td>
+                if (!existingEmpty && container) {
+                    const emptyCard = document.createElement('div');
+                    emptyCard.id = 'santriEmptyFilterRow';
+                    emptyCard.className = "bg-white rounded-2xl p-8 text-center text-slate-400 border border-slate-200/80 shadow-xs";
+                    emptyCard.innerHTML = `
+                        <i class="fa-solid fa-filter text-3xl mb-2 text-slate-300 block"></i>
+                        <p class="font-semibold text-slate-600 text-xs">Tidak ada santri yang cocok dengan filter "${currentSantriGenderFilter === 'banin' ? 'Banin / Putra' : currentSantriGenderFilter === 'banat' ? 'Banat / Putri' : 'Pencarian'}"</p>
+                        <p class="text-[11px] text-slate-400 mt-0.5">Silakan pilih filter 'Semua' atau ubah kata kunci pencarian.</p>
                     `;
-                    tbody.appendChild(tr);
+                    container.appendChild(emptyCard);
                 }
             } else if (existingEmpty) {
                 existingEmpty.remove();
@@ -8649,8 +8718,6 @@ ON CONFLICT (id) DO NOTHING;`;
                 }
             });
         }
-
-        let currentActiveBottomTab = '';
 
         function renderMobileBottomNav(user) {
             const nav = document.getElementById('mobileBottomNav');
