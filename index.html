@@ -3700,13 +3700,18 @@
                     <i class="fa-solid fa-copy text-xs"></i>
                     <span>Salin Teks</span>
                 </button>
-                <div class="flex items-center gap-2">
-                    <button type="button" onclick="closeShareWAModal()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium text-xs transition cursor-pointer">Batal</button>
-                    <button type="button" onclick="sendToWhatsApp(true)" class="px-3.5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-xs transition cursor-pointer" title="Buka langsung via WhatsApp Web">
+                <div class="flex flex-wrap items-center gap-2">
+                    <button type="button" onclick="closeShareWAModal()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium text-xs transition cursor-pointer">Batal</button>
+                    <button type="button" onclick="shareViaNativeMobile()" class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-xs transition cursor-pointer" title="Bagikan via Share Sheet">
+                        <i class="fa-solid fa-share-nodes text-xs"></i>
+                        <span class="hidden sm:inline">Bagikan Cepat</span>
+                        <span class="sm:hidden">Share HP</span>
+                    </button>
+                    <button type="button" onclick="sendToWhatsApp(true)" class="px-3 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-xs transition cursor-pointer" title="Buka langsung via WhatsApp Web">
                         <i class="fa-solid fa-globe text-xs"></i>
                         <span class="hidden sm:inline">WhatsApp Web</span>
                     </button>
-                    <button type="button" onclick="sendToWhatsApp(false)" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-sm transition cursor-pointer" title="Buka Aplikasi WhatsApp & Kirim">
+                    <button type="button" onclick="sendToWhatsApp(false)" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-sm transition cursor-pointer" title="Buka Aplikasi WhatsApp & Kirim">
                         <i class="fa-brands fa-whatsapp text-sm"></i>
                         <span>Buka WhatsApp</span>
                     </button>
@@ -5949,12 +5954,24 @@
                 }
             }
 
-            // Bersihkan akun santri lama di luar 76 santri resmi
+            // Ambil daftar tombstone akun dan kelas yang telah dihapus permanen
+            const deletedAccounts = JSON.parse(localStorage.getItem('siak_deleted_accounts') || '[]').map(x => String(x).toLowerCase().trim());
+            const deletedClasses = JSON.parse(localStorage.getItem('siak_deleted_classes') || '[]');
+
+            // Bersihkan akun santri lama di luar 76 santri resmi atau yang telah dihapus permanen
             const validSeedIds = new Set(SEED_SANTRI_LIST.map(s => s.id.toLowerCase()));
             accounts = accounts.filter(a => {
                 if (!a) return false;
+                const aId = (a.id || '').toLowerCase().trim();
+                const aNis = (a.nis || '').toString().toLowerCase().trim();
+                if (deletedAccounts.includes(aId) || (aNis && deletedAccounts.includes(aNis))) {
+                    return false; // Hapus permanen
+                }
+                if (a.kelas_id && deletedClasses.includes(a.kelas_id)) {
+                    return false; // Kelas telah dihapus permanen
+                }
                 if (a.role === 'santri') {
-                    return validSeedIds.has((a.id || '').toLowerCase());
+                    return validSeedIds.has(aId);
                 }
                 return true;
             });
@@ -5964,6 +5981,16 @@
 
             // 2. Seeding setiap santri ke accounts & classes
             SEED_SANTRI_LIST.forEach(s => {
+                const sId = (s.id || '').toLowerCase().trim();
+                const sNis = (s.nis || '').toString().toLowerCase().trim();
+                // Lewati santri yang telah dihapus permanen atau kelasnya telah dihapus
+                if (deletedAccounts.includes(sId) || (sNis && deletedAccounts.includes(sNis))) {
+                    return;
+                }
+                if (deletedClasses.includes(s.kelas_id)) {
+                    return;
+                }
+
                 // A. Ke tabel Akun Autentikasi (siak_user_accounts)
                 const existingAccIdx = accounts.findIndex(a => a && a.id && a.id.toLowerCase() === s.id.toLowerCase());
                 const accObj = {
@@ -5978,7 +6005,8 @@
                     kategori: s.kategori,
                     waliKelas: s.waliKelas,
                     asrama: s.asrama,
-                    avatar: s.avatar
+                    avatar: s.avatar,
+                    rekap: { hadir: 0, alpa: 0, izin: 0, sakit: 0 }
                 };
 
                 if (existingAccIdx === -1) {
@@ -5998,6 +6026,7 @@
                         (st.nama && st.nama.toLowerCase() === s.nama.toLowerCase())
                     ));
 
+                    // Mulai dari 0 absensi bersih sesuai instruksi
                     const santriData = {
                         nis: s.id,
                         nama: s.nama,
@@ -6006,10 +6035,10 @@
                         status: "Hadir",
                         keterangan: "",
                         rekap: {
-                            hadir: s.rekap.hadir,
-                            alpa: s.rekap.alpa,
-                            izin: s.rekap.izin,
-                            sakit: s.rekap.sakit
+                            hadir: 0,
+                            alpa: 0,
+                            izin: 0,
+                            sakit: 0
                         },
                         nilai: s.nilai
                     };
@@ -6037,7 +6066,7 @@
             // 4. Simpan pembaruan ke storage
             saveAccounts(accounts);
             localStorage.setItem('siak_multi_classes', JSON.stringify(classes));
-            localStorage.setItem('siak_santri_seeder_version', 'v2_clean_76');
+            localStorage.setItem('siak_santri_seeder_version', 'v8_clean_sync_nov30');
 
             try {
                 renderAkunTable();
@@ -6146,13 +6175,14 @@
         }
 
         function initStorage() {
-            // Check version to ensure old mock demo data is purged completely
-            if (localStorage.getItem('siak_db_clean_version') !== 'v7_clean_76_dedup') {
+            // Check version to ensure old mock demo data is purged completely and clean 30 Nov 2026 sync is initialized
+            if (localStorage.getItem('siak_db_clean_version') !== 'v8_clean_sync_nov30') {
                 localStorage.removeItem('siak_user_accounts');
                 localStorage.removeItem('siak_multi_classes');
                 sessionStorage.removeItem('siak_active_user');
-                localStorage.setItem('siak_db_clean_version', 'v7_clean_76_dedup');
-                localStorage.setItem('siak_santri_seeder_version', 'v2_clean_76');
+                localStorage.setItem('siak_db_clean_version', 'v8_clean_sync_nov30');
+                localStorage.setItem('siak_santri_seeder_version', 'v8_clean_sync_nov30');
+                resetAllAttendanceData(true);
             }
 
             if (!localStorage.getItem('siak_user_accounts')) {
@@ -6196,15 +6226,176 @@
                 getMapelData();
             }
 
-            // Seeder otomatis 76 akun santri lengkap dengan biodata, absensi, & nilai
+            // Seeder otomatis 76 akun santri lengkap dengan biodata & absensi nol bersih
             try {
-                if (localStorage.getItem('siak_santri_seeder_version') !== 'v2_clean_76') {
+                if (localStorage.getItem('siak_santri_seeder_version') !== 'v8_clean_sync_nov30') {
                     seedSantriDatabase(true);
                 } else {
                     seedSantriDatabase(false);
                 }
             } catch (errSeeder) {
                 console.warn("Gagal eksekusi seeder santri:", errSeeder);
+            }
+        }
+
+        // =========================================================================
+        // KOSONGKAN & RESET SELURUH DATA PRESENSI SANTRI (MULAI 30 NOV 2026)
+        // =========================================================================
+        function resetAllAttendanceData(isSilent = false) {
+            try {
+                // 1. Kosongkan log absensi lokal
+                localStorage.setItem('siak_attendance_logs', '[]');
+
+                // 2. Kosongkan rekap semua santri di semua kelas
+                const classes = getAllClassesData();
+                for (const k in classes) {
+                    if (classes[k] && Array.isArray(classes[k].santri)) {
+                        classes[k].santri.forEach(s => {
+                            if (s) {
+                                s.status = "Hadir";
+                                s.keterangan = "";
+                                s.rekap = { hadir: 0, alpa: 0, izin: 0, sakit: 0 };
+                            }
+                        });
+                    }
+                }
+                localStorage.setItem('siak_multi_classes', JSON.stringify(classes));
+
+                // 3. Reset rekap kehadiran di akun santri
+                let accounts = getAccounts();
+                accounts.forEach(a => {
+                    if (a && a.role === 'santri') {
+                        a.rekap = { hadir: 0, alpa: 0, izin: 0, sakit: 0 };
+                    }
+                });
+                saveAccounts(accounts);
+
+                // 4. Update session pengguna jika santri
+                if (currentUser && currentUser.role === 'santri') {
+                    currentUser.rekap = { hadir: 0, alpa: 0, izin: 0, sakit: 0 };
+                    sessionStorage.setItem('siak_active_user', JSON.stringify(currentUser));
+                }
+
+                // 5. Bersihkan cloud Supabase bila terkoneksi
+                if (supabaseClient) {
+                    supabaseClient.from('siak_attendance_logs').delete().neq('id', '___safe_delete_all___').then(() => {
+                        console.log("Riwayat absensi cloud direset bersih.");
+                    }).catch(e => console.warn("Supabase reset log:", e));
+                }
+
+                // 6. Set tanggal default ke 30 November 2026
+                const START_DATE = '2026-11-30';
+                const elDate = document.getElementById('absenTanggal');
+                if (elDate) elDate.value = START_DATE;
+                const elPanelDate = document.getElementById('panelRekapTanggalInput');
+                if (elPanelDate) elPanelDate.value = START_DATE;
+                const elLblTgl = document.getElementById('labelTglStatusRekap');
+                if (elLblTgl) elLblTgl.textContent = formatIndoDate(START_DATE);
+
+                // 7. Update UI
+                try {
+                    renderDailyAttendanceStatusPanel();
+                    renderDailyAttendanceSessionsList();
+                    renderSantriTable();
+                    if (currentUser && currentUser.role === 'santri') {
+                        updateSantriDashboardUI(currentUser);
+                        renderSantriPersonalAbsensiView(currentUser);
+                    }
+                } catch (e) {}
+
+                if (!isSilent) {
+                    showToast('Alhamdulillah, seluruh data absensi santri telah dikosongkan. Sinkronisasi dimulai bersih dari tanggal 30 November 2026.');
+                }
+            } catch (err) {
+                console.error("Gagal reset data absensi:", err);
+            }
+        }
+
+        // =========================================================================
+        // SINKRONISASI OTOMATIS DATA PRESENSI KE SETIAP SANTRI (DARI 30 NOV 2026)
+        // =========================================================================
+        function syncAttendanceWithStudents(classId) {
+            try {
+                if (!classId) classId = selectedClassId;
+                const START_DATE = '2026-11-30';
+                
+                // Ambil semua log absensi yang tersimpan pada atau setelah 30 November 2026
+                const allLogs = getAttendanceLogs().filter(l => l && (!l.tanggal || l.tanggal >= START_DATE));
+                const classes = getAllClassesData();
+                const targetClass = classes[classId];
+                if (!targetClass || !Array.isArray(targetClass.santri)) return;
+
+                // Log spesifik untuk kelas target
+                const classLogs = allLogs.filter(l => l && (
+                    l.class_id === classId || 
+                    (l.class_name && targetClass.name && l.class_name.toLowerCase() === targetClass.name.toLowerCase())
+                ));
+
+                // Hitung ulang akumulasi kehadiran tiap santri dari sesi log ustadz
+                targetClass.santri.forEach(s => {
+                    if (!s) return;
+                    const sNis = (s.nis || '').toString().trim().toLowerCase();
+                    const sNama = (s.nama || '').toString().trim().toLowerCase();
+                    let hadir = 0, sakit = 0, izin = 0, alpa = 0;
+
+                    classLogs.forEach(l => {
+                        if (Array.isArray(l.records)) {
+                            const rec = l.records.find(r => r && (
+                                (r.nis && String(r.nis).trim().toLowerCase() === sNis) ||
+                                (r.nama && String(r.nama).trim().toLowerCase() === sNama)
+                            ));
+                            if (rec) {
+                                const st = (rec.status || '').toLowerCase().trim();
+                                if (st === 'hadir') hadir++;
+                                else if (st === 'sakit') sakit++;
+                                else if (st === 'izin') izin++;
+                                else if (st === 'alpa' || st === 'alfa') alpa++;
+                            }
+                        }
+                    });
+
+                    s.rekap = { hadir, sakit, izin, alpa };
+                });
+
+                // Simpan kelas yang telah disingkronkan ke localStorage & cloud
+                localStorage.setItem('siak_multi_classes', JSON.stringify(classes));
+                syncClassToCloud(classId, targetClass);
+
+                // Sinkronkan ke akun santri
+                let accounts = getAccounts();
+                let accChanged = false;
+                targetClass.santri.forEach(s => {
+                    const sNis = (s.nis || '').toString().trim().toLowerCase();
+                    const acc = accounts.find(a => a && a.role === 'santri' && (
+                        (a.id && a.id.toLowerCase() === sNis) ||
+                        (a.nis && a.nis.toLowerCase() === sNis) ||
+                        (a.nama && s.nama && a.nama.toLowerCase() === s.nama.toLowerCase())
+                    ));
+                    if (acc) {
+                        acc.rekap = { ...s.rekap };
+                        accChanged = true;
+                    }
+                });
+                if (accChanged) {
+                    saveAccounts(accounts);
+                }
+
+                // Jika user login aktif adalah santri di kelas ini, langsung perbarui dashboard & rincian
+                if (currentUser && currentUser.role === 'santri') {
+                    const myNis = (currentUser.nis || currentUser.id || '').toString().trim().toLowerCase();
+                    const mySantri = targetClass.santri.find(s => s && (
+                        (s.nis && String(s.nis).trim().toLowerCase() === myNis) ||
+                        (s.nama && currentUser.nama && String(s.nama).trim().toLowerCase() === String(currentUser.nama).trim().toLowerCase())
+                    ));
+                    if (mySantri) {
+                        currentUser.rekap = { ...mySantri.rekap };
+                        sessionStorage.setItem('siak_active_user', JSON.stringify(currentUser));
+                        updateSantriDashboardUI(currentUser);
+                        renderSantriPersonalAbsensiView(currentUser);
+                    }
+                }
+            } catch (err) {
+                console.warn("Gagal syncAttendanceWithStudents:", err);
             }
         }
 
@@ -6321,12 +6512,32 @@
                 try {
                     const { data: accData, error: accErr } = await supabaseClient.from('siak_accounts').select('*').limit(100);
                     if (!accErr && accData) {
-                        const localAccounts = getAccounts();
+                        const deletedAccs = JSON.parse(localStorage.getItem('siak_deleted_accounts') || '[]').map(x => String(x).toLowerCase().trim());
+                        const deletedClassesList = JSON.parse(localStorage.getItem('siak_deleted_classes') || '[]');
+
+                        let localAccounts = getAccounts().filter(a => {
+                            if (!a) return false;
+                            const aId = (a.id || '').toLowerCase().trim();
+                            const aNis = (a.nis || '').toString().toLowerCase().trim();
+                            if (deletedAccs.includes(aId) || (aNis && deletedAccs.includes(aNis))) return false;
+                            if (a.kelas_id && deletedClassesList.includes(a.kelas_id)) return false;
+                            return true;
+                        });
+
                         const accMap = new Map();
                         // Masukkan akun lokal terlebih dahulu
                         localAccounts.forEach(a => { if (a && a.id) accMap.set(a.id, a); });
-                        // Timpa/tambahkan dengan akun dari remote Supabase
-                        accData.forEach(r => { if (r && r.id) accMap.set(r.id, r); });
+                        // Timpa/tambahkan dengan akun dari remote Supabase (jika tidak pernah dihapus permanen)
+                        accData.forEach(r => {
+                            if (!r || !r.id) return;
+                            const rId = String(r.id).toLowerCase().trim();
+                            const rNis = (r.nis || '').toString().toLowerCase().trim();
+                            if (deletedAccs.includes(rId) || (rNis && deletedAccs.includes(rNis)) || (r.kelas_id && deletedClassesList.includes(r.kelas_id))) {
+                                deleteAccountFromCloud(r.id);
+                                return;
+                            }
+                            accMap.set(r.id, r);
+                        });
                         
                         const mergedAccounts = Array.from(accMap.values());
                         if (mergedAccounts.length > 0) {
@@ -6826,7 +7037,19 @@ ON CONFLICT (id) DO NOTHING;`;
                         console.log("Realtime event siak_accounts:", payload);
                         const { data } = await supabaseClient.from('siak_accounts').select('*');
                         if (data && data.length > 0) {
-                            localStorage.setItem('siak_user_accounts', JSON.stringify(data));
+                            const delAccs = JSON.parse(localStorage.getItem('siak_deleted_accounts') || '[]').map(x => String(x).toLowerCase().trim());
+                            const delClss = JSON.parse(localStorage.getItem('siak_deleted_classes') || '[]');
+                            const filteredData = data.filter(r => {
+                                if (!r || !r.id) return false;
+                                const rId = String(r.id).toLowerCase().trim();
+                                const rNis = (r.nis || '').toString().toLowerCase().trim();
+                                if (delAccs.includes(rId) || (rNis && delAccs.includes(rNis)) || (r.kelas_id && delClss.includes(r.kelas_id))) {
+                                    deleteAccountFromCloud(r.id);
+                                    return false;
+                                }
+                                return true;
+                            });
+                            localStorage.setItem('siak_user_accounts', JSON.stringify(filteredData));
                             renderAkunTable();
                             renderGuruTable();
                             updateUstadzSelector();
@@ -7691,20 +7914,52 @@ ON CONFLICT (id) DO NOTHING;`;
             if (!c) return;
 
             const count = c.santri ? c.santri.length : 0;
-            const confirmMsg = `PERINGATAN PERMANEN:\nApakah Anda yakin ingin menghapus kelas "${c.name}" beserta seluruh ${count} santri di dalamnya?\n\nKelas ini akan dihapus permanen dari sistem dan Cloud Supabase.`;
+            const confirmMsg = `PERINGATAN PERMANEN:\nApakah Anda yakin ingin menghapus kelas "${c.name}" beserta seluruh ${count} santri di dalamnya?\n\nKelas dan seluruh akun login santri di dalamnya akan dihapus permanen dari sistem dan Cloud Supabase.`;
             if (!confirm(confirmMsg)) return;
 
+            // 1. Kumpulkan seluruh ID/NIS santri di kelas ini untuk dihapus permanen
+            const deletedAccounts = JSON.parse(localStorage.getItem('siak_deleted_accounts') || '[]');
+            const santriList = c.santri || [];
+            santriList.forEach(s => {
+                if (!s) return;
+                const nisStr = (s.nis || '').toString().toLowerCase().trim();
+                const namaStr = (s.nama || '').toString().toLowerCase().trim();
+                if (nisStr && !deletedAccounts.includes(nisStr)) deletedAccounts.push(nisStr);
+                if (namaStr && !deletedAccounts.includes(namaStr)) deletedAccounts.push(namaStr);
+                deleteAccountFromCloud(s.nis);
+            });
+
+            // 2. Hapus akun pengguna yang terdaftar pada kelas ini
+            let accounts = getAccounts();
+            accounts = accounts.filter(a => {
+                if (!a) return false;
+                if (a.kelas_id === key) {
+                    const aId = (a.id || '').toLowerCase().trim();
+                    if (aId && !deletedAccounts.includes(aId)) deletedAccounts.push(aId);
+                    deleteAccountFromCloud(a.id);
+                    return false;
+                }
+                return true;
+            });
+            saveAccounts(accounts);
+            localStorage.setItem('siak_deleted_accounts', JSON.stringify(deletedAccounts));
+
+            // 3. Hapus kelas dari data multi_classes
             delete all[key];
             localStorage.setItem('siak_multi_classes', JSON.stringify(all));
 
-            // Simpan ke daftar tombstone agar cloud sync tidak membangkitkan kelas ini lagi
+            // 4. Simpan ke daftar tombstone agar cloud sync tidak membangkitkan kelas ini lagi
             const deletedClasses = JSON.parse(localStorage.getItem('siak_deleted_classes') || '[]');
             if (!deletedClasses.includes(key)) {
                 deletedClasses.push(key);
                 localStorage.setItem('siak_deleted_classes', JSON.stringify(deletedClasses));
             }
 
-            // Hard delete di Supabase cloud
+            // 5. Bersihkan log absensi kelas ini
+            const logs = getAttendanceLogs().filter(l => l && l.class_id !== key);
+            saveAttendanceLogs(logs);
+
+            // 6. Hard delete di Supabase cloud
             if (supabaseClient) {
                 try {
                     await supabaseClient.from('siak_classes').delete().eq('id', key);
@@ -7721,7 +7976,8 @@ ON CONFLICT (id) DO NOTHING;`;
             renderAllClassSelectors();
             if (selectedClassId) switchClass(selectedClassId);
             renderDaftarKelasList();
-            showToast(`Kelas "${c.name}" telah dihapus secara permanen.`);
+            renderAkunTable();
+            showToast(`Kelas "${c.name}" beserta akun login santri telah dihapus secara permanen.`);
         }
 
         function openTambahKelasModal() {
@@ -7922,13 +8178,58 @@ ON CONFLICT (id) DO NOTHING;`;
             const s = current.santri[idx];
             if (!s) return;
 
-            if (confirm(`Apakah Anda yakin ingin menghapus santri "${s.nama}" (NIS: ${s.nis}) dari kelas ini?`)) {
+            const nisStr = (s.nis || '').toString().toLowerCase().trim();
+            const namaStr = (s.nama || '').toString().toLowerCase().trim();
+
+            if (confirm(`Apakah Anda yakin ingin menghapus santri "${s.nama}" (NIS: ${s.nis}) secara permanen?\n\nAkun login santri ini juga akan dihapus permanen sehingga tidak dapat login kembali.`)) {
+                // 1. Hapus dari kelas
                 current.santri.splice(idx, 1);
                 localStorage.setItem('siak_multi_classes', JSON.stringify(all));
+
+                // 2. Tambahkan ke tombstone siak_deleted_accounts
+                const deletedAccounts = JSON.parse(localStorage.getItem('siak_deleted_accounts') || '[]');
+                if (nisStr && !deletedAccounts.includes(nisStr)) deletedAccounts.push(nisStr);
+                if (namaStr && !deletedAccounts.includes(namaStr)) deletedAccounts.push(namaStr);
+                localStorage.setItem('siak_deleted_accounts', JSON.stringify(deletedAccounts));
+
+                // 3. Hapus akun login santri dari siak_user_accounts
+                let accounts = getAccounts();
+                accounts = accounts.filter(a => {
+                    if (!a) return false;
+                    const aId = (a.id || '').toLowerCase().trim();
+                    const aNis = (a.nis || '').toString().toLowerCase().trim();
+                    const aNama = (a.nama || '').toLowerCase().trim();
+                    if ((nisStr && (aId === nisStr || aNis === nisStr)) || (namaStr && aNama === namaStr)) {
+                        deleteAccountFromCloud(a.id);
+                        return false;
+                    }
+                    return true;
+                });
+                saveAccounts(accounts);
+                deleteAccountFromCloud(s.nis);
+
+                // 4. Bersihkan catatan absensi santri di log
+                const logs = getAttendanceLogs();
+                let logsModified = false;
+                logs.forEach(l => {
+                    if (Array.isArray(l.records)) {
+                        const initLen = l.records.length;
+                        l.records = l.records.filter(r => {
+                            if (!r) return false;
+                            const rNis = (r.nis || '').toString().toLowerCase().trim();
+                            const rNama = (r.nama || '').toLowerCase().trim();
+                            return !(rNis === nisStr || (namaStr && rNama === namaStr));
+                        });
+                        if (l.records.length !== initLen) logsModified = true;
+                    }
+                });
+                if (logsModified) saveAttendanceLogs(logs);
+
                 renderAllClassSelectors();
                 updateAllComponents();
+                renderAkunTable();
                 syncClassToCloud(selectedClassId, all[selectedClassId]);
-                showToast(`Santri "${s.nama}" berhasil dihapus.`);
+                showToast(`Santri "${s.nama}" dan akun loginnya telah dihapus secara permanen.`);
             }
         }
 
@@ -8056,6 +8357,18 @@ ON CONFLICT (id) DO NOTHING;`;
                     accounts = [...DEFAULT_ACCOUNTS];
                 }
 
+                // Pengecekan Tombstone Akun & Kelas Terhapus Permanen
+                const deletedAccounts = JSON.parse(localStorage.getItem('siak_deleted_accounts') || '[]').map(x => String(x).toLowerCase().trim());
+                const deletedClasses = JSON.parse(localStorage.getItem('siak_deleted_classes') || '[]');
+
+                if (deletedAccounts.includes(idInput.toLowerCase())) {
+                    const errBox = document.getElementById('loginErrorAlert');
+                    const errMsg = document.getElementById('loginErrorMsg');
+                    if (errMsg) errMsg.textContent = `Akun dengan ID "${idInput}" telah dihapus secara permanen dari sistem dan tidak dapat login lagi.`;
+                    if (errBox) errBox.classList.remove('hidden');
+                    return;
+                }
+
                 // 1. Prioritas Utama: Admin / Staff Login (admin atau adminn)
                 const isIdAdmin = (idInput.toLowerCase() === 'admin' || idInput.toLowerCase() === 'adminn');
                 let existingAdmin = accounts.find(a => a && a.id && (a.id.toLowerCase() === 'admin' || a.id.toLowerCase() === 'adminn') && a.role === 'staff');
@@ -8089,13 +8402,19 @@ ON CONFLICT (id) DO NOTHING;`;
                     }
                 }
 
-                // 2. Cari akun yang cocok di daftar accounts terdaftar
+                // 2. Cari akun yang cocok di daftar accounts terdaftar (abaikan yang telah dihapus)
                 let user = accounts.find(a => {
                     if (!a) return false;
-                    const idMatch = (a.id && a.id.toLowerCase() === idInput.toLowerCase()) ||
-                                    (a.nis && String(a.nis).toLowerCase() === idInput.toLowerCase()) ||
+                    const aId = (a.id || '').toLowerCase().trim();
+                    const aNis = (a.nis || '').toString().toLowerCase().trim();
+                    const aNama = (a.nama || '').toLowerCase().trim();
+                    if (deletedAccounts.includes(aId) || (aNis && deletedAccounts.includes(aNis)) || (aNama && deletedAccounts.includes(aNama))) return false;
+                    if (a.kelas_id && deletedClasses.includes(a.kelas_id)) return false;
+
+                    const idMatch = (aId === idInput.toLowerCase()) ||
+                                    (aNis === idInput.toLowerCase()) ||
                                     (a.nip && String(a.nip).toLowerCase() === idInput.toLowerCase()) ||
-                                    (a.nama && a.nama.toLowerCase() === idInput.toLowerCase());
+                                    (aNama === idInput.toLowerCase());
                     const pwdMatch = (a.password === pwdInput || (a.password && a.password.trim() === pwdInput));
                     const roleMatch = (a.role === selectedLoginRole);
                     return idMatch && pwdMatch && roleMatch;
@@ -8105,10 +8424,16 @@ ON CONFLICT (id) DO NOTHING;`;
                 if (!user) {
                     const altUser = accounts.find(a => {
                         if (!a) return false;
-                        const idMatch = (a.id && a.id.toLowerCase() === idInput.toLowerCase()) ||
-                                        (a.nis && String(a.nis).toLowerCase() === idInput.toLowerCase()) ||
+                        const aId = (a.id || '').toLowerCase().trim();
+                        const aNis = (a.nis || '').toString().toLowerCase().trim();
+                        const aNama = (a.nama || '').toLowerCase().trim();
+                        if (deletedAccounts.includes(aId) || (aNis && deletedAccounts.includes(aNis)) || (aNama && deletedAccounts.includes(aNama))) return false;
+                        if (a.kelas_id && deletedClasses.includes(a.kelas_id)) return false;
+
+                        const idMatch = (aId === idInput.toLowerCase()) ||
+                                        (aNis === idInput.toLowerCase()) ||
                                         (a.nip && String(a.nip).toLowerCase() === idInput.toLowerCase()) ||
-                                        (a.nama && a.nama.toLowerCase() === idInput.toLowerCase());
+                                        (aNama === idInput.toLowerCase());
                         const pwdMatch = (a.password === pwdInput || (a.password && a.password.trim() === pwdInput));
                         return idMatch && pwdMatch;
                     });
@@ -8122,11 +8447,17 @@ ON CONFLICT (id) DO NOTHING;`;
                 if (!user) {
                     const allClasses = getAllClassesData();
                     for (const [classKey, classObj] of Object.entries(allClasses)) {
+                        if (deletedClasses.includes(classKey)) continue;
                         const foundSantri = (classObj.santri || []).find(s => 
                             s && ((s.nis && String(s.nis).toLowerCase() === idInput.toLowerCase()) || 
                                  (s.nama && s.nama.toLowerCase() === idInput.toLowerCase()))
                         );
                         if (foundSantri) {
+                            const fNis = (foundSantri.nis || '').toString().toLowerCase().trim();
+                            const fNama = (foundSantri.nama || '').toLowerCase().trim();
+                            if (deletedAccounts.includes(fNis) || deletedAccounts.includes(fNama)) {
+                                continue;
+                            }
                             if (pwdInput === foundSantri.nis || pwdInput === '123456' || pwdInput === 'santri123' || pwdInput === 'pesantren123') {
                                 user = {
                                     id: foundSantri.nis,
@@ -8143,6 +8474,20 @@ ON CONFLICT (id) DO NOTHING;`;
                                 break;
                             }
                         }
+                    }
+                }
+
+                if (user) {
+                    const uId = (user.id || '').toLowerCase().trim();
+                    const uNis = (user.nis || '').toString().toLowerCase().trim();
+                    const uNama = (user.nama || '').toLowerCase().trim();
+                    const uKelas = user.kelas_id || user.kelasId;
+                    if (deletedAccounts.includes(uId) || (uNis && deletedAccounts.includes(uNis)) || (uNama && deletedAccounts.includes(uNama)) || (uKelas && deletedClasses.includes(uKelas))) {
+                        const errBox = document.getElementById('loginErrorAlert');
+                        const errMsg = document.getElementById('loginErrorMsg');
+                        if (errMsg) errMsg.textContent = `Akun atau kelas santri ini telah dihapus permanen dari sistem.`;
+                        if (errBox) errBox.classList.remove('hidden');
+                        return;
                     }
                 }
 
@@ -9503,11 +9848,61 @@ ON CONFLICT (id) DO NOTHING;`;
                 return;
             }
 
-            if (confirm(`Apakah Anda yakin ingin menghapus akun dengan ID "${id}"?`)) {
+            if (confirm(`Apakah Anda yakin ingin menghapus akun dengan ID "${id}" secara permanen?\n\nAkun ini tidak akan dapat login kembali ke sistem.`)) {
                 let accounts = getAccounts();
+                const targetAcc = accounts.find(a => a && a.id === id);
+                
+                // 1. Masukkan ke tombstone
+                const deletedAccounts = JSON.parse(localStorage.getItem('siak_deleted_accounts') || '[]');
+                const idClean = String(id).toLowerCase().trim();
+                if (idClean && !deletedAccounts.includes(idClean)) deletedAccounts.push(idClean);
+                if (targetAcc && targetAcc.nis) {
+                    const nisClean = String(targetAcc.nis).toLowerCase().trim();
+                    if (nisClean && !deletedAccounts.includes(nisClean)) deletedAccounts.push(nisClean);
+                }
+                if (targetAcc && targetAcc.nama) {
+                    const namaClean = String(targetAcc.nama).toLowerCase().trim();
+                    if (namaClean && !deletedAccounts.includes(namaClean)) deletedAccounts.push(namaClean);
+                }
+                localStorage.setItem('siak_deleted_accounts', JSON.stringify(deletedAccounts));
+
+                // 2. Hapus dari accounts lokal
                 accounts = accounts.filter(a => a.id !== id);
                 saveAccounts(accounts);
-                showToast(`Akun "${id}" berhasil dihapus dari sistem.`);
+
+                // 3. Hapus dari Supabase Cloud
+                deleteAccountFromCloud(id);
+                if (targetAcc && targetAcc.nis) deleteAccountFromCloud(targetAcc.nis);
+
+                // 4. Jika akun ini adalah santri, hapus juga dari data kelas
+                if (targetAcc && (targetAcc.role === 'santri' || targetAcc.kelas_id)) {
+                    const allClasses = getAllClassesData();
+                    let classModified = false;
+                    for (const k in allClasses) {
+                        if (allClasses[k] && Array.isArray(allClasses[k].santri)) {
+                            const initLen = allClasses[k].santri.length;
+                            allClasses[k].santri = allClasses[k].santri.filter(s => {
+                                if (!s) return false;
+                                const sNis = (s.nis || '').toString().toLowerCase().trim();
+                                const sNama = (s.nama || '').toLowerCase().trim();
+                                return !(sNis === idClean || (targetAcc.nis && sNis === String(targetAcc.nis).toLowerCase().trim()) || (targetAcc.nama && sNama === String(targetAcc.nama).toLowerCase().trim()));
+                            });
+                            if (allClasses[k].santri.length !== initLen) {
+                                classModified = true;
+                                syncClassToCloud(k, allClasses[k]);
+                            }
+                        }
+                    }
+                    if (classModified) {
+                        localStorage.setItem('siak_multi_classes', JSON.stringify(allClasses));
+                        renderAllClassSelectors();
+                        updateAllComponents();
+                    }
+                }
+
+                renderAkunTable();
+                renderGuruTable();
+                showToast(`Akun "${id}" telah dihapus secara permanen dari sistem.`);
             }
         }
 
@@ -10049,23 +10444,27 @@ ON CONFLICT (id) DO NOTHING;`;
             // 3. Sinkronisasi ke Supabase Cloud
             syncAttendanceToCloud(attendanceRecord);
 
+            // 4. Langsung sinkronisasikan rekap presensi ke data masing-masing santri secara instan
+            syncAttendanceWithStudents(selectedClassId);
+
             const isRevisiSave = !!currentRevisiSessionId;
             currentRevisiSessionId = null;
             const revBanner = document.getElementById('revisiNoticeBar');
             if (revBanner) revBanner.classList.add('hidden');
             updateSimpanButtonText(false);
 
-            // 4. Render ulang status panel dan sesi harian secara langsung
+            // 5. Render ulang status panel, daftar sesi, dan tampilan personal santri secara langsung
             renderDailyAttendanceStatusPanel();
             renderDailyAttendanceSessionsList();
+            renderSantriTable();
             if (currentUser && currentUser.role === 'santri') {
                 updateSantriDashboardUI(currentUser);
                 renderSantriPersonalAbsensiView(currentUser);
             }
 
             showToast(isRevisiSave 
-                ? `Alhamdulillah, revisi absensi kelas ${classData.name} sesi ${jam} berhasil diperbarui!`
-                : `Alhamdulillah, absensi sesi ${jam} (${mapel}) berhasil disimpan & terekap permanen!`);
+                ? `Alhamdulillah, revisi absensi kelas ${classData.name} sesi ${jam} berhasil disimpan & disingkronkan ke santri!`
+                : `Alhamdulillah, absensi sesi ${jam} (${mapel}) berhasil disimpan & langsung disingkronkan ke santri!`);
         }
 
         function filterSantriTable() {
@@ -11464,10 +11863,12 @@ ON CONFLICT (id) DO NOTHING;`;
         }
 
         function sendToWhatsApp(isWeb = false) {
-            let phone = document.getElementById('waRecipientNumber')?.value.trim() || '';
-            phone = phone.replace(/[^0-9]/g, '');
+            let phone = (document.getElementById('waRecipientNumber')?.value || '').trim();
+            phone = phone.replace(/\D/g, '');
             if (phone.startsWith('0')) {
                 phone = '62' + phone.substring(1);
+            } else if (phone.startsWith('8')) {
+                phone = '62' + phone;
             }
 
             const preview = document.getElementById('waMessagePreview');
@@ -11486,45 +11887,85 @@ ON CONFLICT (id) DO NOTHING;`;
 
             // Cegah error HTTP 414 URI Too Long dengan batas aman text URL
             let textToSend = rawText;
-            const maxUrlTextLen = 1800;
+            const maxUrlTextLen = 2200;
             if (textToSend.length > maxUrlTextLen) {
                 textToSend = textToSend.substring(0, maxUrlTextLen) + '\n\n...(Teks lengkap telah otomatis disalin ke clipboard! Silakan Paste/Tempel langsung di WhatsApp)';
             }
 
             const encoded = encodeURIComponent(textToSend);
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             let url = "";
 
-            if (isWeb) {
-                if (phone.length > 5) {
-                    url = `https://web.whatsapp.com/send?phone=${phone}&text=${encoded}`;
-                } else {
-                    url = `https://web.whatsapp.com/send?text=${encoded}`;
-                }
+            if (isWeb && !isMobile) {
+                url = phone.length > 5 
+                    ? `https://web.whatsapp.com/send?phone=${phone}&text=${encoded}`
+                    : `https://web.whatsapp.com/send?text=${encoded}`;
             } else {
-                if (phone.length > 5) {
-                    url = `https://api.whatsapp.com/send?phone=${phone}&text=${encoded}`;
-                } else {
-                    url = `https://api.whatsapp.com/send?text=${encoded}`;
-                }
+                url = phone.length > 5 
+                    ? `https://api.whatsapp.com/send?phone=${phone}&text=${encoded}`
+                    : `https://api.whatsapp.com/send?text=${encoded}`;
             }
 
-            // Gunakan synthetic anchor click agar tidak diblokir oleh popup-blocker browser
+            // 1. Buka window secara langsung
+            let winOpened = false;
             try {
-                const a = document.createElement('a');
-                a.href = url;
-                a.target = '_blank';
-                a.rel = 'noopener noreferrer';
-                document.body.appendChild(a);
-                a.click();
-                setTimeout(() => {
-                    if (document.body.contains(a)) document.body.removeChild(a);
-                }, 200);
+                const newWin = window.open(url, '_blank');
+                if (newWin && !newWin.closed) {
+                    winOpened = true;
+                }
             } catch (e) {
-                window.open(url, '_blank');
+                winOpened = false;
+            }
+
+            // 2. Fallback synthetic anchor click
+            if (!winOpened) {
+                try {
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.target = '_blank';
+                    a.rel = 'noopener noreferrer';
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout(() => {
+                        if (document.body.contains(a)) document.body.removeChild(a);
+                    }, 300);
+                    winOpened = true;
+                } catch (e) {
+                    if (isMobile) {
+                        window.location.href = url;
+                        winOpened = true;
+                    }
+                }
             }
 
             closeShareWAModal();
             showToast('Membuka WhatsApp & teks disalin ke clipboard...');
+        }
+
+        async function shareViaNativeMobile() {
+            const preview = document.getElementById('waMessagePreview');
+            const rawText = (preview && preview.value.trim()) ? preview.value : (activeWAMessage || '');
+            if (!rawText) {
+                showToast('Teks pesan WhatsApp masih kosong.');
+                return;
+            }
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(rawText).catch(() => {});
+            }
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'Laporan Presensi Madrasah - Ma\'had Aly',
+                        text: rawText
+                    });
+                    closeShareWAModal();
+                    showToast('Laporan berhasil dibagikan!');
+                    return;
+                } catch (e) {
+                    if (e.name === 'AbortError') return;
+                }
+            }
+            sendToWhatsApp(false);
         }
 
         function closeShareWAModal() {
@@ -12451,8 +12892,8 @@ ON CONFLICT (id) DO NOTHING;`;
                     }
                 }
                 
-                // 1. Nilai dasar presensi santri (baseline seeder/semester)
-                let hadir = 24, alpa = 0, izin = 1, sakit = 0;
+                // 1. Nilai dasar presensi santri (baseline seeder/semester nol bersih)
+                let hadir = 0, alpa = 0, izin = 0, sakit = 0;
                 if (sData && sData.rekap) {
                     hadir = sData.rekap.hadir !== undefined ? sData.rekap.hadir : hadir;
                     alpa = sData.rekap.alpa !== undefined ? sData.rekap.alpa : alpa;
@@ -12460,8 +12901,9 @@ ON CONFLICT (id) DO NOTHING;`;
                     sakit = sData.rekap.sakit !== undefined ? sData.rekap.sakit : sakit;
                 }
 
-                // 2. Akumulasi dinamis log sesi absensi yang diinput Ustadz dari waktu ke waktu (siak_attendance_logs)
-                const logs = getAttendanceLogs();
+                // 2. Akumulasi dinamis log sesi absensi yang diinput Ustadz mulai 30 November 2026 (siak_attendance_logs)
+                const START_DATE = '2026-11-30';
+                const logs = getAttendanceLogs().filter(l => l && (!l.tanggal || l.tanggal >= START_DATE));
                 let sessionHadir = 0, sessionAlpa = 0, sessionIzin = 0, sessionSakit = 0;
                 logs.forEach(l => {
                     if (l && Array.isArray(l.records)) {
@@ -12479,10 +12921,17 @@ ON CONFLICT (id) DO NOTHING;`;
                     }
                 });
 
-                hadir += sessionHadir;
-                alpa += sessionAlpa;
-                izin += sessionIzin;
-                sakit += sessionSakit;
+                if (sData && sData.rekap && (sData.rekap.hadir > 0 || sData.rekap.alpa > 0 || sData.rekap.izin > 0 || sData.rekap.sakit > 0)) {
+                    hadir = sData.rekap.hadir;
+                    alpa = sData.rekap.alpa;
+                    izin = sData.rekap.izin;
+                    sakit = sData.rekap.sakit;
+                } else {
+                    hadir = sessionHadir;
+                    alpa = sessionAlpa;
+                    izin = sessionIzin;
+                    sakit = sessionSakit;
+                }
 
                 const bHadir = document.getElementById('santriBoxHadir');
                 const bAlpa = document.getElementById('santriBoxAlpa');
@@ -12533,12 +12982,9 @@ ON CONFLICT (id) DO NOTHING;`;
             const elWali = document.getElementById('santriAbsenWaliSantri');
             if (elWali) elWali.textContent = waliKelas;
 
-            // Format tanggal hari ini dalam Bahasa Indonesia
-            const today = new Date();
-            const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-            const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-            const dayName = days[today.getDay()];
-            const dateFormatted = `${dayName}, ${today.getDate()} ${months[today.getMonth()]} ${today.getFullYear()}`;
+            // Format tanggal sinkronisasi absensi (Mulai 30 November 2026)
+            const activeTgl = document.getElementById('absenTanggal')?.value || '2026-11-30';
+            const dateFormatted = formatIndoDate(activeTgl);
             const elTgl = document.getElementById('santriAbsenHariTgl');
             if (elTgl) elTgl.textContent = dateFormatted;
 
@@ -12572,18 +13018,21 @@ ON CONFLICT (id) DO NOTHING;`;
                 'Jam 7 (18.30 - 20.00 WIB)'
             ];
 
-            // 4. Periksa log sesi absensi yang tersimpan di sistem
+            // 4. Periksa log sesi absensi yang tersimpan di sistem mulai 30 November 2026
+            const START_DATE = '2026-11-30';
             const logs = (typeof getAttendanceLogs === 'function') ? getAttendanceLogs() : [];
-            const todayISO = today.toISOString().split('T')[0];
-            const classLogs = logs.filter(l => l && (l.class_id === classId || (l.class_name && l.class_name.toLowerCase() === className.toLowerCase())));
+            const classLogs = logs.filter(l => l && (!l.tanggal || l.tanggal >= START_DATE) && (
+                l.class_id === classId || 
+                (l.class_name && l.class_name.toLowerCase() === className.toLowerCase())
+            ));
 
             // 5. Bangun status kehadiran spesifik untuk setiap mata pelajaran
             const studentStatusPerMapel = mapelList.map((m, idx) => {
                 const timeSlot = defaultTimes[idx % defaultTimes.length];
                 
-                // Cari sesi tersimpan yang cocok
+                // Cari sesi tersimpan yang cocok pada tanggal aktif atau mapel
                 const session = classLogs.find(l => {
-                    const matchDate = l.tanggal === todayISO;
+                    const matchDate = (l.tanggal === activeTgl);
                     const matchMapel = l.mapel && (
                         l.mapel.toLowerCase().includes(m.nama.toLowerCase()) || 
                         (m.kitab && l.mapel.toLowerCase().includes(m.kitab.toLowerCase()))
@@ -12596,8 +13045,8 @@ ON CONFLICT (id) DO NOTHING;`;
                     );
                 });
 
-                let status = 'Hadir';
-                let keterangan = 'Tercatat hadir dalam jam pelajaran';
+                let status = 'Belum Diabsen';
+                let keterangan = 'Menunggu pencatatan kehadiran sesi ini oleh ustadz pengajar';
                 let ustadz = m.pengampu || 'Ustadz Pengampu';
                 let sessionTime = timeSlot;
 
@@ -12609,37 +13058,16 @@ ON CONFLICT (id) DO NOTHING;`;
                         (r.nama && String(r.nama).trim().toLowerCase() === String(nama).trim().toLowerCase())
                     ));
                     if (rec) {
-                        status = rec.status || 'Hadir';
-                        keterangan = rec.keterangan || (status === 'Hadir' ? 'Hadir tepat waktu di kelas' : status);
-                    }
-                } else if (studentRecord) {
-                    // Jika status santri hari ini diatur di tabel kelas
-                    if (studentRecord.status && studentRecord.status !== 'Hadir') {
-                        status = studentRecord.status;
-                        keterangan = studentRecord.keterangan || `Tercatat ${status} hari ini`;
-                    } else if (studentRecord.rekap) {
-                        // Jika ada catatan ketidakhadiran spesifik di data santri
-                        const rk = studentRecord.rekap;
-                        if (rk.alpa > 0 && idx === 2) {
-                            status = 'Alfa';
-                            keterangan = 'Tanpa Keterangan';
-                        } else if (rk.sakit > 0 && idx === 1) {
-                            status = 'Sakit';
-                            keterangan = 'Sakit (Istirahat di Kamar Asrama)';
-                        } else if (rk.izin > 0 && idx === 4) {
-                            status = 'Izin';
-                            keterangan = 'Izin Dispensasi Keperluan Pesantren';
-                        }
+                        const recStatus = (rec.status || 'Hadir').trim();
+                        const stLow = recStatus.toLowerCase();
+                        if (stLow === 'hadir') status = 'Hadir';
+                        else if (stLow === 'sakit') status = 'Sakit';
+                        else if (stLow === 'izin') status = 'Izin';
+                        else if (stLow === 'alpa' || stLow === 'alfa') status = 'Alfa';
+                        else status = recStatus;
+                        keterangan = rec.keterangan || (status === 'Hadir' ? 'Tercatat hadir tepat waktu dalam KBM' : `Tercatat ${status} pada sesi ini`);
                     }
                 }
-
-                // Normalisasi status
-                const st = (status || '').toLowerCase().trim();
-                let finalStatus = 'Hadir';
-                if (st === 'alfa' || st === 'alpa') finalStatus = 'Alfa';
-                else if (st === 'sakit') finalStatus = 'Sakit';
-                else if (st === 'izin') finalStatus = 'Izin';
-                else finalStatus = 'Hadir';
 
                 return {
                     id: m.id || `mapel-${idx}`,
@@ -12648,7 +13076,7 @@ ON CONFLICT (id) DO NOTHING;`;
                     kategori: m.kategori || 'Dirasah',
                     pengampu: ustadz,
                     jam: sessionTime,
-                    status: finalStatus,
+                    status: status,
                     keterangan: keterangan
                 };
             });
@@ -12673,13 +13101,15 @@ ON CONFLICT (id) DO NOTHING;`;
             const elStatAlfa = document.getElementById('santriStatAlfaCount');
             if (elStatAlfa) elStatAlfa.textContent = countAlfa;
 
-            // Persentase kehadiran harian personal
-            const ratePct = totalMapel > 0 ? Math.round((countHadir / totalMapel) * 100) : 100;
+            // Persentase kehadiran harian personal dari sesi yang telah diabsen
+            const recordedMapel = studentStatusPerMapel.filter(s => s.status !== 'Belum Diabsen');
+            const ratePct = recordedMapel.length > 0 ? Math.round((countHadir / recordedMapel.length) * 100) : 100;
             const elRatePct = document.getElementById('santriAbsenRatePct');
             if (elRatePct) elRatePct.textContent = `${ratePct}%`;
             const elRateDesc = document.getElementById('santriAbsenRateDesc');
             if (elRateDesc) {
-                if (ratePct === 100) elRateDesc.textContent = 'Alhamdulillah 100% Hadir';
+                if (recordedMapel.length === 0) elRateDesc.textContent = 'Menunggu Presensi KBM Sesi Ini';
+                else if (ratePct === 100) elRateDesc.textContent = 'Alhamdulillah 100% Hadir';
                 else if (ratePct >= 75) elRateDesc.textContent = 'Kehadiran Sangat Baik';
                 else elRateDesc.textContent = 'Perlu Ditingkatkan';
             }
@@ -12856,9 +13286,12 @@ ON CONFLICT (id) DO NOTHING;`;
             }
 
             container.innerHTML = filtered.map(m => {
-                let badgeClass = 'bg-emerald-100 text-emerald-800 border-emerald-300';
-                let iconClass = 'fa-solid fa-circle-check text-emerald-600';
-                if (m.status === 'Alfa') {
+                let badgeClass = 'bg-slate-100 text-slate-700 border-slate-300';
+                let iconClass = 'fa-solid fa-hourglass-half text-slate-500';
+                if (m.status === 'Hadir') {
+                    badgeClass = 'bg-emerald-100 text-emerald-800 border-emerald-300';
+                    iconClass = 'fa-solid fa-circle-check text-emerald-600';
+                } else if (m.status === 'Alfa') {
                     badgeClass = 'bg-rose-100 text-rose-800 border-rose-300';
                     iconClass = 'fa-solid fa-circle-xmark text-rose-600';
                 } else if (m.status === 'Izin') {
@@ -12884,6 +13317,11 @@ ON CONFLICT (id) DO NOTHING;`;
                                 <span>${m.status}</span>
                             </span>
                         </div>
+
+                        <p class="text-[11px] text-slate-500 flex items-center gap-1.5 pt-1">
+                            <i class="fa-solid fa-circle-info text-slate-400 text-xs shrink-0"></i>
+                            <span class="truncate">${m.keterangan || '-'}</span>
+                        </p>
 
                         <div class="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-600">
                             <div class="flex items-center gap-1.5">
@@ -13268,13 +13706,14 @@ ON CONFLICT (id) DO NOTHING;`;
             initStorage();
             initSupabase();
             
-            const today = new Date().toISOString().split('T')[0];
+            // Mulai sinkronisasi data dari tanggal 30 November 2026 sesuai instruksi resmi
+            const defaultDate = '2026-11-30';
             const dateInput = document.getElementById('absenTanggal');
-            if (dateInput) dateInput.value = today;
+            if (dateInput) dateInput.value = defaultDate;
             const panelDateInput = document.getElementById('panelRekapTanggalInput');
-            if (panelDateInput) panelDateInput.value = today;
+            if (panelDateInput) panelDateInput.value = defaultDate;
             const lblTgl = document.getElementById('labelTglStatusRekap');
-            if (lblTgl) lblTgl.textContent = formatIndoDate(today);
+            if (lblTgl) lblTgl.textContent = formatIndoDate(defaultDate);
 
             // Inisialisasi dropdown kelas dan pengajar secara dinamis
             renderAllClassSelectors();
@@ -13324,6 +13763,27 @@ ON CONFLICT (id) DO NOTHING;`;
                 switchTab(rawHash);
             }
         });
+
+        // Auto-updating presensi santri & ustadz secara otomatis antar-tab dan latar belakang
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'siak_attendance_logs' || e.key === 'siak_multi_classes') {
+                if (currentUser && currentUser.role === 'santri') {
+                    updateSantriDashboardUI(currentUser);
+                    renderSantriPersonalAbsensiView(currentUser);
+                } else if (currentUser && (currentUser.role === 'staff' || currentUser.role === 'ustadz')) {
+                    renderDailyAttendanceStatusPanel();
+                    renderDailyAttendanceSessionsList();
+                    renderSantriTable();
+                }
+            }
+        });
+
+        // Polling realtime ringan setiap 10 detik agar tampilan absensi terus terupdate secara otomatis
+        setInterval(() => {
+            if (currentUser && currentUser.role === 'santri') {
+                renderSantriPersonalAbsensiView(currentUser);
+            }
+        }, 10000);
     </script>
 </body>
 </html>
