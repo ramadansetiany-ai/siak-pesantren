@@ -443,6 +443,14 @@
                                 <span>Pengaturan Sistem</span>
                             </button>
                         </div>
+
+                        <!-- 12. Tombol Keluar (Logout) Konsisten di Bagian Bawah Menu Navigasi (Semua Akun) -->
+                        <div class="pt-2 mt-2 border-t border-slate-100">
+                            <button type="button" onclick="handleLogout()" class="w-full flex items-center space-x-3 px-3 py-2.5 text-sm font-semibold rounded-lg text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition-colors cursor-pointer group" title="Keluar dari sesi akun">
+                                <i class="fa-solid fa-right-from-bracket w-5 text-center text-rose-500 group-hover:text-rose-700 transition-colors"></i>
+                                <span>Keluar (Logout)</span>
+                            </button>
+                        </div>
                     </nav>
 
                     <!-- Info Box (Active Class) -->
@@ -2496,6 +2504,17 @@
                             <span class="text-[10px] text-teal-700 font-normal">Kirim ringkasan presensi harian seluruh kelas</span>
                         </div>
                         <i class="fa-solid fa-chevron-right text-teal-400 text-xs"></i>
+                    </button>
+
+                    <button type="button" onclick="closeQuickActionDrawer(); handleLogout();" class="p-3 bg-rose-50 hover:bg-rose-100 text-rose-900 rounded-xl border border-rose-200 flex items-center space-x-2.5 transition active:scale-95 text-left cursor-pointer col-span-2">
+                        <div class="w-8 h-8 rounded-lg bg-rose-600 text-white flex items-center justify-center text-xs shrink-0 shadow-xs">
+                            <i class="fa-solid fa-right-from-bracket text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <span class="block font-bold">Keluar dari Akun (Logout)</span>
+                            <span class="text-[10px] text-rose-700 font-normal">Akhiri sesi pengguna aktif di perangkat ini</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-rose-400 text-xs"></i>
                     </button>
                 </div>
             </div>
@@ -6285,13 +6304,15 @@ ON CONFLICT (id) DO NOTHING;`;
             if (sidebar) sidebar.classList.add('hidden');
         }
 
-        function handleLogout() {
-            if (confirm('Apakah Anda ingin keluar dari akun Anda?')) {
+        function handleLogout(skipConfirm = false) {
+            if (skipConfirm || confirm('Apakah Anda yakin ingin keluar dari akun Anda?')) {
                 // 1. Tutup seluruh modal dan backdrop terlebih dahulu
                 closeAllModals();
 
+                // 2. Hancurkan sesi pengguna aktif (session destroy)
                 currentUser = null;
                 sessionStorage.removeItem('siak_active_user');
+                sessionStorage.clear();
 
                 // Reset tema dark mode santri
                 document.body.classList.remove('theme-santri-dark');
@@ -6300,13 +6321,24 @@ ON CONFLICT (id) DO NOTHING;`;
                 if (sHdrCtrl) { sHdrCtrl.classList.add('hidden'); sHdrCtrl.classList.remove('flex'); }
                 if (stdHdrCtrl) { stdHdrCtrl.classList.remove('hidden'); }
 
-                // 2. Tampilkan kembali loginScreen dan sembunyikan app
-                document.getElementById('appContainer').classList.add('hidden');
-                document.getElementById('loginScreen').classList.remove('hidden');
-                document.getElementById('loginPassword').value = '';
-                document.getElementById('loginErrorAlert').classList.add('hidden');
+                // 3. Tampilkan kembali loginScreen dan sembunyikan appContainer
+                const appContainer = document.getElementById('appContainer');
+                const loginScreen = document.getElementById('loginScreen');
+                if (appContainer) appContainer.classList.add('hidden');
+                if (loginScreen) loginScreen.classList.remove('hidden');
 
-                showToast('Anda telah berhasil keluar dari sistem.');
+                const pwdInput = document.getElementById('loginPassword');
+                if (pwdInput) pwdInput.value = '';
+                const errAlert = document.getElementById('loginErrorAlert');
+                if (errAlert) errAlert.classList.add('hidden');
+
+                // Tutup mobile drawer jika terbuka
+                const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+                const sidebarNav = document.getElementById('sidebarNav');
+                if (sidebarBackdrop) sidebarBackdrop.classList.add('hidden');
+                if (sidebarNav) sidebarNav.classList.add('hidden');
+
+                showToast('Sesi akun telah diakhiri. Silakan login kembali.');
             }
         }
 
@@ -9900,12 +9932,12 @@ ON CONFLICT (id) DO NOTHING;`;
                         <span class="text-[10px] leading-none tracking-tight bottom-nav-label">Akun</span>
                     </button>
 
-                    <!-- 5. Logout -->
-                    <button type="button" onclick="handleLogout()" class="bottom-nav-item flex-1 py-1 px-1 flex flex-col items-center justify-center text-rose-500 hover:text-rose-700 transition-all cursor-pointer relative group">
-                        <div class="bottom-nav-icon-box w-7 h-7 flex items-center justify-center rounded-xl transition-all mb-0.5">
+                    <!-- 5. Tombol Keluar (Logout) Santri -->
+                    <button type="button" id="bottomNavBtn_logout" onclick="handleLogout()" class="bottom-nav-item bottom-nav-logout flex-1 py-1 px-1 flex flex-col items-center justify-center text-rose-500 hover:text-rose-700 transition-all cursor-pointer relative group" title="Keluar dari Akun (Logout)">
+                        <div class="bottom-nav-icon-box w-7 h-7 flex items-center justify-center rounded-xl transition-all mb-0.5 text-rose-500 group-hover:text-rose-700">
                             <i class="fa-solid fa-right-from-bracket text-sm sm:text-base"></i>
                         </div>
-                        <span class="text-[10px] leading-none tracking-tight bottom-nav-label">Logout</span>
+                        <span class="text-[10px] font-bold leading-none tracking-tight bottom-nav-label text-rose-500 group-hover:text-rose-700">Keluar</span>
                     </button>
                 `;
                 updateBottomNavActive('profil-santri');
@@ -9941,20 +9973,20 @@ ON CONFLICT (id) DO NOTHING;`;
                     <span class="text-[9px] font-extrabold text-slate-600 mt-0.5 tracking-tight">Akses</span>
                 </div>
 
-                <!-- 4. Berkas (Foto 4) -->
-                <button type="button" id="bottomNavBtn_jurnal" onclick="switchTab('jurnal')" class="bottom-nav-item flex-1 py-1 px-1 flex flex-col items-center justify-center text-slate-500 hover:text-emerald-700 transition-all cursor-pointer relative group">
-                    <div class="bottom-nav-icon-box w-7 h-7 flex items-center justify-center rounded-xl transition-all mb-0.5">
-                        <i class="fa-solid fa-folder-closed text-sm sm:text-base transition-transform group-active:scale-90"></i>
-                    </div>
-                    <span class="text-[10px] font-semibold leading-none tracking-tight bottom-nav-label">Berkas</span>
-                </button>
-
-                <!-- 5. Profil / Pengaturan (PERSIS FOTO 4) -->
+                <!-- 4. Profil / Pengaturan (Staff & Ustadz) -->
                 <button type="button" id="bottomNavBtn_profil" onclick="${profilAction}" class="bottom-nav-item flex-1 py-1 px-1 flex flex-col items-center justify-center text-slate-500 hover:text-emerald-700 transition-all cursor-pointer relative group">
                     <div class="bottom-nav-icon-box w-7 h-7 flex items-center justify-center rounded-xl transition-all mb-0.5">
                         <i class="fa-solid fa-user text-sm sm:text-base transition-transform group-active:scale-90"></i>
                     </div>
                     <span class="text-[10px] font-semibold leading-none tracking-tight bottom-nav-label">${profilLabel}</span>
+                </button>
+
+                <!-- 5. Tombol Keluar (Logout) Konsisten Semua Akun (Staff & Ustadz) -->
+                <button type="button" id="bottomNavBtn_logout" onclick="handleLogout()" class="bottom-nav-item bottom-nav-logout flex-1 py-1 px-1 flex flex-col items-center justify-center text-rose-500 hover:text-rose-700 transition-all cursor-pointer relative group" title="Keluar dari Akun (Logout)">
+                    <div class="bottom-nav-icon-box w-7 h-7 flex items-center justify-center rounded-xl transition-all mb-0.5 text-rose-500 group-hover:text-rose-700">
+                        <i class="fa-solid fa-right-from-bracket text-sm sm:text-base"></i>
+                    </div>
+                    <span class="text-[10px] font-bold leading-none tracking-tight bottom-nav-label text-rose-500 group-hover:text-rose-700">Keluar</span>
                 </button>
             `;
 
@@ -9967,6 +9999,11 @@ ON CONFLICT (id) DO NOTHING;`;
             const isSantri = currentUser && currentUser.role === 'santri';
 
             document.querySelectorAll('.bottom-nav-item').forEach(btn => {
+                if (btn.classList.contains('bottom-nav-logout')) {
+                    btn.classList.remove('text-emerald-700', 'font-bold');
+                    btn.classList.add('text-rose-500');
+                    return;
+                }
                 btn.classList.remove('text-emerald-700', 'text-blue-400', 'font-bold');
                 btn.classList.add('text-slate-500');
                 const iconBox = btn.querySelector('.bottom-nav-icon-box');
