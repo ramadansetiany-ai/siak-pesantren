@@ -1551,8 +1551,253 @@
                 <!-- SECTION 2: ABSENSI SANTRI (PER KELAS)          -->
                 <!-- ============================================== -->
                 <section id="tab-absensi" class="tab-content hidden space-y-6">
-                    <!-- Navigation Sub-views: Absensi Harian, Rekap Mingguan, Rekap Bulanan, Grafik Kehadiran -->
-                    <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm">
+                    <!-- ============================================================== -->
+                    <!-- TAMPILAN 1: KHUSUS AKUN SANTRI (RINGKAS, PERSONAL, PER MAPEL) -->
+                    <!-- ============================================================== -->
+                    <div id="santriPersonalAbsensiView" class="hidden space-y-5">
+                        <!-- 1. Header Card: Fokus Kelas & Identitas Santri -->
+                        <div class="bg-gradient-to-br from-emerald-800 via-emerald-700 to-teal-800 text-white rounded-3xl p-5 sm:p-7 shadow-lg relative overflow-hidden">
+                            <!-- Background Glow Elements -->
+                            <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-white/5 rounded-full blur-2xl pointer-events-none"></div>
+                            <div class="absolute -left-10 -top-10 w-48 h-48 bg-emerald-400/10 rounded-full blur-2xl pointer-events-none"></div>
+
+                            <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
+                                <div class="space-y-3">
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-white/20 backdrop-blur-md text-white border border-white/20 tracking-wider">
+                                            <i class="fa-solid fa-user-check text-emerald-300"></i> PRESENSI PRIBADI SANTRI
+                                        </span>
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-950/60 text-emerald-200 border border-emerald-500/30">
+                                            <i class="fa-regular fa-calendar-check text-emerald-300"></i> <span id="santriAbsenHariTgl">Sabtu, 31 Oktober 2026</span>
+                                        </span>
+                                    </div>
+                                    
+                                    <div>
+                                        <h2 class="text-2xl sm:text-3xl font-black tracking-tight" id="santriAbsenNamaSantri">Aji WS</h2>
+                                        <p class="text-xs sm:text-sm text-emerald-100/90 font-medium flex flex-wrap items-center gap-2 mt-1">
+                                            <span>NIS: <strong class="text-white font-mono" id="santriAbsenNisSantri">1aly.ajiws</strong></span>
+                                            <span class="text-emerald-400">•</span>
+                                            <span>Asrama: <strong class="text-white" id="santriAbsenAsramaSantri">Kobong 1 Banin</strong></span>
+                                        </p>
+                                    </div>
+
+                                    <!-- Informasi Khusus Kelas Santri Tersebut (Ketentuan 1) -->
+                                    <div class="flex flex-wrap items-center gap-2 pt-1 text-xs">
+                                        <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-3.5 py-1.5 rounded-xl border border-white/15">
+                                            <i class="fa-solid fa-school text-emerald-300"></i>
+                                            <span>Kelas: <strong class="text-white font-bold" id="santriAbsenKelasSantri">1 Aly Banin</strong></span>
+                                        </div>
+                                        <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-3.5 py-1.5 rounded-xl border border-white/15">
+                                            <i class="fa-solid fa-user-tie text-emerald-300"></i>
+                                            <span>Wali Kelas: <strong class="text-white font-bold" id="santriAbsenWaliSantri">Ust. M. Salman Abi Hasan M. S.H.</strong></span>
+                                        </div>
+                                        <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-3.5 py-1.5 rounded-xl border border-white/15">
+                                            <i class="fa-solid fa-bookmark text-emerald-300"></i>
+                                            <span>Periode: <strong class="text-white font-bold">Semester Ganjil 2026/2027</strong></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Tingkat Kehadiran Harian -->
+                                <div class="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center border-t sm:border-t-0 border-white/15 pt-3 sm:pt-0 shrink-0">
+                                    <span class="text-xs text-emerald-200 font-medium">Tingkat Kehadiran Harian</span>
+                                    <div class="flex items-baseline gap-1.5 mt-0.5">
+                                        <span class="text-3xl sm:text-4xl font-black text-white" id="santriAbsenRatePct">100%</span>
+                                    </div>
+                                    <span class="text-[11px] text-emerald-200/90 font-medium bg-emerald-950/60 px-3 py-0.5 rounded-full border border-emerald-400/20 mt-1" id="santriAbsenRateDesc">
+                                        Alhamdulillah 100% Hadir
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. Ringkasan 4 Stat Cards Personal (Bukan Total Kelas Global!) -->
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                            <!-- Hadir -->
+                            <div class="bg-white rounded-2xl p-4 sm:p-5 border border-emerald-200/80 shadow-sm hover:shadow-md transition">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-[11px] font-bold text-emerald-700 uppercase tracking-wider">Tercatat Hadir</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-emerald-800 mt-1" id="santriStatHadirCount">0</p>
+                                        <p class="text-[11px] text-emerald-600/90 font-medium mt-0.5">Mata Pelajaran</p>
+                                    </div>
+                                    <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xl shrink-0">
+                                        <i class="fa-solid fa-circle-check"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sakit -->
+                            <div class="bg-white rounded-2xl p-4 sm:p-5 border border-sky-200/80 shadow-sm hover:shadow-md transition">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-[11px] font-bold text-sky-700 uppercase tracking-wider">Tercatat Sakit</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-sky-800 mt-1" id="santriStatSakitCount">0</p>
+                                        <p class="text-[11px] text-sky-600/90 font-medium mt-0.5">Mata Pelajaran</p>
+                                    </div>
+                                    <div class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-700 flex items-center justify-center text-xl shrink-0">
+                                        <i class="fa-solid fa-notes-medical"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Izin -->
+                            <div class="bg-white rounded-2xl p-4 sm:p-5 border border-amber-200/80 shadow-sm hover:shadow-md transition">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-[11px] font-bold text-amber-700 uppercase tracking-wider">Tercatat Izin</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-amber-800 mt-1" id="santriStatIzinCount">0</p>
+                                        <p class="text-[11px] text-amber-600/90 font-medium mt-0.5">Mata Pelajaran</p>
+                                    </div>
+                                    <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center text-xl shrink-0">
+                                        <i class="fa-solid fa-envelope-open-text"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Alfa -->
+                            <div class="bg-white rounded-2xl p-4 sm:p-5 border border-rose-200/80 shadow-sm hover:shadow-md transition">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-[11px] font-bold text-rose-700 uppercase tracking-wider">Tercatat Alfa</p>
+                                        <p class="text-2xl sm:text-3xl font-black text-rose-800 mt-1" id="santriStatAlfaCount">0</p>
+                                        <p class="text-[11px] text-rose-600/90 font-medium mt-0.5">Tanpa Keterangan</p>
+                                    </div>
+                                    <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-700 flex items-center justify-center text-xl shrink-0">
+                                        <i class="fa-solid fa-circle-xmark"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. Rincian Presensi Pribadi Berdasarkan Mata Pelajaran (Ketentuan 4) -->
+                        <div class="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-sm space-y-5">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
+                                <div>
+                                    <h3 class="text-lg font-black text-slate-800 flex items-center gap-2">
+                                        <i class="fa-solid fa-list-check text-emerald-600"></i>
+                                        <span>Rincian Status Kehadiran Mata Pelajaran</span>
+                                    </h3>
+                                    <p class="text-xs text-slate-500 mt-0.5">Status kehadiran spesifik Anda di setiap mata pelajaran kelas hari ini.</p>
+                                </div>
+                                <div class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200/80 self-start sm:self-auto flex items-center gap-1.5">
+                                    <i class="fa-solid fa-circle-dot text-emerald-500 animate-pulse text-[8px]"></i>
+                                    <span>Presensi Personal</span>
+                                </div>
+                            </div>
+
+                            <!-- 4 Kotak Rincian Spesifik Sesuai Ketentuan 4: Hadir, Alfa, Izin, Sakit -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Box 1: Pelajaran Tercatat Hadir -->
+                                <div class="bg-emerald-50/50 rounded-2xl border border-emerald-200/80 p-4 space-y-3">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <span class="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-xs font-black">
+                                                <i class="fa-solid fa-check"></i>
+                                            </span>
+                                            <h4 class="text-xs font-black text-emerald-900 uppercase tracking-wide">Pelajaran Tercatat Hadir</h4>
+                                        </div>
+                                        <span id="badgeCountHadirBox" class="text-xs font-bold bg-emerald-200/70 text-emerald-900 px-2.5 py-0.5 rounded-full">0 Mapel</span>
+                                    </div>
+                                    <div id="santriListMapelHadir" class="space-y-2 text-xs">
+                                        <!-- Dynamic rendered by JS -->
+                                    </div>
+                                </div>
+
+                                <!-- Box 2: Pelajaran Tercatat Alfa -->
+                                <div class="bg-rose-50/50 rounded-2xl border border-rose-200/80 p-4 space-y-3">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <span class="w-7 h-7 rounded-lg bg-rose-600 text-white flex items-center justify-center text-xs font-black">
+                                                <i class="fa-solid fa-xmark"></i>
+                                            </span>
+                                            <h4 class="text-xs font-black text-rose-900 uppercase tracking-wide">Pelajaran Tercatat Alfa</h4>
+                                        </div>
+                                        <span id="badgeCountAlfaBox" class="text-xs font-bold bg-rose-200/70 text-rose-900 px-2.5 py-0.5 rounded-full">0 Mapel</span>
+                                    </div>
+                                    <div id="santriListMapelAlfa" class="space-y-2 text-xs">
+                                        <!-- Dynamic rendered by JS -->
+                                    </div>
+                                </div>
+
+                                <!-- Box 3: Pelajaran Tercatat Izin -->
+                                <div class="bg-amber-50/50 rounded-2xl border border-amber-200/80 p-4 space-y-3">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <span class="w-7 h-7 rounded-lg bg-amber-600 text-white flex items-center justify-center text-xs font-black">
+                                                <i class="fa-solid fa-envelope-open-text"></i>
+                                            </span>
+                                            <h4 class="text-xs font-black text-amber-900 uppercase tracking-wide">Pelajaran Tercatat Izin</h4>
+                                        </div>
+                                        <span id="badgeCountIzinBox" class="text-xs font-bold bg-amber-200/70 text-amber-900 px-2.5 py-0.5 rounded-full">0 Mapel</span>
+                                    </div>
+                                    <div id="santriListMapelIzin" class="space-y-2 text-xs">
+                                        <!-- Dynamic rendered by JS -->
+                                    </div>
+                                </div>
+
+                                <!-- Box 4: Pelajaran Tercatat Sakit -->
+                                <div class="bg-sky-50/50 rounded-2xl border border-sky-200/80 p-4 space-y-3">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <span class="w-7 h-7 rounded-lg bg-sky-600 text-white flex items-center justify-center text-xs font-black">
+                                                <i class="fa-solid fa-notes-medical"></i>
+                                            </span>
+                                            <h4 class="text-xs font-black text-sky-900 uppercase tracking-wide">Pelajaran Tercatat Sakit</h4>
+                                        </div>
+                                        <span id="badgeCountSakitBox" class="text-xs font-bold bg-sky-200/70 text-sky-900 px-2.5 py-0.5 rounded-full">0 Mapel</span>
+                                    </div>
+                                    <div id="santriListMapelSakit" class="space-y-2 text-xs">
+                                        <!-- Dynamic rendered by JS -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. Daftar Kartu Jadwal & Presensi Mapel Kelas Hari Ini -->
+                        <div class="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-sm space-y-4">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                                <div>
+                                    <h3 class="text-base font-black text-slate-800 flex items-center gap-2">
+                                        <i class="fa-solid fa-book-open-reader text-emerald-600"></i>
+                                        <span>Jadwal & Catatan Kehadiran KBM Hari Ini</span>
+                                    </h3>
+                                    <p class="text-xs text-slate-500 mt-0.5">Rincian jam pelajaran, kitab kajian, ustadz pengampu, dan status absensi Anda.</p>
+                                </div>
+
+                                <!-- Quick Filter Status Filter Pills -->
+                                <div class="flex flex-wrap items-center gap-1.5 text-xs">
+                                    <button type="button" onclick="filterSantriPersonalMapel('all')" id="btnFilterMapelAll" class="px-3 py-1.5 rounded-xl text-xs font-bold transition bg-emerald-700 text-white shadow-xs">
+                                        Semua (<span id="countPillAll">0</span>)
+                                    </button>
+                                    <button type="button" onclick="filterSantriPersonalMapel('hadir')" id="btnFilterMapelHadir" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-emerald-50 hover:text-emerald-800">
+                                        Hadir (<span id="countPillHadir">0</span>)
+                                    </button>
+                                    <button type="button" onclick="filterSantriPersonalMapel('sakit')" id="btnFilterMapelSakit" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-sky-50 hover:text-sky-800">
+                                        Sakit (<span id="countPillSakit">0</span>)
+                                    </button>
+                                    <button type="button" onclick="filterSantriPersonalMapel('izin')" id="btnFilterMapelIzin" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-amber-50 hover:text-amber-800">
+                                        Izin (<span id="countPillIzin">0</span>)
+                                    </button>
+                                    <button type="button" onclick="filterSantriPersonalMapel('alfa')" id="btnFilterMapelAlfa" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-rose-50 hover:text-rose-800">
+                                        Alfa (<span id="countPillAlfa">0</span>)
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Grid Kartu Mapel Personal -->
+                            <div id="santriPersonalMapelGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-1">
+                                <!-- Dynamic mapel cards -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ============================================================== -->
+                    <!-- TAMPILAN 2: KHUSUS STAF & USTADZ (ADMINISTRASI LENGKAP KELAS)   -->
+                    <!-- ============================================================== -->
+                    <div id="staffUstadzAbsensiView" class="space-y-6">
+                        <!-- Navigation Sub-views: Absensi Harian, Rekap Mingguan, Rekap Bulanan, Grafik Kehadiran -->
+                        <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm">
                         <div class="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-xl border border-slate-200 overflow-x-auto max-w-full custom-scrollbar">
                             <button type="button" onclick="switchAbsenSubView('harian')" id="btnSubAbsenHarian" class="shrink-0 whitespace-nowrap px-3.5 py-2 rounded-lg text-xs font-bold transition bg-emerald-600 text-white shadow-sm flex items-center">
                                 <i class="fa-solid fa-calendar-day mr-1.5"></i> Absensi Harian
@@ -2133,7 +2378,8 @@
                             </div>
                         </div>
                     </div>
-                </section>
+                </div> <!-- /#staffUstadzAbsensiView -->
+            </section>
 
                 <!-- ============================================== -->
                 <!-- SECTION 3: BATAS PELAJARAN & TUGAS (JURNAL)   -->
@@ -8239,6 +8485,12 @@ ON CONFLICT (id) DO NOTHING;`;
                 const descAbs = document.getElementById('descAbsensiSection');
                 if (descAbs) descAbs.textContent = "Pilih kelas madrasah untuk melihat atau menginput data kehadiran santri.";
 
+                // Tampilan Absensi: Staf melihat panel manajemen penuh
+                const staffAbs = document.getElementById('staffUstadzAbsensiView');
+                if (staffAbs) staffAbs.classList.remove('hidden');
+                const santriAbs = document.getElementById('santriPersonalAbsensiView');
+                if (santriAbs) santriAbs.classList.add('hidden');
+
                 // Tampilan Pertama Staff: Dashboard
                 switchTab('dashboard');
                 showToast(`Selamat datang, ${user.nama} (Akses Penuh Staff)`);
@@ -8283,6 +8535,12 @@ ON CONFLICT (id) DO NOTHING;`;
 
                 const descAbs = document.getElementById('descAbsensiSection');
                 if (descAbs) descAbs.textContent = "Kelola dan input kehadiran santri kelas yang Anda ajar.";
+
+                // Tampilan Absensi: Ustadz melihat panel manajemen penuh
+                const staffAbsU = document.getElementById('staffUstadzAbsensiView');
+                if (staffAbsU) staffAbsU.classList.remove('hidden');
+                const santriAbsU = document.getElementById('santriPersonalAbsensiView');
+                if (santriAbsU) santriAbsU.classList.add('hidden');
 
                 // Tampilan Pertama Ustadz: HALAMAN PROFIL BIODATA USTADZ
                 switchTab('profil-ustadz');
@@ -8344,6 +8602,15 @@ ON CONFLICT (id) DO NOTHING;`;
                 // Set active class to student's class
                 if (user.kelasId || user.kelas_id) {
                     switchClass(user.kelasId || user.kelas_id);
+                }
+
+                // Tampilan Absensi: Khusus Santri (Rincian Personal per Mapel)
+                const staffAbs = document.getElementById('staffUstadzAbsensiView');
+                if (staffAbs) staffAbs.classList.add('hidden');
+                const santriAbs = document.getElementById('santriPersonalAbsensiView');
+                if (santriAbs) {
+                    santriAbs.classList.remove('hidden');
+                    renderSantriPersonalAbsensiView(user);
                 }
 
                 // Perbarui komponen visual khusus dashboard santri
@@ -9793,6 +10060,7 @@ ON CONFLICT (id) DO NOTHING;`;
             renderDailyAttendanceSessionsList();
             if (currentUser && currentUser.role === 'santri') {
                 updateSantriDashboardUI(currentUser);
+                renderSantriPersonalAbsensiView(currentUser);
             }
 
             showToast(isRevisiSave 
@@ -12227,9 +12495,409 @@ ON CONFLICT (id) DO NOTHING;`;
 
                 // Render analitik diagram santri (akhir semester, harian, mingguan, bulanan)
                 renderSantriFullCharts();
+
+                // Render rincian presensi personal santri per mata pelajaran
+                renderSantriPersonalAbsensiView(user);
             } catch (err) {
                 console.warn("Gagal update rekap santri boxes:", err);
             }
+        }
+
+        // =========================================================================
+        // KHUSUS SANTRI: RINCIAN PRESENSI PRIBADI BERDASARKAN MATA PELAJARAN
+        // =========================================================================
+        function renderSantriPersonalAbsensiView(user) {
+            if (!user) user = currentUser;
+            if (!user || user.role !== 'santri') return;
+
+            const extra = (typeof getSantriExtraProfile === 'function') ? getSantriExtraProfile() : {};
+            const nama = user.nama || extra.nama || 'Santri';
+            const nis = user.nis || user.id || extra.nis || '-';
+            const classId = user.kelasId || user.kelas_id || '1-aly';
+            const asrama = user.asrama || user.alamat || extra.alamat || 'Kobong 1 Banin';
+
+            const allClasses = getAllClassesData();
+            const classData = allClasses[classId] || { name: user.kelas_nama || '1 Aly Banin', wali: user.waliKelas || 'Ust. Pembimbing', santri: [] };
+            const className = classData.name || user.kelas_nama || '1 Aly Banin';
+            const waliKelas = classData.wali || user.waliKelas || 'Ust. Pembimbing';
+
+            // 1. Update Header Card Data Santri & Kelas
+            const elNama = document.getElementById('santriAbsenNamaSantri');
+            if (elNama) elNama.textContent = nama;
+            const elNis = document.getElementById('santriAbsenNisSantri');
+            if (elNis) elNis.textContent = nis;
+            const elAsrama = document.getElementById('santriAbsenAsramaSantri');
+            if (elAsrama) elAsrama.textContent = asrama;
+            const elKelas = document.getElementById('santriAbsenKelasSantri');
+            if (elKelas) elKelas.textContent = className;
+            const elWali = document.getElementById('santriAbsenWaliSantri');
+            if (elWali) elWali.textContent = waliKelas;
+
+            // Format tanggal hari ini dalam Bahasa Indonesia
+            const today = new Date();
+            const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            const dayName = days[today.getDay()];
+            const dateFormatted = `${dayName}, ${today.getDate()} ${months[today.getMonth()]} ${today.getFullYear()}`;
+            const elTgl = document.getElementById('santriAbsenHariTgl');
+            if (elTgl) elTgl.textContent = dateFormatted;
+
+            // 2. Cari santri di data kelas
+            let studentRecord = (classData.santri || []).find(s => s && (
+                (s.nis && String(s.nis).trim().toLowerCase() === String(nis).trim().toLowerCase()) ||
+                (s.nama && String(s.nama).trim().toLowerCase() === String(nama).trim().toLowerCase())
+            ));
+            if (!studentRecord) {
+                for (const k in allClasses) {
+                    const found = (allClasses[k].santri || []).find(s => s && (
+                        (s.nis && String(s.nis).trim().toLowerCase() === String(nis).trim().toLowerCase()) ||
+                        (s.nama && String(s.nama).trim().toLowerCase() === String(nama).trim().toLowerCase())
+                    ));
+                    if (found) {
+                        studentRecord = found;
+                        break;
+                    }
+                }
+            }
+
+            // 3. Ambil daftar mata pelajaran & kitab
+            const mapelList = (typeof getMapelData === 'function') ? getMapelData() : [];
+            const defaultTimes = [
+                'Jam 1 (05.30 - 06.30 WIB)',
+                'Jam 2 (07.00 - 08.30 WIB)',
+                'Jam 3 (08.30 - 10.00 WIB)',
+                'Jam 4 (10.15 - 11.45 WIB)',
+                'Jam 5 (13.30 - 15.00 WIB)',
+                'Jam 6 (16.00 - 17.15 WIB)',
+                'Jam 7 (18.30 - 20.00 WIB)'
+            ];
+
+            // 4. Periksa log sesi absensi yang tersimpan di sistem
+            const logs = (typeof getAttendanceLogs === 'function') ? getAttendanceLogs() : [];
+            const todayISO = today.toISOString().split('T')[0];
+            const classLogs = logs.filter(l => l && (l.class_id === classId || (l.class_name && l.class_name.toLowerCase() === className.toLowerCase())));
+
+            // 5. Bangun status kehadiran spesifik untuk setiap mata pelajaran
+            const studentStatusPerMapel = mapelList.map((m, idx) => {
+                const timeSlot = defaultTimes[idx % defaultTimes.length];
+                
+                // Cari sesi tersimpan yang cocok
+                const session = classLogs.find(l => {
+                    const matchDate = l.tanggal === todayISO;
+                    const matchMapel = l.mapel && (
+                        l.mapel.toLowerCase().includes(m.nama.toLowerCase()) || 
+                        (m.kitab && l.mapel.toLowerCase().includes(m.kitab.toLowerCase()))
+                    );
+                    return matchDate && matchMapel;
+                }) || classLogs.find(l => {
+                    return l.mapel && (
+                        l.mapel.toLowerCase().includes(m.nama.toLowerCase()) || 
+                        (m.kitab && l.mapel.toLowerCase().includes(m.kitab.toLowerCase()))
+                    );
+                });
+
+                let status = 'Hadir';
+                let keterangan = 'Tercatat hadir dalam jam pelajaran';
+                let ustadz = m.pengampu || 'Ustadz Pengampu';
+                let sessionTime = timeSlot;
+
+                if (session) {
+                    if (session.jam) sessionTime = session.jam;
+                    if (session.ustadz) ustadz = session.ustadz;
+                    const rec = (session.records || []).find(r => r && (
+                        (r.nis && String(r.nis).trim().toLowerCase() === String(nis).trim().toLowerCase()) ||
+                        (r.nama && String(r.nama).trim().toLowerCase() === String(nama).trim().toLowerCase())
+                    ));
+                    if (rec) {
+                        status = rec.status || 'Hadir';
+                        keterangan = rec.keterangan || (status === 'Hadir' ? 'Hadir tepat waktu di kelas' : status);
+                    }
+                } else if (studentRecord) {
+                    // Jika status santri hari ini diatur di tabel kelas
+                    if (studentRecord.status && studentRecord.status !== 'Hadir') {
+                        status = studentRecord.status;
+                        keterangan = studentRecord.keterangan || `Tercatat ${status} hari ini`;
+                    } else if (studentRecord.rekap) {
+                        // Jika ada catatan ketidakhadiran spesifik di data santri
+                        const rk = studentRecord.rekap;
+                        if (rk.alpa > 0 && idx === 2) {
+                            status = 'Alfa';
+                            keterangan = 'Tanpa Keterangan';
+                        } else if (rk.sakit > 0 && idx === 1) {
+                            status = 'Sakit';
+                            keterangan = 'Sakit (Istirahat di Kamar Asrama)';
+                        } else if (rk.izin > 0 && idx === 4) {
+                            status = 'Izin';
+                            keterangan = 'Izin Dispensasi Keperluan Pesantren';
+                        }
+                    }
+                }
+
+                // Normalisasi status
+                const st = (status || '').toLowerCase().trim();
+                let finalStatus = 'Hadir';
+                if (st === 'alfa' || st === 'alpa') finalStatus = 'Alfa';
+                else if (st === 'sakit') finalStatus = 'Sakit';
+                else if (st === 'izin') finalStatus = 'Izin';
+                else finalStatus = 'Hadir';
+
+                return {
+                    id: m.id || `mapel-${idx}`,
+                    nama: m.nama,
+                    kitab: m.kitab || '-',
+                    kategori: m.kategori || 'Dirasah',
+                    pengampu: ustadz,
+                    jam: sessionTime,
+                    status: finalStatus,
+                    keterangan: keterangan
+                };
+            });
+
+            // Simpan cache untuk tombol filter
+            window._santriCurrentMapelAttendance = studentStatusPerMapel;
+
+            // 6. Hitung rekapitulasi ringkas personal
+            const countHadir = studentStatusPerMapel.filter(s => s.status === 'Hadir').length;
+            const countSakit = studentStatusPerMapel.filter(s => s.status === 'Sakit').length;
+            const countIzin = studentStatusPerMapel.filter(s => s.status === 'Izin').length;
+            const countAlfa = studentStatusPerMapel.filter(s => s.status === 'Alfa').length;
+            const totalMapel = studentStatusPerMapel.length;
+
+            // 7. Update 4 Stat Cards Personal Santri
+            const elStatHadir = document.getElementById('santriStatHadirCount');
+            if (elStatHadir) elStatHadir.textContent = countHadir;
+            const elStatSakit = document.getElementById('santriStatSakitCount');
+            if (elStatSakit) elStatSakit.textContent = countSakit;
+            const elStatIzin = document.getElementById('santriStatIzinCount');
+            if (elStatIzin) elStatIzin.textContent = countIzin;
+            const elStatAlfa = document.getElementById('santriStatAlfaCount');
+            if (elStatAlfa) elStatAlfa.textContent = countAlfa;
+
+            // Persentase kehadiran harian personal
+            const ratePct = totalMapel > 0 ? Math.round((countHadir / totalMapel) * 100) : 100;
+            const elRatePct = document.getElementById('santriAbsenRatePct');
+            if (elRatePct) elRatePct.textContent = `${ratePct}%`;
+            const elRateDesc = document.getElementById('santriAbsenRateDesc');
+            if (elRateDesc) {
+                if (ratePct === 100) elRateDesc.textContent = 'Alhamdulillah 100% Hadir';
+                else if (ratePct >= 75) elRateDesc.textContent = 'Kehadiran Sangat Baik';
+                else elRateDesc.textContent = 'Perlu Ditingkatkan';
+            }
+
+            // 8. Render 4 Kotak Rincian Sesuai Ketentuan 4 (Hadir, Alfa, Izin, Sakit)
+            renderSantriStatusBoxes(studentStatusPerMapel);
+
+            // 9. Update badge pada tombol filter
+            const elPillAll = document.getElementById('countPillAll');
+            if (elPillAll) elPillAll.textContent = totalMapel;
+            const elPillHadir = document.getElementById('countPillHadir');
+            if (elPillHadir) elPillHadir.textContent = countHadir;
+            const elPillSakit = document.getElementById('countPillSakit');
+            if (elPillSakit) elPillSakit.textContent = countSakit;
+            const elPillIzin = document.getElementById('countPillIzin');
+            if (elPillIzin) elPillIzin.textContent = countIzin;
+            const elPillAlfa = document.getElementById('countPillAlfa');
+            if (elPillAlfa) elPillAlfa.textContent = countAlfa;
+
+            // 10. Tampilkan kartu pelajaran
+            filterSantriPersonalMapel('all');
+        }
+
+        function renderSantriStatusBoxes(list) {
+            const listHadir = list.filter(m => m.status === 'Hadir');
+            const listAlfa = list.filter(m => m.status === 'Alfa');
+            const listIzin = list.filter(m => m.status === 'Izin');
+            const listSakit = list.filter(m => m.status === 'Sakit');
+
+            // Update badge counters
+            const bHadir = document.getElementById('badgeCountHadirBox');
+            if (bHadir) bHadir.textContent = `${listHadir.length} Mapel`;
+            const bAlfa = document.getElementById('badgeCountAlfaBox');
+            if (bAlfa) bAlfa.textContent = `${listAlfa.length} Mapel`;
+            const bIzin = document.getElementById('badgeCountIzinBox');
+            if (bIzin) bIzin.textContent = `${listIzin.length} Mapel`;
+            const bSakit = document.getElementById('badgeCountSakitBox');
+            if (bSakit) bSakit.textContent = `${listSakit.length} Mapel`;
+
+            // Box Hadir
+            const cHadir = document.getElementById('santriListMapelHadir');
+            if (cHadir) {
+                if (listHadir.length === 0) {
+                    cHadir.innerHTML = `<p class="text-xs text-slate-400 italic py-2">Belum ada catatan mata pelajaran hadir hari ini.</p>`;
+                } else {
+                    cHadir.innerHTML = listHadir.map(m => `
+                        <div class="flex items-center justify-between p-2.5 bg-white rounded-xl border border-emerald-100 shadow-xs">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+                                <div class="truncate">
+                                    <p class="font-bold text-slate-800 text-xs truncate">${m.nama} <span class="text-slate-400 font-normal">(${m.kitab})</span></p>
+                                    <p class="text-[10px] text-slate-500 truncate">${m.jam} • ${m.pengampu}</p>
+                                </div>
+                            </div>
+                            <span class="shrink-0 text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-200">
+                                Hadir
+                            </span>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // Box Alfa
+            const cAlfa = document.getElementById('santriListMapelAlfa');
+            if (cAlfa) {
+                if (listAlfa.length === 0) {
+                    cAlfa.innerHTML = `
+                        <div class="flex items-center gap-2 p-3 bg-white rounded-xl border border-emerald-100 text-emerald-700 shadow-xs">
+                            <i class="fa-solid fa-circle-check text-emerald-600 text-sm shrink-0"></i>
+                            <p class="text-xs font-semibold text-slate-700">Alhamdulillah, tidak ada catatan Alfa hari ini.</p>
+                        </div>
+                    `;
+                } else {
+                    cAlfa.innerHTML = listAlfa.map(m => `
+                        <div class="flex items-center justify-between p-2.5 bg-white rounded-xl border border-rose-200 shadow-xs">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span>
+                                <div class="truncate">
+                                    <p class="font-bold text-rose-900 text-xs truncate">${m.nama} <span class="text-rose-400 font-normal">(${m.kitab})</span></p>
+                                    <p class="text-[10px] text-rose-600 truncate">${m.jam} • ${m.pengampu}</p>
+                                </div>
+                            </div>
+                            <span class="shrink-0 text-[10px] font-bold text-rose-800 bg-rose-100 px-2 py-0.5 rounded-full border border-rose-300">
+                                Alfa
+                            </span>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // Box Izin
+            const cIzin = document.getElementById('santriListMapelIzin');
+            if (cIzin) {
+                if (listIzin.length === 0) {
+                    cIzin.innerHTML = `
+                        <div class="flex items-center gap-2 p-3 bg-white rounded-xl border border-amber-100 text-slate-600 shadow-xs">
+                            <i class="fa-solid fa-circle-info text-amber-500 text-sm shrink-0"></i>
+                            <p class="text-xs font-semibold text-slate-700">Tidak ada catatan Izin (Mengikuti KBM Normal).</p>
+                        </div>
+                    `;
+                } else {
+                    cIzin.innerHTML = listIzin.map(m => `
+                        <div class="flex items-center justify-between p-2.5 bg-white rounded-xl border border-amber-200 shadow-xs">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
+                                <div class="truncate">
+                                    <p class="font-bold text-amber-900 text-xs truncate">${m.nama} <span class="text-amber-500 font-normal">(${m.kitab})</span></p>
+                                    <p class="text-[10px] text-amber-700 truncate">${m.jam} • ${m.keterangan || 'Izin'}</p>
+                                </div>
+                            </div>
+                            <span class="shrink-0 text-[10px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full border border-amber-300">
+                                Izin
+                            </span>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // Box Sakit
+            const cSakit = document.getElementById('santriListMapelSakit');
+            if (cSakit) {
+                if (listSakit.length === 0) {
+                    cSakit.innerHTML = `
+                        <div class="flex items-center gap-2 p-3 bg-white rounded-xl border border-sky-100 text-slate-600 shadow-xs">
+                            <i class="fa-solid fa-heart-pulse text-sky-500 text-sm shrink-0"></i>
+                            <p class="text-xs font-semibold text-slate-700">Tidak ada catatan Sakit (Kondisi Sehat Wal'afiat).</p>
+                        </div>
+                    `;
+                } else {
+                    cSakit.innerHTML = listSakit.map(m => `
+                        <div class="flex items-center justify-between p-2.5 bg-white rounded-xl border border-sky-200 shadow-xs">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <span class="w-2 h-2 rounded-full bg-sky-500 shrink-0"></span>
+                                <div class="truncate">
+                                    <p class="font-bold text-sky-900 text-xs truncate">${m.nama} <span class="text-sky-500 font-normal">(${m.kitab})</span></p>
+                                    <p class="text-[10px] text-sky-700 truncate">${m.jam} • ${m.keterangan || 'Sakit'}</p>
+                                </div>
+                            </div>
+                            <span class="shrink-0 text-[10px] font-bold text-sky-800 bg-sky-100 px-2 py-0.5 rounded-full border border-sky-300">
+                                Sakit
+                            </span>
+                        </div>
+                    `).join('');
+                }
+            }
+        }
+
+        function filterSantriPersonalMapel(status) {
+            const list = window._santriCurrentMapelAttendance || [];
+            const container = document.getElementById('santriPersonalMapelGrid');
+            if (!container) return;
+
+            // Atur gaya aktif tombol filter
+            ['all', 'hadir', 'sakit', 'izin', 'alfa'].forEach(key => {
+                const btn = document.getElementById(`btnFilterMapel${key.charAt(0).toUpperCase() + key.slice(1)}`);
+                if (!btn) return;
+                if (key === status) {
+                    btn.className = "px-3 py-1.5 rounded-xl text-xs font-bold transition bg-emerald-700 text-white shadow-xs";
+                } else {
+                    btn.className = "px-3 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200";
+                }
+            });
+
+            const filtered = status === 'all' ? list : list.filter(m => m.status.toLowerCase() === status.toLowerCase());
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full py-8 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-200 text-slate-500">
+                        <i class="fa-solid fa-folder-open text-2xl text-slate-400 mb-1"></i>
+                        <p class="text-xs font-medium">Tidak ada mata pelajaran dengan status "${status}".</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtered.map(m => {
+                let badgeClass = 'bg-emerald-100 text-emerald-800 border-emerald-300';
+                let iconClass = 'fa-solid fa-circle-check text-emerald-600';
+                if (m.status === 'Alfa') {
+                    badgeClass = 'bg-rose-100 text-rose-800 border-rose-300';
+                    iconClass = 'fa-solid fa-circle-xmark text-rose-600';
+                } else if (m.status === 'Izin') {
+                    badgeClass = 'bg-amber-100 text-amber-800 border-amber-300';
+                    iconClass = 'fa-solid fa-envelope-open-text text-amber-600';
+                } else if (m.status === 'Sakit') {
+                    badgeClass = 'bg-sky-100 text-sky-800 border-sky-300';
+                    iconClass = 'fa-solid fa-notes-medical text-sky-600';
+                }
+
+                return `
+                    <div class="bg-white rounded-2xl border border-slate-200/90 p-4 hover:border-emerald-300 hover:shadow-sm transition space-y-3">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="min-w-0">
+                                <span class="inline-block text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md mb-1 uppercase tracking-wide">
+                                    ${m.kategori}
+                                </span>
+                                <h4 class="font-extrabold text-slate-900 text-sm truncate">${m.nama}</h4>
+                                <p class="text-xs text-emerald-700 font-semibold truncate">Kitab: ${m.kitab}</p>
+                            </div>
+                            <span class="shrink-0 text-xs font-bold px-2.5 py-1 rounded-xl border flex items-center gap-1.5 ${badgeClass}">
+                                <i class="${iconClass}"></i>
+                                <span>${m.status}</span>
+                            </span>
+                        </div>
+
+                        <div class="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-600">
+                            <div class="flex items-center gap-1.5">
+                                <i class="fa-regular fa-clock text-slate-400"></i>
+                                <span>${m.jam}</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 font-medium text-slate-700 truncate">
+                                <i class="fa-solid fa-user-tie text-emerald-600"></i>
+                                <span class="truncate">${m.pengampu}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         // Modals controllers
@@ -12384,6 +13052,17 @@ ON CONFLICT (id) DO NOTHING;`;
                 if (isStaff) el.classList.remove('hidden');
                 else el.classList.add('hidden');
             });
+
+            // Sinkronisasi Tampilan Absensi Santri vs Staf/Ustadz
+            const staffAbsView = document.getElementById('staffUstadzAbsensiView');
+            const santriAbsView = document.getElementById('santriPersonalAbsensiView');
+            if (isSantri) {
+                if (staffAbsView) staffAbsView.classList.add('hidden');
+                if (santriAbsView) santriAbsView.classList.remove('hidden');
+            } else {
+                if (staffAbsView) staffAbsView.classList.remove('hidden');
+                if (santriAbsView) santriAbsView.classList.add('hidden');
+            }
         }
 
         function switchTab(tabId) {
@@ -12437,6 +13116,23 @@ ON CONFLICT (id) DO NOTHING;`;
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             const target = document.getElementById(`tab-${tabId}`);
             if (target) target.classList.remove('hidden');
+
+            // Tangani tampilan Absensi: Santri vs Staf/Ustadz
+            if (tabId === 'absensi') {
+                const isSantri = currentUser && currentUser.role === 'santri';
+                const staffAbs = document.getElementById('staffUstadzAbsensiView');
+                const santriAbs = document.getElementById('santriPersonalAbsensiView');
+                if (isSantri) {
+                    if (staffAbs) staffAbs.classList.add('hidden');
+                    if (santriAbs) {
+                        santriAbs.classList.remove('hidden');
+                        renderSantriPersonalAbsensiView(currentUser);
+                    }
+                } else {
+                    if (staffAbs) staffAbs.classList.remove('hidden');
+                    if (santriAbs) santriAbs.classList.add('hidden');
+                }
+            }
 
             // Perbarui gaya aktif tombol navigasi tanpa merusak status hidden
             document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -12557,6 +13253,7 @@ ON CONFLICT (id) DO NOTHING;`;
 
             if (currentUser && currentUser.role === 'santri') {
                 updateSantriDashboardUI(currentUser);
+                renderSantriPersonalAbsensiView(currentUser);
             }
 
             setTimeout(() => {
