@@ -716,6 +716,31 @@
                                 </button>
                             </div>
                         </div>
+
+                        <!-- Akses Cepat Langsung di Bawah Sambutan (Modern, Rapi & Elegan) -->
+                        <div class="relative z-10 mt-3.5 pt-3 border-t border-white/15 flex flex-wrap items-center gap-2">
+                            <span class="text-[11px] font-bold text-emerald-200 flex items-center gap-1 mr-0.5">
+                                <i class="fa-solid fa-bolt text-amber-300 text-xs"></i>
+                                <span>Akses Cepat:</span>
+                            </span>
+                            <button type="button" onclick="switchTab('absensi')" class="px-3 py-1.5 bg-white text-emerald-900 hover:bg-emerald-50 font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer active:scale-95">
+                                <i class="fa-solid fa-user-check text-emerald-700"></i>
+                                <span>Buka Absensi Santri</span>
+                            </button>
+                            <button type="button" onclick="switchTab('jurnal')" class="px-3 py-1.5 bg-white/15 hover:bg-white/25 text-white border border-white/25 font-semibold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5 backdrop-blur-xs cursor-pointer active:scale-95">
+                                <i class="fa-solid fa-book-open text-emerald-200"></i>
+                                <span>Batas Pelajaran & Tugas</span>
+                            </button>
+                            <button type="button" onclick="switchTab('laporan')" class="px-3 py-1.5 bg-white/15 hover:bg-white/25 text-white border border-white/25 font-semibold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5 backdrop-blur-xs cursor-pointer active:scale-95">
+                                <i class="fa-solid fa-print text-emerald-200"></i>
+                                <span>Cetak Laporan</span>
+                            </button>
+                            <button type="button" onclick="openShareAbsenHarianWA('all')" class="px-3 py-1.5 bg-emerald-600/80 hover:bg-emerald-600 text-white border border-emerald-400/40 font-semibold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer active:scale-95" title="Bagikan Rekap Presensi Seluruh Kelas ke WhatsApp">
+                                <i class="fa-brands fa-whatsapp text-sm text-emerald-200"></i>
+                                <span>Share WA</span>
+                            </button>
+                        </div>
+
                         <i class="fa-solid fa-mosque absolute -right-3 -bottom-5 text-7xl sm:text-8xl text-white/10 pointer-events-none"></i>
                     </div>
 
