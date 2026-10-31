@@ -5653,22 +5653,42 @@
         ];
 
 
+        function deduplicateClassSantri(santriList) {
+            if (!Array.isArray(santriList)) return [];
+            const seenNis = new Set();
+            const seenNama = new Set();
+            return santriList.filter(s => {
+                if (!s) return false;
+                const nisKey = String(s.nis || '').trim().toLowerCase();
+                const namaKey = String(s.nama || '').trim().toLowerCase();
+                // Saring dan bersihkan format dummy lama (AMH-)
+                if (nisKey.startsWith('amh-')) return false;
+                if (nisKey && seenNis.has(nisKey)) return false;
+                if (namaKey && seenNama.has(namaKey)) return false;
+                if (nisKey) seenNis.add(nisKey);
+                if (namaKey) seenNama.add(namaKey);
+                return true;
+            });
+        }
+
         function seedSantriDatabase(force = false) {
             let accounts = getAccounts();
             let classes = getAllClassesData();
 
-            // 1. Pastikan struktur 6 kelas utama tersedia
+            // 1. Pastikan struktur kelas utama tersedia dan bersih dari data dummy/duplikat
             const classMeta = {
                 '1-aly': { name: '1 Aly Banin', wali: 'Ust. M. Salman Abi Hasan M. S.H.', kategori: 'banin' },
                 '2-aly': { name: '2 Aly Banin', wali: 'Ust. M. Salman Abi Hasan M. S.H.', kategori: 'banin' },
                 '3-aly': { name: '3 Aly Banin', wali: 'Ust. M. Salman Abi Hasan M. S.H.', kategori: 'banin' },
+                '1-tsanawi': { name: '1 Tsanawi Banin', wali: 'Ust. Salman Abi Hasan M. S.H', kategori: 'banin' },
                 '1-aly-banat': { name: '1 Aly Banat', wali: 'Ustadzah Siti Maryam, M.Pd', kategori: 'banat' },
                 '2-aly-banat': { name: '2 Aly Banat', wali: 'Ustadzah Siti Maryam, M.Pd', kategori: 'banat' },
-                '3-aly-banat': { name: '3 Aly Banat', wali: 'Ustadzah Siti Maryam, M.Pd', kategori: 'banat' }
+                '3-aly-banat': { name: '3 Aly Banat', wali: 'Ustadzah Siti Maryam, M.Pd', kategori: 'banat' },
+                '1-tsanawi-banat': { name: '1 Tsanawi Banat', wali: 'Ustadzah Siti Maryam, M.Pd', kategori: 'banat' }
             };
 
             for (const [k, meta] of Object.entries(classMeta)) {
-                if (!classes[k]) {
+                if (!classes[k] || force) {
                     classes[k] = {
                         name: meta.name,
                         wali: meta.wali,
@@ -5679,9 +5699,19 @@
                     classes[k].name = meta.name;
                     classes[k].wali = meta.wali;
                     classes[k].kategori = meta.kategori;
-                    if (!classes[k].santri) classes[k].santri = [];
+                    classes[k].santri = deduplicateClassSantri(classes[k].santri || []);
                 }
             }
+
+            // Bersihkan akun santri lama di luar 76 santri resmi
+            const validSeedIds = new Set(SEED_SANTRI_LIST.map(s => s.id.toLowerCase()));
+            accounts = accounts.filter(a => {
+                if (!a) return false;
+                if (a.role === 'santri') {
+                    return validSeedIds.has((a.id || '').toLowerCase());
+                }
+                return true;
+            });
 
             let seededAccCount = 0;
             let seededSantriCount = 0;
@@ -5708,7 +5738,7 @@
                 if (existingAccIdx === -1) {
                     accounts.push(accObj);
                     seededAccCount++;
-                } else if (force) {
+                } else {
                     accounts[existingAccIdx] = { ...accounts[existingAccIdx], ...accObj };
                     seededAccCount++;
                 }
@@ -5741,7 +5771,7 @@
                     if (existingSantriIdx === -1) {
                         targetClass.santri.push(santriData);
                         seededSantriCount++;
-                    } else if (force) {
+                    } else {
                         targetClass.santri[existingSantriIdx] = {
                             ...targetClass.santri[existingSantriIdx],
                             ...santriData
@@ -5751,10 +5781,17 @@
                 }
             });
 
-            // 3. Simpan pembaruan ke storage
+            // 3. Pastikan tidak ada data ganda di setiap kelas
+            for (const k in classes) {
+                if (classes[k] && Array.isArray(classes[k].santri)) {
+                    classes[k].santri = deduplicateClassSantri(classes[k].santri);
+                }
+            }
+
+            // 4. Simpan pembaruan ke storage
             saveAccounts(accounts);
             localStorage.setItem('siak_multi_classes', JSON.stringify(classes));
-            localStorage.setItem('siak_santri_seeder_version', 'v1_76_santri');
+            localStorage.setItem('siak_santri_seeder_version', 'v2_clean_76');
 
             try {
                 renderAkunTable();
@@ -5864,10 +5901,12 @@
 
         function initStorage() {
             // Check version to ensure old mock demo data is purged completely
-            if (localStorage.getItem('siak_db_clean_version') !== 'v5_adminn') {
+            if (localStorage.getItem('siak_db_clean_version') !== 'v7_clean_76_dedup') {
                 localStorage.removeItem('siak_user_accounts');
+                localStorage.removeItem('siak_multi_classes');
                 sessionStorage.removeItem('siak_active_user');
-                localStorage.setItem('siak_db_clean_version', 'v5_adminn');
+                localStorage.setItem('siak_db_clean_version', 'v7_clean_76_dedup');
+                localStorage.setItem('siak_santri_seeder_version', 'v2_clean_76');
             }
 
             if (!localStorage.getItem('siak_user_accounts')) {
@@ -5913,7 +5952,7 @@
 
             // Seeder otomatis 76 akun santri lengkap dengan biodata, absensi, & nilai
             try {
-                if (localStorage.getItem('siak_santri_seeder_version') !== 'v1_76_santri') {
+                if (localStorage.getItem('siak_santri_seeder_version') !== 'v2_clean_76') {
                     seedSantriDatabase(true);
                 } else {
                     seedSantriDatabase(false);
@@ -5989,20 +6028,17 @@
                                 name: item.name,
                                 wali: item.wali || 'Belum Ditentukan',
                                 kategori: (item.name || '').toLowerCase().includes('banat') ? 'banat' : 'banin',
-                                santri: item.santri || []
+                                santri: deduplicateClassSantri(item.santri || [])
                             };
                         } else {
-                            // Kelas ada di kedua sisi -> gunakan data remote jika santrinya ada/lebih baru
-                            const remoteSantri = item.santri || [];
-                            const localSantri = localItem.santri || [];
-                            if (remoteSantri.length >= localSantri.length) {
-                                mergedClasses[item.id] = {
-                                    name: item.name || localItem.name,
-                                    wali: item.wali || localItem.wali,
-                                    kategori: (item.name || localItem.name).toLowerCase().includes('banat') ? 'banat' : 'banin',
-                                    santri: remoteSantri
-                                };
-                            }
+                            // Gunakan data santri dari remote yang telah dibersihkan secara kanonikal di cloud
+                            const remoteSantri = deduplicateClassSantri(item.santri || []);
+                            mergedClasses[item.id] = {
+                                name: item.name || localItem.name,
+                                wali: item.wali || localItem.wali,
+                                kategori: (item.name || localItem.name).toLowerCase().includes('banat') ? 'banat' : 'banin',
+                                santri: remoteSantri
+                            };
                         }
                     });
                 }
@@ -6012,8 +6048,13 @@
                     delete mergedClasses[delKey];
                 });
 
-                // Rapikan kelas dan santri ke struktur Banin & Banat
+                // Rapikan kelas dan santri ke struktur Banin & Banat serta pastikan tanpa duplikasi
                 ensureBaninBanatClasses(mergedClasses);
+                for (const k in mergedClasses) {
+                    if (mergedClasses[k] && Array.isArray(mergedClasses[k].santri)) {
+                        mergedClasses[k].santri = deduplicateClassSantri(mergedClasses[k].santri);
+                    }
+                }
 
                 localStorage.setItem('siak_multi_classes', JSON.stringify(mergedClasses));
                 renderAllClassSelectors();
@@ -6518,7 +6559,8 @@ ON CONFLICT (id) DO NOTHING;`;
                                 remoteClasses[item.id] = {
                                     name: item.name,
                                     wali: item.wali,
-                                    santri: item.santri || []
+                                    kategori: (item.name || '').toLowerCase().includes('banat') ? 'banat' : 'banin',
+                                    santri: deduplicateClassSantri(item.santri || [])
                                 };
                             });
                             localStorage.setItem('siak_multi_classes', JSON.stringify(remoteClasses));
@@ -6606,7 +6648,21 @@ ON CONFLICT (id) DO NOTHING;`;
         }
 
         function getAllClassesData() {
-            return JSON.parse(localStorage.getItem('siak_multi_classes') || '{}');
+            const raw = JSON.parse(localStorage.getItem('siak_multi_classes') || '{}');
+            let needsClean = false;
+            for (const k in raw) {
+                if (raw[k] && Array.isArray(raw[k].santri)) {
+                    const cleaned = deduplicateClassSantri(raw[k].santri);
+                    if (cleaned.length !== raw[k].santri.length) {
+                        raw[k].santri = cleaned;
+                        needsClean = true;
+                    }
+                }
+            }
+            if (needsClean) {
+                try { localStorage.setItem('siak_multi_classes', JSON.stringify(raw)); } catch(e){}
+            }
+            return raw;
         }
 
         function getCurrentClassData() {
