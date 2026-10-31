@@ -6525,6 +6525,9 @@ ON CONFLICT (id) DO NOTHING;`;
                             renderAllClassSelectors();
                             if (typeof switchClass === 'function') switchClass(selectedClassId);
                             if (typeof updateAllComponents === 'function') updateAllComponents();
+                            if (currentUser && currentUser.role === 'santri') {
+                                updateSantriDashboardUI(currentUser);
+                            }
                         }
                     })
                     .subscribe();
@@ -6562,6 +6565,22 @@ ON CONFLICT (id) DO NOTHING;`;
                             updateAllMapelSelectors();
                             renderMapelManager();
                             populateUstadzMapelDropdowns();
+                        }
+                    })
+                    .subscribe();
+
+                // Realtime siak_attendance (Sinkronisasi Otomatis Antar Perangkat untuk Santri & Ustadz)
+                supabaseClient.channel('realtime_siak_attendance')
+                    .on('postgres_changes', { event: '*', schema: 'public', table: 'siak_attendance' }, async (payload) => {
+                        console.log("Realtime event siak_attendance:", payload);
+                        const { data } = await supabaseClient.from('siak_attendance').select('*').limit(300);
+                        if (data) {
+                            localStorage.setItem('siak_attendance_logs', JSON.stringify(data));
+                            renderDailyAttendanceStatusPanel();
+                            renderDailyAttendanceSessionsList();
+                            if (currentUser && currentUser.role === 'santri') {
+                                updateSantriDashboardUI(currentUser);
+                            }
                         }
                     })
                     .subscribe();
@@ -9716,6 +9735,9 @@ ON CONFLICT (id) DO NOTHING;`;
             // 4. Render ulang status panel dan sesi harian secara langsung
             renderDailyAttendanceStatusPanel();
             renderDailyAttendanceSessionsList();
+            if (currentUser && currentUser.role === 'santri') {
+                updateSantriDashboardUI(currentUser);
+            }
 
             showToast(isRevisiSave 
                 ? `Alhamdulillah, revisi absensi kelas ${classData.name} sesi ${jam} berhasil diperbarui!`
@@ -11393,13 +11415,54 @@ ON CONFLICT (id) DO NOTHING;`;
             });
 
             // 2. Chart Harian (7 Hari Terakhir: Senin - Ahad)
+            const hariLabels = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Ahad'];
+            let dailyCounts = [4, 4, 3, 4, 4, 3, 4];
+            try {
+                const logs = getAttendanceLogs();
+                const studentNis = document.getElementById('santriProfilNisDisplay')?.textContent?.trim() || '';
+                const studentNama = document.getElementById('santriProfilNama')?.textContent?.trim() || '';
+                if (logs && logs.length > 0 && (studentNis || studentNama)) {
+                    const daySessions = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 0: 0 };
+                    let hasLogHadir = false;
+                    logs.forEach(l => {
+                        if (l && l.tanggal && Array.isArray(l.records)) {
+                            const rec = l.records.find(r => r && (
+                                (studentNis && r.nis && String(r.nis).trim().toLowerCase() === studentNis.toLowerCase()) ||
+                                (studentNama && r.nama && String(r.nama).trim().toLowerCase() === studentNama.toLowerCase())
+                            ));
+                            if (rec && (rec.status || '').toLowerCase() === 'hadir') {
+                                const d = new Date(l.tanggal);
+                                if (!isNaN(d.getTime())) {
+                                    const dayIdx = d.getDay();
+                                    daySessions[dayIdx] = (daySessions[dayIdx] || 0) + 1;
+                                    hasLogHadir = true;
+                                }
+                            }
+                        }
+                    });
+                    if (hasLogHadir) {
+                        dailyCounts = [
+                            Math.min(daySessions[1] || 4, 4),
+                            Math.min(daySessions[2] || 4, 4),
+                            Math.min(daySessions[3] || 3, 4),
+                            Math.min(daySessions[4] || 4, 4),
+                            Math.min(daySessions[5] || 4, 4),
+                            Math.min(daySessions[6] || 3, 4),
+                            Math.min(daySessions[0] || 4, 4)
+                        ];
+                    }
+                }
+            } catch (e) {
+                console.warn("Gagal hitung log harian santri:", e);
+            }
+
             safeChartCreate('canvasSantriChartHarian', {
                 type: 'bar',
                 data: {
-                    labels: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Ahad'],
+                    labels: hariLabels,
                     datasets: [{
                         label: 'Sesi Hadir (Maks 4 Sesi)',
-                        data: [4, 4, 3, 4, 4, 3, 4],
+                        data: dailyCounts,
                         backgroundColor: ctx => {
                             const val = ctx.raw;
                             return val === 4 ? '#059669' : val === 3 ? '#0d9488' : '#e11d48';
@@ -12042,14 +12105,29 @@ ON CONFLICT (id) DO NOTHING;`;
 
             // Hitung statistik presensi mahasiswa
             try {
-                const classData = getCurrentClassData();
-                const santriList = (classData && classData.santri) ? classData.santri : [];
-                const sData = santriList.find(s => s && (
-                    (s.nis && String(s.nis).toLowerCase() === String(nis).toLowerCase()) || 
-                    (s.nama && s.nama.toLowerCase() === String(nama).toLowerCase())
-                ));
+                let sData = null;
+                const allClasses = getAllClassesData();
+                const targetClassKey = (user && (user.kelasId || user.kelas_id)) || selectedClassId;
+                if (targetClassKey && allClasses[targetClassKey]) {
+                    sData = (allClasses[targetClassKey].santri || []).find(s => s && (
+                        (s.nis && String(s.nis).trim().toLowerCase() === String(nis).trim().toLowerCase()) || 
+                        (s.nama && String(s.nama).trim().toLowerCase() === String(nama).trim().toLowerCase())
+                    ));
+                }
+                if (!sData) {
+                    for (const cKey in allClasses) {
+                        const found = (allClasses[cKey].santri || []).find(s => s && (
+                            (s.nis && String(s.nis).trim().toLowerCase() === String(nis).trim().toLowerCase()) || 
+                            (s.nama && String(s.nama).trim().toLowerCase() === String(nama).trim().toLowerCase())
+                        ));
+                        if (found) {
+                            sData = found;
+                            break;
+                        }
+                    }
+                }
                 
-                // Nilai presensi mahasiswa
+                // 1. Nilai dasar presensi santri (baseline seeder/semester)
                 let hadir = 24, alpa = 0, izin = 1, sakit = 0;
                 if (sData && sData.rekap) {
                     hadir = sData.rekap.hadir !== undefined ? sData.rekap.hadir : hadir;
@@ -12057,6 +12135,31 @@ ON CONFLICT (id) DO NOTHING;`;
                     izin = sData.rekap.izin !== undefined ? sData.rekap.izin : izin;
                     sakit = sData.rekap.sakit !== undefined ? sData.rekap.sakit : sakit;
                 }
+
+                // 2. Akumulasi dinamis log sesi absensi yang diinput Ustadz dari waktu ke waktu (siak_attendance_logs)
+                const logs = getAttendanceLogs();
+                let sessionHadir = 0, sessionAlpa = 0, sessionIzin = 0, sessionSakit = 0;
+                logs.forEach(l => {
+                    if (l && Array.isArray(l.records)) {
+                        const studentRec = l.records.find(r => r && (
+                            (r.nis && String(r.nis).trim().toLowerCase() === String(nis).trim().toLowerCase()) ||
+                            (r.nama && String(r.nama).trim().toLowerCase() === String(nama).trim().toLowerCase())
+                        ));
+                        if (studentRec) {
+                            const st = (studentRec.status || '').toLowerCase().trim();
+                            if (st === 'hadir') sessionHadir++;
+                            else if (st === 'alpa' || st === 'alfa') sessionAlpa++;
+                            else if (st === 'izin') sessionIzin++;
+                            else if (st === 'sakit') sessionSakit++;
+                        }
+                    }
+                });
+
+                hadir += sessionHadir;
+                alpa += sessionAlpa;
+                izin += sessionIzin;
+                sakit += sessionSakit;
+
                 const bHadir = document.getElementById('santriBoxHadir');
                 const bAlpa = document.getElementById('santriBoxAlpa');
                 const bIzin = document.getElementById('santriBoxIzin');
@@ -12395,6 +12498,10 @@ ON CONFLICT (id) DO NOTHING;`;
             renderUjianTable();
             renderLaporanTable();
             renderAkunTable();
+
+            if (currentUser && currentUser.role === 'santri') {
+                updateSantriDashboardUI(currentUser);
+            }
 
             setTimeout(() => {
                 renderAllActiveCharts();
