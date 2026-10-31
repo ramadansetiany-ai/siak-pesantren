@@ -3673,9 +3673,23 @@ ON CONFLICT (id) DO NOTHING;`;
         }
 
         async function syncAttendanceToCloud(recordObj) {
-            if (!supabaseClient) return;
+            if (!supabaseClient || !recordObj) return;
             try {
-                await supabaseClient.from('siak_attendance').upsert(recordObj);
+                const payload = {
+                    id: recordObj.id,
+                    class_id: recordObj.class_id,
+                    tanggal: recordObj.tanggal,
+                    jam: recordObj.jam || '-',
+                    mapel: recordObj.mapel || '-',
+                    ustadz: recordObj.ustadz || '-',
+                    records: recordObj.records || [],
+                    summary: recordObj.summary || {},
+                    updated_at: recordObj.updated_at || new Date().toISOString()
+                };
+                const { error } = await supabaseClient.from('siak_attendance').upsert(payload);
+                if (error) {
+                    console.warn("Gagal sync absensi ke cloud:", error);
+                }
             } catch (e) {
                 console.warn("Gagal sync absensi ke cloud:", e);
             }
@@ -3783,6 +3797,11 @@ ON CONFLICT (id) DO NOTHING;`;
                 const jurnal = getJurnalData();
                 for (const j of jurnal) {
                     await syncJurnalToCloud(j);
+                }
+                
+                const logs = getAttendanceLogs();
+                for (const l of logs) {
+                    await syncAttendanceToCloud(l);
                 }
                 
                 showToast('Alhamdulillah, semua data lokal berhasil diunggah ke Supabase Cloud!');
@@ -3922,6 +3941,27 @@ ON CONFLICT (id) DO NOTHING;`;
         function saveKitabData(data) {
             localStorage.setItem('siak_kitab_list', JSON.stringify(data));
             renderKitabList();
+        }
+
+        function renderKitabList() {
+            if (typeof renderMapelManager === 'function') renderMapelManager();
+        }
+
+        function getAttendanceLogs() {
+            try {
+                return JSON.parse(localStorage.getItem('siak_attendance_logs') || '[]');
+            } catch (e) {
+                console.warn("Gagal parse siak_attendance_logs:", e);
+                return [];
+            }
+        }
+
+        function saveAttendanceLogs(logs) {
+            try {
+                localStorage.setItem('siak_attendance_logs', JSON.stringify(logs || []));
+            } catch (e) {
+                console.warn("Gagal simpan siak_attendance_logs:", e);
+            }
         }
 
         // =========================================================================
@@ -5851,34 +5891,35 @@ ON CONFLICT (id) DO NOTHING;`;
             const container = document.getElementById('rekapStatusKelasContainer');
             if (!container) return;
 
-            const allClasses = getAllClassesData();
-            const deletedClasses = JSON.parse(localStorage.getItem('siak_deleted_classes') || '[]');
-            const activeClassKeys = Object.keys(allClasses).filter(k => !deletedClasses.includes(k));
+            try {
+                const allClasses = getAllClassesData() || {};
+                const deletedClasses = JSON.parse(localStorage.getItem('siak_deleted_classes') || '[]');
+                const activeClassKeys = Object.keys(allClasses).filter(k => !deletedClasses.includes(k));
 
-            const tgl = document.getElementById('absenTanggal')?.value || new Date().toISOString().split('T')[0];
-            const lblTgl = document.getElementById('labelTglStatusRekap');
-            if (lblTgl) lblTgl.textContent = formatIndoDate(tgl);
+                const tgl = document.getElementById('absenTanggal')?.value || new Date().toISOString().split('T')[0];
+                const lblTgl = document.getElementById('labelTglStatusRekap');
+                if (lblTgl) lblTgl.textContent = formatIndoDate(tgl);
 
-            const panelDateInput = document.getElementById('panelRekapTanggalInput');
-            if (panelDateInput && panelDateInput.value !== tgl) {
-                panelDateInput.value = tgl;
-            }
+                const panelDateInput = document.getElementById('panelRekapTanggalInput');
+                if (panelDateInput && panelDateInput.value !== tgl) {
+                    panelDateInput.value = tgl;
+                }
 
-            const logs = getAttendanceLogs();
-            const tglLogs = logs.filter(l => l.tanggal === tgl);
+                const logs = getAttendanceLogs();
+                const tglLogs = logs.filter(l => l && l.tanggal === tgl);
 
-            // Periksa status setiap kelas untuk tanggal aktif
-            const classDataList = activeClassKeys.map(key => {
-                const cls = allClasses[key] || { name: key, wali: '-', santri: [] };
-                const matchingLogs = tglLogs.filter(l => l.class_id === key);
-                const isSudah = matchingLogs.length > 0;
-                return {
-                    key: key,
-                    data: cls,
-                    isSudah: isSudah,
-                    logs: matchingLogs
-                };
-            });
+                // Periksa status setiap kelas untuk tanggal aktif
+                const classDataList = activeClassKeys.map(key => {
+                    const cls = allClasses[key] || { name: key, wali: '-', santri: [] };
+                    const matchingLogs = tglLogs.filter(l => l && (l.class_id === key || (l.class_name && cls.name && l.class_name.toLowerCase().trim() === cls.name.toLowerCase().trim())));
+                    const isSudah = matchingLogs.length > 0;
+                    return {
+                        key: key,
+                        data: cls,
+                        isSudah: isSudah,
+                        logs: matchingLogs
+                    };
+                });
 
             const totalKelas = classDataList.length;
             const sudahCount = classDataList.filter(c => c.isSudah).length;
@@ -6025,6 +6066,9 @@ ON CONFLICT (id) DO NOTHING;`;
             if (currentUser && currentUser.role === 'santri') {
                 container.querySelectorAll('.rbac-can-edit').forEach(el => el.classList.add('hidden'));
             }
+            } catch (err) {
+                console.error("Gagal renderDailyAttendanceStatusPanel:", err);
+            }
         }
 
         function revisiPresensiKelas(classKey, sessionId) {
@@ -6151,9 +6195,16 @@ ON CONFLICT (id) DO NOTHING;`;
 
             const logs = getAttendanceLogs();
             const tglActive = document.getElementById('absenTanggal')?.value || new Date().toISOString().split('T')[0];
+            const currentCls = getCurrentClassData();
+            const currentClsName = currentCls && currentCls.name ? currentCls.name.toLowerCase().trim() : '';
 
             // Saring sesi untuk kelas aktif atau tanggal aktif
-            const filteredLogs = logs.filter(l => (!selectedClassId || l.class_id === selectedClassId) && (!tglActive || l.tanggal === tglActive));
+            const filteredLogs = logs.filter(l => {
+                if (!l) return false;
+                const matchClass = !selectedClassId || l.class_id === selectedClassId || (l.class_name && currentClsName && l.class_name.toLowerCase().trim() === currentClsName);
+                const matchDate = !tglActive || l.tanggal === tglActive;
+                return matchClass && matchDate;
+            });
 
             if (badge) badge.textContent = `${filteredLogs.length} Sesi Tersimpan`;
 
@@ -6908,7 +6959,7 @@ ON CONFLICT (id) DO NOTHING;`;
             } else {
                 logs.unshift(attendanceRecord);
             }
-            localStorage.setItem('siak_attendance_logs', JSON.stringify(logs));
+            saveAttendanceLogs(logs);
 
             // 3. Sinkronisasi ke Supabase Cloud
             syncAttendanceToCloud(attendanceRecord);
