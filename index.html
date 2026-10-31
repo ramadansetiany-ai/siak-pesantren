@@ -27,8 +27,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Inter, Plus Jakarta Sans, & Amiri (Arabic Calligraphy) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Chart.js CDN for Attendance Charts across all roles -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Supabase JS Client CDN -->
@@ -685,197 +687,402 @@
                 <!-- ============================================== -->
                 <!-- SECTION 1: DASHBOARD UTAMA                     -->
                 <!-- ============================================== -->
-                <section id="tab-dashboard" class="tab-content block space-y-6">
-                    <!-- Welcome Banner (Clean, Minimalist & Modern) -->
-                    <div class="bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-800 rounded-2xl p-4 sm:p-5 text-white shadow-sm relative overflow-hidden">
-                        <div class="relative z-10 flex items-center justify-between gap-4">
-                            <div>
-                                <div class="flex items-center space-x-2 mb-1">
-                                    <span id="dashRoleBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/20 text-emerald-100 border border-white/20 backdrop-blur-xs">Staff Admin</span>
-                                    <span class="text-xs text-emerald-200 font-mono" id="dashAccountInfo">ID: admin</span>
+                <section id="tab-dashboard" class="tab-content block space-y-4">
+                    <!-- Hero Greeting Banner (Sesuai Foto, Tanpa Tombol Pengaturan & Tanpa Subtitle Berantakan) -->
+                    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-800 via-emerald-700 to-teal-800 p-4 sm:p-5 text-white shadow-lg shadow-emerald-950/15">
+                        <!-- Subtle Pattern Ornaments -->
+                        <div class="absolute -right-6 -bottom-6 w-32 h-32 rounded-full bg-emerald-400/10 pointer-events-none blur-xl"></div>
+                        <i class="fa-solid fa-mosque absolute right-3 bottom-2 text-7xl sm:text-8xl text-white/10 pointer-events-none"></i>
+
+                        <div class="relative z-10">
+                            <div class="flex items-center gap-2.5 mb-2">
+                                <span id="dashRoleBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/30 text-emerald-200 border border-emerald-400/30 tracking-wide uppercase">
+                                    Staff Admin
+                                </span>
+                                <span class="text-xs text-emerald-200/90 font-mono" id="dashAccountInfo">ID: adminn</span>
+                            </div>
+
+                            <h2 class="text-base sm:text-xl font-bold tracking-tight text-white flex flex-wrap items-center gap-2">
+                                <span class="text-amber-300 font-bold text-lg sm:text-2xl leading-none" style="font-family: 'Amiri', 'Traditional Arabic', serif;">أَهْلًا وَسَهْلًا,</span>
+                                <span id="dashWelcome" class="text-white">Editor / Administrator!</span>
+                            </h2>
+                        </div>
+                    </div>
+
+                    <!-- Key Metrics: Grid 2x2 Compact (Merapikan card yang sebelumnya vertikal panjang) -->
+                    <section class="space-y-3">
+                        <div class="flex items-center justify-between px-1">
+                            <span class="text-xs font-bold text-slate-500 tracking-wide uppercase">Statistik KBM Hari Ini</span>
+                            <span class="text-[11px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">Aktif</span>
+                        </div>
+
+                        <!-- 2 Column Grid for quick glance (Responsive to 4 columns on lg) -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+
+                            <!-- Card 1: Kehadiran Santri (Gabungan Banin & Banat yang rapi) -->
+                            <div class="col-span-1 sm:col-span-2 lg:col-span-2 bg-white rounded-2xl p-3.5 shadow-xs border border-slate-200/80 hover:shadow-md transition-shadow">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <p class="text-[11px] font-medium text-slate-500" id="labelCardTotalSantri">Santri Kelas Terpilih</p>
+                                        <div class="flex items-baseline gap-2 mt-0.5">
+                                            <span class="text-2xl font-extrabold text-slate-800" id="statTotalSantri">76</span>
+                                            <span class="text-xs text-slate-500 font-semibold">Total Santri</span>
+                                        </div>
+                                    </div>
+                                    <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 text-lg shadow-xs">
+                                        <i class="fa-solid fa-users"></i>
+                                    </div>
                                 </div>
-                                <h2 class="text-lg sm:text-2xl font-bold tracking-tight" id="dashWelcome">Ahlan wa Sahlan, Administrator!</h2>
-                                <p class="text-emerald-100/90 text-xs sm:text-xs max-w-xl mt-0.5 leading-relaxed" id="dashSubWelcome">Sistem Informasi Administrasi Kelas & LMS Pesantren Terpadu.</p>
-                            </div>
-                            <div class="hidden sm:block shrink-0 rbac-staff-only">
-                                <button type="button" onclick="openEditProfilSayaModal()" class="px-3.5 py-2 bg-white/15 hover:bg-white/25 text-white border border-white/25 font-semibold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5 backdrop-blur-xs cursor-pointer">
-                                    <i class="fa-solid fa-gear"></i>
-                                    <span>Pengaturan</span>
-                                </button>
-                            </div>
-                        </div>
 
-                        <i class="fa-solid fa-mosque absolute -right-3 -bottom-5 text-7xl sm:text-8xl text-white/10 pointer-events-none"></i>
-                    </div>
+                                <!-- Sub Badges: Banin & Banat -->
+                                <div class="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-slate-100" id="statSantriHadirSub">
+                                    <div class="bg-blue-50/70 border border-blue-100 rounded-xl px-2.5 py-1.5 flex flex-col justify-center">
+                                        <div class="flex items-center justify-between text-[11px]">
+                                            <span class="font-bold text-blue-800 flex items-center gap-1">
+                                                <i class="fa-solid fa-person text-blue-600"></i> Banin
+                                            </span>
+                                            <span class="text-blue-900 font-bold" id="dashStatBaninTotal">46</span>
+                                        </div>
+                                        <div class="text-[10px] text-blue-600 font-medium mt-0.5">
+                                            <span class="font-bold text-emerald-600" id="dashStatBaninHadir">20</span> Hadir di kelas
+                                        </div>
+                                    </div>
 
-                    <!-- Stats Cards -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div class="bg-white rounded-xl p-4 border border-slate-200/80 shadow-sm flex items-center justify-between hover:border-emerald-300 transition">
-                            <div>
-                                <p class="text-xs font-medium text-slate-500">Santri Kelas Terpilih</p>
-                                <h3 class="text-2xl font-bold text-slate-800 mt-1" id="statTotalSantri">32</h3>
-                                <p class="text-[11px] text-emerald-600 mt-1 font-medium" id="statSantriHadirSub"><i class="fa-solid fa-check-circle mr-1"></i> 30 Hadir Hari Ini</p>
+                                    <div class="bg-rose-50/70 border border-rose-100 rounded-xl px-2.5 py-1.5 flex flex-col justify-center">
+                                        <div class="flex items-center justify-between text-[11px]">
+                                            <span class="font-bold text-rose-800 flex items-center gap-1">
+                                                <i class="fa-solid fa-person-dress text-rose-600"></i> Banat
+                                            </span>
+                                            <span class="text-rose-900 font-bold" id="dashStatBanatTotal">30</span>
+                                        </div>
+                                        <div class="text-[10px] text-rose-600 font-medium mt-0.5">
+                                            <span class="font-bold text-emerald-600" id="dashStatBanatHadir">17</span> Hadir di kelas
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center text-xl">
-                                <i class="fa-solid fa-users"></i>
-                            </div>
-                        </div>
 
-                        <div class="bg-white rounded-xl p-4 border border-slate-200/80 shadow-sm flex items-center justify-between hover:border-blue-300 transition">
-                            <div>
-                                <p class="text-xs font-medium text-slate-500">Kehadiran Guru</p>
-                                <h3 class="text-2xl font-bold text-slate-800 mt-1" id="statKehadiranGuru">96%</h3>
-                                <p class="text-[11px] text-emerald-600 mt-1 font-medium"><i class="fa-solid fa-arrow-up mr-1"></i> Konsisten & Tertib</p>
-                            </div>
-                            <div class="w-12 h-12 bg-blue-100 text-blue-700 rounded-xl flex items-center justify-center text-xl">
-                                <i class="fa-solid fa-chalkboard-user"></i>
-                            </div>
-                        </div>
-
-                        <div class="bg-white rounded-xl p-4 border border-slate-200/80 shadow-sm flex items-center justify-between hover:border-amber-300 transition">
-                            <div>
-                                <p class="text-xs font-medium text-slate-500">Kajian Kitab Aktif</p>
-                                <h3 class="text-2xl font-bold text-slate-800 mt-1" id="statTotalKitab">6</h3>
-                                <p class="text-[11px] text-slate-500 mt-1">Sesuai Kurikulum</p>
-                            </div>
-                            <div class="w-12 h-12 bg-amber-100 text-amber-700 rounded-xl flex items-center justify-center text-xl">
-                                <i class="fa-solid fa-book"></i>
-                            </div>
-                        </div>
-
-                        <div class="bg-white rounded-xl p-4 border border-slate-200/80 shadow-sm flex items-center justify-between hover:border-purple-300 transition">
-                            <div>
-                                <p class="text-xs font-medium text-slate-500">Pertemuan Jam Ke</p>
-                                <h3 class="text-2xl font-bold text-slate-800 mt-1">Jam ke-3</h3>
-                                <p class="text-[11px] text-emerald-600 mt-1 font-medium">Fiqih (Fathul Qorib)</p>
-                            </div>
-                            <div class="w-12 h-12 bg-purple-100 text-purple-700 rounded-xl flex items-center justify-center text-xl">
-                                <i class="fa-solid fa-clock"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Exam Status Summary Card in Dashboard -->
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200/80 p-5">
-                        <div class="flex items-center justify-between mb-3">
-                            <h3 class="font-bold text-slate-800 text-base flex items-center">
-                                <i class="fa-solid fa-award mr-2 text-emerald-600"></i> Ringkasan Status Kelulusan Ujian
-                            </h3>
-                            <div class="flex items-center space-x-2">
-                                <button onclick="openShareKelasWAModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center shadow-sm">
-                                    <i class="fa-brands fa-whatsapp text-sm mr-1.5"></i> Share Rekap Nilai ke WA
-                                </button>
-                                <button onclick="switchTab('ujian')" class="text-xs text-emerald-600 hover:text-emerald-800 font-semibold flex items-center">
-                                    Lihat Rincian Ujian &rarr;
-                                </button>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-                            <div class="p-3 bg-emerald-50 rounded-lg border border-emerald-100">
-                                <p class="text-xs text-emerald-700 font-medium">Santri Lulus</p>
-                                <p class="text-xl font-bold text-emerald-800 mt-0.5" id="dashLulusCount">29</p>
-                            </div>
-                            <div class="p-3 bg-rose-50 rounded-lg border border-rose-100">
-                                <p class="text-xs text-rose-700 font-medium">Belum Lulus / Remidial</p>
-                                <p class="text-xl font-bold text-rose-800 mt-0.5" id="dashTidakLulusCount">3</p>
-                            </div>
-                            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                                <p class="text-xs text-slate-600 font-medium">Persentase Kelulusan</p>
-                                <p class="text-xl font-bold text-slate-800 mt-0.5" id="dashPersenLulus">90.6%</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ATTENDANCE CHARTS FOR STAFF (Grafik Kehadiran Akses Staff) -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <!-- Chart 1: Tren Kehadiran Mingguan (6 Hari Sekolah) -->
-                        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200/80 p-5">
-                            <div class="flex items-center justify-between mb-4">
-                                <h3 class="font-bold text-slate-800 text-sm flex items-center">
-                                    <i class="fa-solid fa-chart-line mr-2 text-emerald-600"></i> Tren Kehadiran Santri Mingguan (Senin - Sabtu)
-                                </h3>
-                                <span class="text-[11px] bg-emerald-50 text-emerald-800 px-2.5 py-1 rounded-md font-semibold border border-emerald-100">Bulan Oktober 2026</span>
-                            </div>
-                            <div class="h-64 relative">
-                                <canvas id="chartTrenStaff"></canvas>
-                            </div>
-                        </div>
-
-                        <!-- Chart 2: Komposisi Presensi Santri Hari Ini -->
-                        <div class="bg-white rounded-xl shadow-sm border border-slate-200/80 p-5">
-                            <div class="flex items-center justify-between mb-4">
-                                <h3 class="font-bold text-slate-800 text-sm flex items-center">
-                                    <i class="fa-solid fa-chart-pie mr-2 text-emerald-600"></i> Komposisi Presensi Hari Ini
-                                </h3>
-                                <span class="text-[11px] text-slate-400 font-medium">Semua Status</span>
-                            </div>
-                            <div class="h-64 relative flex items-center justify-center">
-                                <canvas id="chartPieStaff"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Recent Activities & Overview -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <!-- Left: Latest Jurnal -->
-                        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200/80 p-5">
-                            <div class="flex items-center justify-between mb-4">
-                                <h3 class="font-bold text-slate-800 text-base flex items-center">
-                                    <i class="fa-solid fa-clock-rotate-left mr-2 text-emerald-600"></i> Batas Pelajaran Terakhir
-                                </h3>
-                                <button onclick="switchTab('jurnal')" class="text-xs text-emerald-600 hover:text-emerald-800 font-semibold">Lihat Semua &rarr;</button>
-                            </div>
-                            <div id="dashboardJurnalList" class="space-y-3">
-                                <!-- Populated dynamically -->
-                            </div>
-                        </div>
-
-                        <!-- Right: Quick Attendance Status -->
-                        <div class="bg-white rounded-xl shadow-sm border border-slate-200/80 p-5">
-                            <div class="flex items-center justify-between mb-3">
-                                <h3 class="font-bold text-slate-800 text-base flex items-center">
-                                    <i class="fa-solid fa-chart-pie mr-2 text-emerald-600"></i> Rekap Absensi
-                                </h3>
-                                <span class="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100" id="dashCurrentClassName">10 Ula - Al-Ghazali</span>
-                            </div>
-                            <div class="space-y-4">
+                            <!-- Card 2: Kehadiran Guru -->
+                            <div class="bg-white rounded-2xl p-3.5 shadow-xs border border-slate-200/80 flex flex-col justify-between hover:shadow-md transition-shadow">
                                 <div>
-                                    <div class="flex justify-between text-xs font-semibold mb-1">
-                                        <span class="text-emerald-700"><i class="fa-solid fa-circle text-[8px] mr-1"></i> Hadir</span>
-                                        <span id="dashHadirCount">30 Santri (93.7%)</span>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[11px] font-medium text-slate-500">Kehadiran Guru</span>
+                                        <div class="w-8 h-8 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shadow-xs">
+                                            <i class="fa-solid fa-chalkboard-user"></i>
+                                        </div>
                                     </div>
-                                    <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                                        <div id="barHadir" class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: 93.7%"></div>
+                                    <div class="text-2xl font-extrabold text-slate-800 mt-1" id="statKehadiranGuru">96%</div>
+                                </div>
+                                <div class="mt-2 flex items-center gap-1 text-[11px] font-semibold text-emerald-600">
+                                    <i class="fa-solid fa-arrow-trend-up"></i>
+                                    <span>Konsisten & Tertib</span>
+                                </div>
+                            </div>
+
+                            <!-- Card 3: Kajian Kitab Aktif -->
+                            <div class="bg-white rounded-2xl p-3.5 shadow-xs border border-slate-200/80 flex flex-col justify-between hover:shadow-md transition-shadow">
+                                <div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[11px] font-medium text-slate-500">Kajian Kitab</span>
+                                        <div class="w-8 h-8 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600 shadow-xs">
+                                            <i class="fa-solid fa-book-bookmark"></i>
+                                        </div>
                                     </div>
+                                    <div class="text-2xl font-extrabold text-slate-800 mt-1">
+                                        <span id="statTotalKitab">6</span> <span class="text-xs font-normal text-slate-500">Kitab</span>
+                                    </div>
+                                </div>
+                                <div class="mt-2 text-[11px] font-medium text-slate-500 flex items-center gap-1">
+                                    <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                                    <span>Sesuai Kurikulum</span>
+                                </div>
+                            </div>
+
+                            <!-- Card 4: Jadwal Saat Ini (Pertemuan Jam Ke) -->
+                            <div class="col-span-1 sm:col-span-2 lg:col-span-4 bg-gradient-to-r from-purple-50 via-white to-indigo-50/40 rounded-2xl p-3.5 border border-purple-100 shadow-xs flex items-center justify-between">
+                                <div class="space-y-0.5">
+                                    <span class="text-[11px] font-medium text-slate-500">Sesi Berlangsung</span>
+                                    <div class="text-base font-bold text-slate-800" id="dashPertemuanJam">
+                                        Jam ke-3 <span class="font-normal text-slate-400">•</span> <span class="text-purple-700">Fiqih</span>
+                                    </div>
+                                    <p class="text-xs text-purple-900/70 font-medium" id="dashPertemuanKitab">Kitab: Fathul Qorib Al-Mujib</p>
+                                </div>
+                                <div class="w-10 h-10 rounded-xl bg-purple-100/80 border border-purple-200 flex items-center justify-center text-purple-700 text-lg shadow-xs">
+                                    <i class="fa-solid fa-clock"></i>
+                                </div>
+                            </div>
+
+                        </div>
+                    </section>
+
+                    <!-- Section: Ringkasan Status Ujian (Merapikan bagian tombol & preview kelulusan) -->
+                    <section class="bg-white rounded-2xl p-4 shadow-xs border border-slate-200/80 space-y-3.5">
+                        <!-- Section Header with clean CTA links -->
+                        <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center">
+                                    <i class="fa-solid fa-award"></i>
                                 </div>
                                 <div>
-                                    <div class="flex justify-between text-xs font-semibold mb-1">
-                                        <span class="text-amber-600"><i class="fa-solid fa-circle text-[8px] mr-1"></i> Izin / Sakit</span>
-                                        <span id="dashIzinCount">2 Santri (6.3%)</span>
-                                    </div>
-                                    <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                                        <div id="barIzin" class="bg-amber-400 h-full rounded-full transition-all duration-500" style="width: 6.3%"></div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="flex justify-between text-xs font-semibold mb-1">
-                                        <span class="text-rose-600"><i class="fa-solid fa-circle text-[8px] mr-1"></i> Alpa</span>
-                                        <span id="dashAlpaCount">0 Santri (0%)</span>
-                                    </div>
-                                    <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                                        <div id="barAlpa" class="bg-rose-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
-                                    </div>
+                                    <h3 class="text-sm font-bold text-slate-800">Status Kelulusan Ujian</h3>
+                                    <p class="text-[10px] text-slate-400">Semester Ganjil 1447 H / 2026/2027</p>
                                 </div>
                             </div>
 
-                            <div class="mt-6 pt-4 border-t border-slate-100">
-                                <p class="text-xs text-slate-500 font-medium mb-2">Santri Perlu Perhatian (Izin/Sakit/Alpa):</p>
-                                <div id="dashAbsenAlerts" class="space-y-2">
-                                    <!-- Dynamic -->
+                            <!-- Link to Details -->
+                            <button type="button" onclick="switchTab('ujian')" class="text-xs font-semibold text-emerald-700 hover:text-emerald-800 flex items-center gap-1 group cursor-pointer">
+                                <span>Rincian</span>
+                                <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-0.5 transition-transform"></i>
+                            </button>
+                        </div>
+
+                        <!-- Progress Overview Bar -->
+                        <div class="space-y-1.5">
+                            <div class="flex justify-between text-xs font-semibold">
+                                <span class="text-emerald-700">Tingkat Kelulusan</span>
+                                <span class="text-slate-700" id="dashPersenLulus">90.6%</span>
+                            </div>
+                            <div class="w-full bg-rose-100 h-2.5 rounded-full overflow-hidden flex">
+                                <div id="dashBarLulus" class="bg-emerald-500 h-full rounded-l-full transition-all duration-500" style="width: 90.6%;"></div>
+                                <div id="dashBarRemidial" class="bg-rose-500 h-full rounded-r-full transition-all duration-500" style="width: 9.4%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Status Cards: Side-by-Side -->
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <!-- Santri Lulus -->
+                            <div class="bg-emerald-50/60 border border-emerald-100 rounded-xl p-3 text-center">
+                                <div class="flex items-center justify-center gap-1 text-[11px] font-semibold text-emerald-700">
+                                    <i class="fa-solid fa-check"></i>
+                                    Santri Lulus
+                                </div>
+                                <div class="text-2xl font-black text-emerald-800 mt-1" id="dashLulusCount">29</div>
+                                <span class="text-[10px] text-emerald-600 font-medium">Memenuhi KKM</span>
+                            </div>
+
+                            <!-- Remidial -->
+                            <div class="bg-rose-50/60 border border-rose-100 rounded-xl p-3 text-center">
+                                <div class="flex items-center justify-center gap-1 text-[11px] font-semibold text-rose-700">
+                                    <i class="fa-solid fa-circle-exclamation"></i>
+                                    Remidial
+                                </div>
+                                <div class="text-2xl font-black text-rose-800 mt-1" id="dashTidakLulusCount">3</div>
+                                <span class="text-[10px] text-rose-600 font-medium">Perlu Pengulangan</span>
+                            </div>
+                        </div>
+
+                        <!-- Full-Width Share Button -->
+                        <button type="button" onclick="openShareKelasWAModal()" class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white rounded-xl font-semibold text-xs flex items-center justify-center gap-2 shadow-xs transition-all shadow-emerald-600/20 cursor-pointer">
+                            <i class="fa-brands fa-whatsapp text-sm"></i>
+                            <span>Bagikan Rekap Nilai ke WhatsApp</span>
+                        </button>
+                    </section>
+
+                    <!-- Section: Analisis & Grafik Kehadiran (Memperbaiki ruang kosong berlebih & layout chart) -->
+                    <section class="space-y-3">
+                        <div class="flex items-center justify-between px-1">
+                            <span class="text-xs font-bold text-slate-500 tracking-wide uppercase">Monitoring & Presensi</span>
+                            <span class="text-[11px] font-medium text-slate-500">Pekan ke-4</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                            <!-- 1. Tren Kehadiran Mingguan (Desain Full Width, Bersih & Tidak Bolong) -->
+                            <div class="bg-white rounded-2xl p-4 shadow-xs border border-slate-200/80 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center">
+                                            <i class="fa-solid fa-arrow-trend-up"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-xs font-bold text-slate-800">Tren Kehadiran Mingguan</h4>
+                                            <p class="text-[10px] text-slate-400">Senin - Sabtu (Bulan Oktober 2026)</p>
+                                        </div>
+                                    </div>
+                                    <span class="px-2 py-0.5 text-[10px] font-bold rounded-md bg-emerald-50 text-emerald-700 border border-emerald-100">
+                                        Rata-rata 94%
+                                    </span>
+                                </div>
+
+                                <!-- Bar Visualizer Responsif & Proporsional -->
+                                <div class="pt-2">
+                                    <div class="h-28 flex items-end justify-between gap-2.5 px-1 pb-2 border-b border-slate-100">
+                                        <!-- Senin -->
+                                        <div class="flex-1 flex flex-col items-center gap-1 group">
+                                            <span class="text-[10px] font-bold text-emerald-700 group-hover:scale-110 transition-transform">95%</span>
+                                            <div class="w-full bg-slate-100 rounded-t-lg h-20 flex items-end overflow-hidden p-0.5">
+                                                <div class="w-full bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-md" style="height: 95%;"></div>
+                                            </div>
+                                            <span class="text-[10px] text-slate-500 font-medium mt-0.5">Sen</span>
+                                        </div>
+                                        <!-- Selasa -->
+                                        <div class="flex-1 flex flex-col items-center gap-1 group">
+                                            <span class="text-[10px] font-bold text-emerald-700 group-hover:scale-110 transition-transform">92%</span>
+                                            <div class="w-full bg-slate-100 rounded-t-lg h-20 flex items-end overflow-hidden p-0.5">
+                                                <div class="w-full bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-md" style="height: 92%;"></div>
+                                            </div>
+                                            <span class="text-[10px] text-slate-500 font-medium mt-0.5">Sel</span>
+                                        </div>
+                                        <!-- Rabu -->
+                                        <div class="flex-1 flex flex-col items-center gap-1 group">
+                                            <span class="text-[10px] font-bold text-amber-600 group-hover:scale-110 transition-transform">88%</span>
+                                            <div class="w-full bg-slate-100 rounded-t-lg h-20 flex items-end overflow-hidden p-0.5">
+                                                <div class="w-full bg-gradient-to-t from-amber-500 to-amber-400 rounded-t-md" style="height: 88%;"></div>
+                                            </div>
+                                            <span class="text-[10px] text-slate-500 font-medium mt-0.5">Rab</span>
+                                        </div>
+                                        <!-- Kamis -->
+                                        <div class="flex-1 flex flex-col items-center gap-1 group">
+                                            <span class="text-[10px] font-bold text-emerald-700 group-hover:scale-110 transition-transform">96%</span>
+                                            <div class="w-full bg-slate-100 rounded-t-lg h-20 flex items-end overflow-hidden p-0.5">
+                                                <div class="w-full bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-md" style="height: 96%;"></div>
+                                            </div>
+                                            <span class="text-[10px] text-slate-500 font-medium mt-0.5">Kam</span>
+                                        </div>
+                                        <!-- Jumat -->
+                                        <div class="flex-1 flex flex-col items-center gap-1 group">
+                                            <span class="text-[10px] font-bold text-emerald-700 group-hover:scale-110 transition-transform">98%</span>
+                                            <div class="w-full bg-slate-100 rounded-t-lg h-20 flex items-end overflow-hidden p-0.5">
+                                                <div class="w-full bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-md" style="height: 98%;"></div>
+                                            </div>
+                                            <span class="text-[10px] text-slate-500 font-medium mt-0.5">Jum</span>
+                                        </div>
+                                        <!-- Sabtu -->
+                                        <div class="flex-1 flex flex-col items-center gap-1 group">
+                                            <span class="text-[10px] font-bold text-emerald-700 group-hover:scale-110 transition-transform">94%</span>
+                                            <div class="w-full bg-slate-100 rounded-t-lg h-20 flex items-end overflow-hidden p-0.5">
+                                                <div class="w-full bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-md" style="height: 94%;"></div>
+                                            </div>
+                                            <span class="text-[10px] text-slate-500 font-medium mt-0.5">Sab</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between text-[10px] text-slate-400 pt-2 px-1">
+                                        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Di atas target (90%)</span>
+                                        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Perhatian</span>
+                                    </div>
+                                </div>
+                                <canvas id="chartTrenStaff" class="hidden"></canvas>
+                            </div>
+
+                            <!-- 2. Komposisi Presensi Hari Ini (Donut ringkas + Legend side-by-side seimbang) -->
+                            <div class="bg-white rounded-2xl p-4 shadow-xs border border-slate-200/80">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                                            <i class="fa-solid fa-chart-pie"></i>
+                                        </div>
+                                        <h4 class="text-xs font-bold text-slate-800">Komposisi Presensi Hari Ini</h4>
+                                    </div>
+                                    <span class="text-[11px] font-semibold text-emerald-700 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100" id="dashCurrentClassName">
+                                        Semua Kelas
+                                    </span>
+                                </div>
+
+                                <div class="flex items-center gap-4">
+                                    <!-- Donut Visual SVG Ringkas -->
+                                    <div class="relative w-24 h-24 shrink-0 flex items-center justify-center">
+                                        <svg class="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                                            <!-- Background Circle -->
+                                            <path class="text-slate-100" stroke-width="4.5" stroke="currentColor" fill="none"
+                                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                            <!-- Hadir -->
+                                            <path id="donutDashHadir" class="text-emerald-500 stroke-current transition-all duration-500" stroke-width="4.5" stroke-dasharray="35.3, 100" fill="none"
+                                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                            <!-- Izin / Sakit -->
+                                            <path id="donutDashIzin" class="text-amber-500 stroke-current transition-all duration-500" stroke-width="4.5" stroke-dasharray="64.7, 100" stroke-dashoffset="-35.3" fill="none"
+                                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                        </svg>
+                                        <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                                            <span class="text-sm font-extrabold text-slate-800 leading-none" id="dashKomposisiTotal">17</span>
+                                            <span class="text-[9px] text-slate-400 font-medium">Santri</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Legend & Stats Table -->
+                                    <div class="flex-1 space-y-2">
+                                        <div class="flex items-center justify-between text-xs pb-1 border-b border-slate-50">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                                                <span class="text-slate-600 font-medium">Hadir</span>
+                                            </div>
+                                            <span class="font-bold text-slate-800" id="dashHadirCount">6 <span class="text-[10px] text-slate-400 font-normal">(35.3%)</span></span>
+                                        </div>
+
+                                        <div class="flex items-center justify-between text-xs pb-1 border-b border-slate-50">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                                                <span class="text-slate-600 font-medium">Izin / Sakit</span>
+                                            </div>
+                                            <span class="font-bold text-slate-800" id="dashIzinCount">11 <span class="text-[10px] text-slate-400 font-normal">(64.7%)</span></span>
+                                        </div>
+
+                                        <div class="flex items-center justify-between text-xs">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                                                <span class="text-slate-600 font-medium">Alpa</span>
+                                            </div>
+                                            <span class="font-bold text-slate-800" id="dashAlpaCount">0 <span class="text-[10px] text-slate-400 font-normal">(0%)</span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <canvas id="chartPieStaff" class="hidden"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                            <!-- 3. Batas Pelajaran Terakhir -->
+                            <div class="bg-gradient-to-r from-amber-50/70 to-orange-50/50 rounded-2xl p-3.5 border border-amber-200/60 shadow-xs space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center">
+                                            <i class="fa-solid fa-clock-rotate-left"></i>
+                                        </div>
+                                        <span class="text-xs font-bold text-slate-800">Batas Pelajaran Terakhir</span>
+                                    </div>
+                                    <button type="button" onclick="switchTab('jurnal')" class="text-[11px] font-semibold text-amber-700 hover:text-amber-800 flex items-center gap-0.5 cursor-pointer">
+                                        <span>Lihat Semua</span>
+                                        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                                    </button>
+                                </div>
+
+                                <!-- Cuplikan Kitab & Bab Terakhir -->
+                                <div id="dashboardJurnalList" class="space-y-2">
+                                    <!-- Populated dynamically by renderDashboardJurnal() -->
+                                </div>
+                            </div>
+
+                            <!-- 4. Daftar Santri Perlu Perhatian -->
+                            <div class="bg-white rounded-2xl p-4 shadow-xs border border-slate-200/80 space-y-3">
+                                <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center">
+                                            <i class="fa-solid fa-bell"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-xs font-bold text-slate-800">Santri Perlu Perhatian</h4>
+                                            <p class="text-[10px] text-slate-400" id="dashAlertsSubtitle">Santri Tidak Hadir di Kelas</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100" id="dashAlertsClassBadge">
+                                        Kelas Aktif
+                                    </span>
+                                </div>
+
+                                <!-- List Container dengan max-height & scroll halus agar halaman tidak molor -->
+                                <div id="dashAbsenAlerts" class="space-y-1.5 max-h-72 overflow-y-auto pr-1">
+                                    <!-- Dynamic items with avatar, name, and status badge -->
+                                </div>
+
+                                <!-- Bottom Summary Link -->
+                                <div class="pt-2 text-center border-t border-slate-100">
+                                    <button type="button" onclick="switchTab('absen')" class="text-[11px] font-semibold text-emerald-700 hover:text-emerald-800 inline-flex items-center gap-1 cursor-pointer">
+                                        <span>Buka Formulir Presensi & Izin Lengkap</span>
+                                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                    </div>
+
+                    </section>
                 </section>
 
                 <!-- ============================================== -->
@@ -5218,10 +5425,10 @@ ON CONFLICT (id) DO NOTHING;`;
             const elDashRoleBadge = document.getElementById('dashRoleBadge');
             const elDashAccountInfo = document.getElementById('dashAccountInfo');
             const elDashSubWelcome = document.getElementById('dashSubWelcome');
-            if (elDashWelcome) elDashWelcome.textContent = `Ahlan wa Sahlan, ${user.nama}!`;
+            if (elDashWelcome) elDashWelcome.textContent = user.nama || 'Editor / Administrator!';
             if (elDashRoleBadge) elDashRoleBadge.textContent = user.role === 'staff' ? 'Staff Admin' : user.role === 'ustadz' ? 'Ustadz Pengajar' : 'Santri';
             if (elDashAccountInfo) elDashAccountInfo.textContent = `ID: ${user.id || user.nis || '-'}`;
-            if (elDashSubWelcome) elDashSubWelcome.textContent = `Sistem Informasi Administrasi Kelas & LMS Pesantren. Anda login sebagai ${user.role === 'staff' ? 'Staff Administrator' : user.role === 'ustadz' ? 'Ustadz / Pengajar' : 'Santri Pesantren'}.`;
+            if (elDashSubWelcome) elDashSubWelcome.textContent = '';
 
             // 3. Profil Ustadz Tab
             const uNama = document.getElementById('profilUstadzNama');
@@ -6832,23 +7039,57 @@ ON CONFLICT (id) DO NOTHING;`;
                 });
 
                 const grandTotal = totalAllBanin + totalAllBanat;
-                document.getElementById('statTotalSantri').textContent = `${grandTotal} Santri`;
-                document.getElementById('statSantriHadirSub').innerHTML = `
-                    <span class="text-blue-700 font-bold"><i class="fa-solid fa-person mr-1"></i> ${totalAllBanin} Banin</span> (${hadirAllBanin} Hadir) &nbsp;&bull;&nbsp; 
-                    <span class="text-rose-700 font-bold"><i class="fa-solid fa-person-dress mr-1"></i> ${totalAllBanat} Banat</span> (${hadirAllBanat} Hadir)
-                `;
+                const elStatTot = document.getElementById('statTotalSantri');
+                if (elStatTot) elStatTot.textContent = grandTotal;
+
+                const elBaninTot = document.getElementById('dashStatBaninTotal');
+                const elBaninHad = document.getElementById('dashStatBaninHadir');
+                if (elBaninTot) elBaninTot.textContent = totalAllBanin;
+                if (elBaninHad) elBaninHad.textContent = hadirAllBanin;
+
+                const elBanatTot = document.getElementById('dashStatBanatTotal');
+                const elBanatHad = document.getElementById('dashStatBanatHadir');
+                if (elBanatTot) elBanatTot.textContent = totalAllBanat;
+                if (elBanatHad) elBanatHad.textContent = hadirAllBanat;
             } else {
                 if (labelCardEl) labelCardEl.textContent = "Santri Kelas Saya";
-                document.getElementById('statTotalSantri').textContent = `${santriList.length} Santri`;
-                document.getElementById('statSantriHadirSub').innerHTML = `<i class="fa-solid fa-check-circle mr-1"></i> ${hadir} Hadir Hari Ini`;
+                const elStatTot = document.getElementById('statTotalSantri');
+                if (elStatTot) elStatTot.textContent = santriList.length;
+
+                const elBaninTot = document.getElementById('dashStatBaninTotal');
+                const elBaninHad = document.getElementById('dashStatBaninHadir');
+                if (elBaninTot) elBaninTot.textContent = santriList.filter(s => s.kategori !== 'banat').length;
+                if (elBaninHad) elBaninHad.textContent = santriList.filter(s => s.kategori !== 'banat' && s.status === 'Hadir').length;
+
+                const elBanatTot = document.getElementById('dashStatBanatTotal');
+                const elBanatHad = document.getElementById('dashStatBanatHadir');
+                if (elBanatTot) elBanatTot.textContent = santriList.filter(s => s.kategori === 'banat').length;
+                if (elBanatHad) elBanatHad.textContent = santriList.filter(s => s.kategori === 'banat' && s.status === 'Hadir').length;
             }
 
-            document.getElementById('dashHadirCount').textContent = `${hadir} Santri (${pctHadir}%)`;
-            document.getElementById('barHadir').style.width = `${pctHadir}%`;
-            document.getElementById('dashIzinCount').textContent = `${sakit + izin} Santri (${pctIzin}%)`;
-            document.getElementById('barIzin').style.width = `${pctIzin}%`;
-            document.getElementById('dashAlpaCount').textContent = `${alpa} Santri (${pctAlpa}%)`;
-            document.getElementById('barAlpa').style.width = `${pctAlpa}%`;
+            const elHadirCount = document.getElementById('dashHadirCount');
+            if (elHadirCount) elHadirCount.innerHTML = `${hadir} <span class="text-[10px] text-slate-400 font-normal">(${pctHadir}%)</span>`;
+            const elIzinCount = document.getElementById('dashIzinCount');
+            if (elIzinCount) elIzinCount.innerHTML = `${sakit + izin} <span class="text-[10px] text-slate-400 font-normal">(${pctIzin}%)</span>`;
+            const elAlpaCount = document.getElementById('dashAlpaCount');
+            if (elAlpaCount) elAlpaCount.innerHTML = `${alpa} <span class="text-[10px] text-slate-400 font-normal">(${pctAlpa}%)</span>`;
+
+            const elKompTotal = document.getElementById('dashKomposisiTotal');
+            if (elKompTotal) elKompTotal.textContent = santriList.length;
+            const donutHadir = document.getElementById('donutDashHadir');
+            const donutIzin = document.getElementById('donutDashIzin');
+            if (donutHadir) donutHadir.setAttribute('stroke-dasharray', `${pctHadir}, 100`);
+            if (donutIzin) {
+                donutIzin.setAttribute('stroke-dasharray', `${pctIzin + pctAlpa}, 100`);
+                donutIzin.setAttribute('stroke-dashoffset', `-${pctHadir}`);
+            }
+
+            const bHadir = document.getElementById('barHadir');
+            if (bHadir) bHadir.style.width = `${pctHadir}%`;
+            const bIzin = document.getElementById('barIzin');
+            if (bIzin) bIzin.style.width = `${pctIzin}%`;
+            const bAlpa = document.getElementById('barAlpa');
+            if (bAlpa) bAlpa.style.width = `${pctAlpa}%`;
             document.getElementById('lapTotalSantri').textContent = `${santriList.length} Santri`;
             document.getElementById('lapPersenKehadiran').textContent = `${pctHadir}%`;
 
@@ -6866,19 +7107,33 @@ ON CONFLICT (id) DO NOTHING;`;
             if (alertsEl) {
                 alertsEl.innerHTML = '';
                 const problemSantri = santriList.filter(s => s.status !== 'Hadir');
+                const alertBadge = document.getElementById('dashAlertsClassBadge');
+                if (alertBadge) alertBadge.textContent = classData.name || 'Kelas Aktif';
+                const alertSub = document.getElementById('dashAlertsSubtitle');
+                if (alertSub) alertSub.textContent = `${problemSantri.length} Santri Tidak Hadir di Kelas`;
+
                 if (problemSantri.length === 0) {
-                    alertsEl.innerHTML = `<p class="text-xs text-emerald-600 italic"><i class="fa-solid fa-face-smile mr-1"></i> Seluruh santri hadir lengkap hari ini.</p>`;
+                    alertsEl.innerHTML = `<div class="p-3 text-center text-xs text-emerald-600 bg-emerald-50/70 rounded-xl border border-emerald-100"><i class="fa-solid fa-circle-check mr-1.5"></i> Seluruh santri hadir lengkap hari ini.</div>`;
                 } else {
                     problemSantri.forEach(s => {
-                        const badgeColor = s.status === 'Sakit' ? 'bg-blue-100 text-blue-800' : s.status === 'Izin' ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-800';
+                        const badgeColor = s.status === 'Sakit' ? 'bg-blue-100 text-blue-700' : s.status === 'Izin' ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-700';
+                        const avatarBg = s.status === 'Sakit' ? 'bg-blue-100 text-blue-700' : s.status === 'Izin' ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-700';
+                        const initials = (s.nama || 'S').split(' ').map(w => w[0]).filter(Boolean).slice(0, 2).join('').toUpperCase();
                         const item = document.createElement('div');
-                        item.className = "flex items-center justify-between text-xs p-2 bg-slate-50 rounded-lg border border-slate-100";
+                        item.className = "flex items-center justify-between p-2 rounded-xl bg-slate-50 hover:bg-slate-100/80 border border-slate-100 transition-colors";
                         item.innerHTML = `
-                            <span class="font-medium text-slate-700 truncate max-w-[170px]">${s.nama}</span>
-                            <div class="flex items-center space-x-1.5">
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${badgeColor}">${s.status}</span>
-                                <span class="text-[10px] text-slate-400 truncate max-w-[100px]">${s.keterangan || '-'}</span>
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-7 h-7 rounded-full ${avatarBg} font-bold text-[10px] flex items-center justify-center shrink-0">
+                                    ${initials}
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="text-xs font-semibold text-slate-800 leading-tight truncate">${s.nama}</div>
+                                    <span class="text-[10px] text-slate-400 truncate block">${s.keterangan ? 'Ket: ' + s.keterangan : (s.nis || '-')}</span>
+                                </div>
                             </div>
+                            <span class="px-2.5 py-1 text-[10px] font-bold rounded-lg ${badgeColor} shrink-0">
+                                ${s.status}
+                            </span>
                         `;
                         alertsEl.appendChild(item);
                     });
@@ -7280,19 +7535,15 @@ ON CONFLICT (id) DO NOTHING;`;
 
             recents.forEach(j => {
                 const div = document.createElement('div');
-                div.className = "p-3 rounded-lg border border-slate-100 bg-slate-50 hover:bg-slate-100/80 transition flex items-start justify-between gap-3";
+                div.className = "bg-white/95 backdrop-blur-xs rounded-xl p-2.5 border border-amber-100 flex items-center justify-between shadow-2xs gap-3";
                 div.innerHTML = `
-                    <div>
-                        <div class="flex items-center space-x-2">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">${j.kitab}</span>
-                            <span class="text-xs text-slate-400 font-medium">${j.tanggal} &bull; ${j.jam.split(' ')[0]} ${j.jam.split(' ')[1]}</span>
-                        </div>
-                        <h4 class="font-bold text-slate-800 text-sm mt-1">${j.bab}</h4>
-                        <p class="text-xs text-slate-600 mt-0.5 line-clamp-1">${j.materi}</p>
-                        <p class="text-[11px] text-emerald-700 font-medium mt-1"><i class="fa-solid fa-bookmark mr-1"></i> Batas: ${j.halaman}</p>
-                        ${j.tugas ? `<p class="text-[11px] text-amber-800 font-semibold mt-1"><i class="fa-solid fa-list-check mr-1"></i> Tugas: ${j.tugas}</p>` : ''}
+                    <div class="min-w-0">
+                        <div class="text-xs font-bold text-slate-800 truncate">${j.kitab} &bull; ${j.bab}</div>
+                        <p class="text-[10px] text-slate-500 mt-0.5 truncate">Hal. ${j.halaman || '-'} &mdash; ${j.materi || '-'}</p>
                     </div>
-                    <span class="shrink-0 text-xs font-semibold text-slate-500 bg-white px-2 py-1 rounded border border-slate-200">${j.ustadz.split(',')[0]}</span>
+                    <span class="px-2 py-1 text-[10px] font-semibold bg-amber-100 text-amber-800 rounded-lg shrink-0">
+                        ${(j.ustadz || 'Ustadz').split(',')[0]}
+                    </span>
                 `;
                 container.appendChild(div);
             });
@@ -7572,6 +7823,10 @@ ON CONFLICT (id) DO NOTHING;`;
                 document.getElementById('dashLulusCount').textContent = '0';
                 document.getElementById('dashTidakLulusCount').textContent = '0';
                 document.getElementById('dashPersenLulus').textContent = '0%';
+                const barLulus0 = document.getElementById('dashBarLulus');
+                const barRemidial0 = document.getElementById('dashBarRemidial');
+                if (barLulus0) barLulus0.style.width = '0%';
+                if (barRemidial0) barRemidial0.style.width = '0%';
                 document.getElementById('ujianLulusCount').textContent = '0';
                 document.getElementById('ujianRemidialCount').textContent = '0';
                 document.getElementById('ujianRataRata').textContent = '0.0';
@@ -7650,6 +7905,10 @@ ON CONFLICT (id) DO NOTHING;`;
             document.getElementById('dashLulusCount').textContent = lulusCount;
             document.getElementById('dashTidakLulusCount').textContent = remidialCount;
             document.getElementById('dashPersenLulus').textContent = `${pctLulus}%`;
+            const barLulus = document.getElementById('dashBarLulus');
+            const barRemidial = document.getElementById('dashBarRemidial');
+            if (barLulus) barLulus.style.width = `${pctLulus}%`;
+            if (barRemidial) barRemidial.style.width = `${(100 - parseFloat(pctLulus)).toFixed(1)}%`;
 
             document.getElementById('ujianLulusCount').textContent = lulusCount;
             document.getElementById('ujianRemidialCount').textContent = remidialCount;
