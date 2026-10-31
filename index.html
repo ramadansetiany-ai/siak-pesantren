@@ -361,8 +361,8 @@
                             <span>Biodata & Profil Saya</span>
                         </button>
 
-                        <!-- 4. Menu Khusus STAFF: Manajemen Akun Pengguna -->
-                        <button onclick="switchTab('manajemen-akun')" id="nav-manajemen-akun" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors">
+                        <!-- 4. Menu Khusus STAFF: Manajemen Akun Pengguna (Hanya Tampil untuk Staff / Admin) -->
+                        <button onclick="switchTab('manajemen-akun')" id="nav-manajemen-akun" class="nav-btn rbac-staff-only w-full flex items-center space-x-3 px-3 py-2.5 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors hidden">
                             <i class="fa-solid fa-users-gear w-5 text-center text-amber-600"></i>
                             <span>Manajemen Akun</span>
                         </button>
@@ -5189,6 +5189,9 @@ ON CONFLICT (id) DO NOTHING;`;
             // Render Mobile Bottom Navigation Bar khusus peran ini
             renderMobileBottomNav(user);
 
+            // Terapkan batasan visibilitas menu navigasi sesuai peran
+            applyRoleMenuVisibility();
+
             // Sync all view tables
             updateAllComponents();
         }
@@ -5619,6 +5622,11 @@ ON CONFLICT (id) DO NOTHING;`;
         }
 
         function renderAkunTable() {
+            if (!currentUser || currentUser.role !== 'staff') {
+                const tbody = document.getElementById('tabelAkunBody');
+                if (tbody) tbody.innerHTML = '';
+                return;
+            }
             const accounts = getAccounts();
             const tbody = document.getElementById('tabelAkunBody');
             if (!tbody) return;
@@ -8003,19 +8011,116 @@ ON CONFLICT (id) DO NOTHING;`;
             }
         }
 
+        function applyRoleMenuVisibility() {
+            if (!currentUser) return;
+
+            const isStaff = currentUser.role === 'staff';
+            const isUstadz = currentUser.role === 'ustadz';
+            const isSantri = currentUser.role === 'santri';
+
+            // Menu Manajemen Akun (Sidebar & Halaman Utama): HANYA Staff / Admin
+            const navManajemenAkun = document.getElementById('nav-manajemen-akun');
+            if (navManajemenAkun) {
+                if (isStaff) {
+                    navManajemenAkun.classList.remove('hidden');
+                } else {
+                    navManajemenAkun.classList.add('hidden');
+                }
+            }
+
+            // Menu Dashboard: Staff & Ustadz (Santri disembunyikan)
+            const navDashboard = document.getElementById('nav-dashboard');
+            if (navDashboard) {
+                if (isSantri) {
+                    navDashboard.classList.add('hidden');
+                } else {
+                    navDashboard.classList.remove('hidden');
+                }
+            }
+
+            // Menu Profil Ustadz: Staff & Ustadz (Santri disembunyikan)
+            const navProfilUstadz = document.getElementById('nav-profil-ustadz');
+            if (navProfilUstadz) {
+                if (isSantri) {
+                    navProfilUstadz.classList.add('hidden');
+                } else {
+                    navProfilUstadz.classList.remove('hidden');
+                }
+            }
+
+            // Seluruh elemen khusus Staff
+            document.querySelectorAll('.rbac-staff-only').forEach(el => {
+                if (isStaff) el.classList.remove('hidden');
+                else el.classList.add('hidden');
+            });
+        }
+
         function switchTab(tabId) {
+            // 1. KEAMANAN AKSES ROUTING (ROLE-BASED ACCESS CONTROL)
+            // Tolak akses Manajemen Akun jika bukan Staff / Admin
+            if (tabId === 'manajemen-akun') {
+                if (!currentUser || currentUser.role !== 'staff') {
+                    showUnauthorizedModal(`
+                        <div class="space-y-2">
+                            <p class="font-bold text-rose-700 text-sm">Akses Ditolak (Unauthorized Access)</p>
+                            <p class="text-xs text-slate-600">Halaman <strong>Manajemen Akun</strong> bersifat terproteksi penuh dan hanya dapat diakses oleh akun <strong>Staff / Administrator</strong>.</p>
+                        </div>
+                    `);
+                    // Bersihkan URL hash langsung jika ada manipulasi URL
+                    if (window.location.hash) {
+                        try { history.replaceState(null, null, ' '); } catch (e) { window.location.hash = ''; }
+                    }
+                    // Kembalikan ke halaman beranda yang sah sesuai peran
+                    const fallbackTab = currentUser ? (currentUser.role === 'ustadz' ? 'profil-ustadz' : 'profil-santri') : 'dashboard';
+                    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+                    const targetFallback = document.getElementById(`tab-${fallbackTab}`);
+                    if (targetFallback) targetFallback.classList.remove('hidden');
+                    updateBottomNavActive(fallbackTab);
+                    applyRoleMenuVisibility();
+                    return;
+                }
+            }
+
+            // Tolak akses Santri untuk menu yang dilarang
+            if (currentUser && currentUser.role === 'santri') {
+                if (tabId === 'dashboard' || tabId === 'profil-ustadz' || tabId === 'kehadiran-guru') {
+                    showUnauthorizedModal(`
+                        <div class="space-y-2">
+                            <p class="font-bold text-rose-700 text-sm">Akses Ditolak (Unauthorized Access)</p>
+                            <p class="text-xs text-slate-600">Akun Santri tidak memiliki izin untuk membuka menu ini. Silakan gunakan menu Biodata, Absensi, Jurnal, dan Raport.</p>
+                        </div>
+                    `);
+                    if (window.location.hash) {
+                        try { history.replaceState(null, null, ' '); } catch (e) { window.location.hash = ''; }
+                    }
+                    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+                    const targetSantri = document.getElementById('tab-profil-santri');
+                    if (targetSantri) targetSantri.classList.remove('hidden');
+                    updateBottomNavActive('profil-santri');
+                    applyRoleMenuVisibility();
+                    return;
+                }
+            }
+
+            // Sembunyikan semua tab dan tampilkan tab tujuan
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             const target = document.getElementById(`tab-${tabId}`);
             if (target) target.classList.remove('hidden');
 
+            // Perbarui gaya aktif tombol navigasi tanpa merusak status hidden
             document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.className = "nav-btn w-full flex items-center space-x-3 px-3 py-2.5 text-sm font-medium rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors";
+                btn.classList.remove('text-emerald-700', 'bg-emerald-50', 'font-semibold');
+                btn.classList.add('text-slate-600');
             });
 
             const activeBtn = document.getElementById(`nav-${tabId}`);
             if (activeBtn) {
-                activeBtn.className = "nav-btn w-full flex items-center space-x-3 px-3 py-2.5 text-sm font-medium rounded-lg text-emerald-700 bg-emerald-50 transition-colors font-semibold";
+                activeBtn.classList.remove('text-slate-600');
+                activeBtn.classList.add('text-emerald-700', 'bg-emerald-50', 'font-semibold');
             }
+
+            // Jamin visibilitas menu sesuai peran selalu sinkron & tidak bocor
+            applyRoleMenuVisibility();
 
             // Tutup drawer sidebar mobile dan backdrop bila terbuka
             toggleMobileSidebar(false);
@@ -8050,6 +8155,7 @@ ON CONFLICT (id) DO NOTHING;`;
             if (shouldOpen) {
                 sidebar.classList.remove('hidden');
                 if (backdrop) backdrop.classList.remove('hidden');
+                applyRoleMenuVisibility();
             } else {
                 sidebar.classList.add('hidden');
                 if (backdrop) backdrop.classList.add('hidden');
@@ -8163,7 +8269,23 @@ ON CONFLICT (id) DO NOTHING;`;
             }
 
             switchClass(selectedClassId);
+
+            // Validasi proteksi routing URL langsung (Direct URL Hash Protection)
+            if (window.location.hash) {
+                const initHash = window.location.hash.replace('#', '').trim();
+                if (initHash) {
+                    switchTab(initHash);
+                }
+            }
         };
+
+        // Event listener untuk memvalidasi perubahan URL secara langsung
+        window.addEventListener('hashchange', () => {
+            const rawHash = window.location.hash.replace('#', '').trim();
+            if (rawHash) {
+                switchTab(rawHash);
+            }
+        });
     </script>
 </body>
 </html>
